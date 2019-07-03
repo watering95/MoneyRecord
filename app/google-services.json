@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "799315006133",
+    "firebase_url": "https://money-record-49cc8.firebaseio.com",
+    "project_id": "money-record-49cc8",
+    "storage_bucket": "money-record-49cc8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:799315006133:android:6d4b7dc923da627e",
+        "android_client_info": {
+          "package_name": "com.watering.moneyrecord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "799315006133-ilakigscssvno95lsnsbes2trh7m6hc8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.watering.moneyrecord",
+            "certificate_hash": "f4497bac74db113f65adbb4d4cf1ca322f5b18ec"
+          }
+        },
+        {
+          "client_id": "799315006133-2qjq0skgbj4d04k0avamj3dvmildeklo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDNemfRtwbEaNzkt_sBe6LC7oL5dIhK3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "799315006133-2qjq0skgbj4d04k0avamj3dvmildeklo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
