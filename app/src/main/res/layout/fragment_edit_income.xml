@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <import type="com.example.watering.assetlog.model.Converter"/>
-        <variable name="viewmodel" type="com.example.watering.assetlog.viewmodel.ViewModelEditIncome"/>
+        <import type="com.watering.moneyrecord.model.Converter"/>
+        <variable name="viewmodel" type="com.watering.moneyrecord.viewmodel.ViewModelEditIncome"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_edit_income"

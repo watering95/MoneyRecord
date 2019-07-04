@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <variable name="group" type="com.example.watering.assetlog.entities.Group"/>
+        <variable name="group" type="com.watering.moneyrecord.entities.Group"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_edit_group"

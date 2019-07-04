@@ -2,8 +2,8 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <import type="com.example.watering.assetlog.model.Converter"/>
-        <variable name="viewmodel" type="com.example.watering.assetlog.viewmodel.ViewModelEditInoutKRW"/>
+        <import type="com.watering.moneyrecord.model.Converter"/>
+        <variable name="viewmodel" type="com.watering.moneyrecord.viewmodel.ViewModelEditInoutKRW"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_edit_spend"

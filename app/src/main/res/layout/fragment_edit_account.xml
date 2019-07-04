@@ -2,7 +2,7 @@
 <layout xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable name="adapter" type="android.widget.ArrayAdapter"/>
-        <variable name="viewmodel" type="com.example.watering.assetlog.viewmodel.ViewModelEditAccount"/>
+        <variable name="viewmodel" type="com.watering.moneyrecord.viewmodel.ViewModelEditAccount"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_edit_account"

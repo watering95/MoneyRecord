@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable name="adapter" type="android.widget.ArrayAdapter"/>
-        <variable name="viewmodel" type="com.example.watering.assetlog.viewmodel.ViewModelEditCategorySub"/>
+        <variable name="viewmodel" type="com.watering.moneyrecord.viewmodel.ViewModelEditCategorySub"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_edit_categorysub"

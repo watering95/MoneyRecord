@@ -61,4 +61,6 @@ dependencies {
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+
+    implementation 'com.google.android.material:material:1.0.0'
 }
