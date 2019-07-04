@@ -9,6 +9,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.watering.moneyrecord.fragments.FragmentAccounts
 import com.watering.moneyrecord.fragments.FragmentBook
 import com.watering.moneyrecord.fragments.FragmentHome
 import com.watering.moneyrecord.viewmodel.ViewModelApp
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private var mTransaction = mFragmentManager.beginTransaction()
     private val mFragmentHome = FragmentHome()
     private val mFragmentBook = FragmentBook()
+    private val mFragmentAccounts = FragmentAccounts()
     lateinit var mViewModel: ViewModelApp
 
     val RC_SIGN_IN = 1
@@ -68,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_accounts -> {
                 supportActionBar?.title = getString(R.string.title_accounts)
                 with(mTransaction) {
-//                    replace(R.id.frame_main, mFragmentAccounts)
+                    replace(R.id.frame_main, mFragmentAccounts)
                     commit()
                 }
                 return@OnNavigationItemSelectedListener true
