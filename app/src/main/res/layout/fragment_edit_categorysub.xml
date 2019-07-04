@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="adapter" type="android.widget.ArrayAdapter"/>
+        <variable name="viewmodel" type="com.example.watering.assetlog.viewmodel.ViewModelEditCategorySub"/>
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fragment_edit_categorysub"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@={ viewmodel.categorySub.name }"
+                android:id="@+id/edit_name_fragment_edit_categorysub"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/text_name_fragment_edit_categorysub"
+                android:layout_marginStart="8dp" android:inputType="text"
+        />
+        <Spinner
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner_categorymain_fragment_edit_categorysub"
+                android:adapter="@{adapter}"
+                android:selectedItemPosition="@={ viewmodel.selected }"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintTop_toBottomOf="@+id/edit_name_fragment_edit_categorysub"
+                app:layout_constraintStart_toEndOf="@+id/text_categorymain_fragment_edit_categorysub"/>
+        <TextView
+                android:text="@string/name"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_name_fragment_edit_categorysub" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@+id/edit_name_fragment_edit_categorysub"
+                app:layout_constraintBottom_toBottomOf="@+id/edit_name_fragment_edit_categorysub"/>
+        <TextView
+                android:text="@string/main_category"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_categorymain_fragment_edit_categorysub"
+                app:layout_constraintTop_toTopOf="@+id/spinner_categorymain_fragment_edit_categorysub"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_categorymain_fragment_edit_categorysub"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

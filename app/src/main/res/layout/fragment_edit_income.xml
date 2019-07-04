@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <import type="com.example.watering.assetlog.model.Converter"/>
+        <variable name="viewmodel" type="com.example.watering.assetlog.viewmodel.ViewModelEditIncome"/>
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fragment_edit_income"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TextView
+                android:text="@string/sub_category"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView11"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@+id/spinner_categorysub_fragment_edit_income"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_categorysub_fragment_edit_income"/>
+        <Spinner
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:entries="@{viewmodel.listOfSub}"
+                android:selectedItemPosition="@={viewmodel.indexOfSub}"
+                android:id="@+id/spinner_categorysub_fragment_edit_income" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_categorymain_fragment_edit_income" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintStart_toEndOf="@+id/textView11" android:layout_marginStart="8dp"/>
+        <TextView
+                android:text="@string/date"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView4" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@+id/button_date_fragment_edit_income"
+                app:layout_constraintBottom_toBottomOf="@+id/button_date_fragment_edit_income"/>
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:text="@={viewmodel.income.date}"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="16dp" android:id="@+id/button_date_fragment_edit_income"
+                app:layout_constraintStart_toEndOf="@+id/textView4" android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"/>
+        <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@={viewmodel.income.details}"
+                android:ems="10"
+                android:id="@+id/edit_details_fragment_edit_income" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/button_date_fragment_edit_income"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/textView8"
+                android:layout_marginStart="8dp" android:inputType="text"/>
+        <TextView
+                android:text="@string/details"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+                android:id="@+id/textView8"
+                app:layout_constraintTop_toTopOf="@+id/edit_details_fragment_edit_income"
+                app:layout_constraintBottom_toBottomOf="@+id/edit_details_fragment_edit_income"/>
+        <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="@={Converter.intToStr(viewmodel.income.amount)}"
+                android:ems="10"
+                android:id="@+id/edit_amount_fragment_edit_income" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/edit_details_fragment_edit_income"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/textView9"
+                android:layout_marginStart="8dp"/>
+        <TextView
+                android:text="@string/amount"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView9"
+                app:layout_constraintTop_toTopOf="@+id/edit_amount_fragment_edit_income"
+                app:layout_constraintBottom_toBottomOf="@+id/edit_amount_fragment_edit_income" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"/>
+        <Spinner
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:entries="@{viewmodel.listOfMain}"
+                android:selectedItemPosition="@={viewmodel.indexOfMain}"
+                android:id="@+id/spinner_categorymain_fragment_edit_income" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/edit_amount_fragment_edit_income" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp" app:layout_constraintStart_toEndOf="@+id/textView10"
+                android:layout_marginStart="8dp"/>
+        <TextView
+                android:text="@string/main_category"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView10"
+                app:layout_constraintTop_toTopOf="@+id/spinner_categorymain_fragment_edit_income" app:layout_constraintBottom_toBottomOf="@+id/spinner_categorymain_fragment_edit_income"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"/>
+        <TextView
+                android:text="@string/account_number"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView12" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@+id/spinner_account_fragment_edit_income"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_account_fragment_edit_income"/>
+        <Spinner
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:entries="@{viewmodel.listOfAccount}"
+                android:selectedItemPosition="@={viewmodel.indexOfAccount}"
+                android:id="@+id/spinner_account_fragment_edit_income" app:layout_constraintStart_toEndOf="@+id/textView12"
+                android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_categorysub_fragment_edit_income"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
