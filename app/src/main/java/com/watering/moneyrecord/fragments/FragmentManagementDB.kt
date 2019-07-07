@@ -50,16 +50,20 @@ class FragmentManagementDB : Fragment() {
             // 파일 백업
             0 -> {
                 mMainActivity.mViewModel.close()
-//                mMainActivity.mAppDBFile.requestBackup()
+                mMainActivity.mDBFile.requestUpload()
             }
             // 파일 복원
             1 -> {
-//                mMainActivity.mAppDBFile.requestOpen()
+                mMainActivity.mViewModel.close()
+                mMainActivity.mDBFile.requestDownload()
+                mMainActivity.mViewModel.initialize()
                 getList()
             }
             // 파일 삭제
             2 -> {
-//                mMainActivity.mAppDBFile.requestDelete()
+                mMainActivity.mViewModel.close()
+                mMainActivity.mDBFile.requestDelete()
+                mMainActivity.mViewModel.initialize()
                 getList()
             }
         }
@@ -67,10 +71,10 @@ class FragmentManagementDB : Fragment() {
 
     private fun getList() {
         binding.viewmodel?.run {
-//            listOfFile = mMainActivity.getDatabasePath(mMainActivity.mAppDBFile.dbFileName).parentFile.list().filterNotNull()
-//            binding.recyclerviewFileFragmentManagementDb.run {
-//                adapter = RecyclerViewAdapterFileManagementDB(listOfFile)
-//            }
+            listOfFile = mMainActivity.getDatabasePath(mMainActivity.mDBFile.dbFileName).parentFile.list().filterNotNull()
+            binding.recyclerviewFileFragmentManagementDb.run {
+                adapter = RecyclerViewAdapterFileManagementDB(listOfFile)
+            }
         }
     }
 }

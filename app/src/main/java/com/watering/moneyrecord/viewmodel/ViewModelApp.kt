@@ -30,6 +30,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun <T> delete(t: T) = scope.launch(Dispatchers.IO) { repository.delete(t) }
 
     fun close() = repository.close()
+    fun initialize() = repository.initialize()
 
     fun replaceFragment(fragmentManager: FragmentManager, fragment: Fragment) {
         fragmentManager.run {

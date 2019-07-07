@@ -60,11 +60,11 @@
     <string name="toast_db_del_ok">DB File을 삭제하였습니다.</string>
     <string name="toast_db_del_error">DB File을 삭제하지 못했습니다.</string>
     <string name="toast_db_open_error">DB File을 열지 못했습니다.</string>
-    <string name="toast_db_restore_ok">DB File을 복구했습니다.</string>
-    <string name="toast_db_restore_error">DB File을 복구하지 못했습니다.</string>
+    <string name="toast_db_download_ok">DB File을 Download 했습니다.</string>
+    <string name="toast_db_download_error">DB File을 Download 하지 못했습니다.</string>
     <string name="toast_db_no_exist_error">DB File이 없습니다.</string>
-    <string name="toast_db_backup_ok">DB File이 Backup 되었습니다.</string>
-    <string name="toast_db_backup_error">DB File이 Backup 되지 았않습니다.</string>
+    <string name="toast_db_upload_ok">DB File이 Upload 되었습니다.</string>
+    <string name="toast_db_upload_error">DB File이 Upload 되지 았않습니다.</string>
     <string name="toast_date_error">오늘 이전 날짜로 선택해 주세요.</string>
     <array name="category">
         <item name="spend">spend</item>
