@@ -2,11 +2,10 @@ package com.watering.moneyrecord.model
 
 import android.app.Application
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.LiveData
 import com.watering.moneyrecord.entities.*
 import kotlinx.coroutines.CoroutineScope
 
-class AppRepository(val application: Application, val scope: CoroutineScope) {
+class AppRepository(val application: Application, private val scope: CoroutineScope) {
     var db = AppDatabase.getDatabase(application, scope)
     private var daoGroup = db.daoGroup()
     private var daoAccount = db.daoAccount()
@@ -22,15 +21,16 @@ class AppRepository(val application: Application, val scope: CoroutineScope) {
     private var daoDairyKRW = db.daoDairyKRW()
     private var daoDairyForeign = db.daoDairyForeign()
     private var daoDairyTotal = db.daoDairyTotal()
+    private var daoHome = db.daoHome()
 
-    var allGroups: LiveData<List<Group>> = daoGroup.getAll()
-    var allAccounts: LiveData<List<Account>> = daoAccount.getAll()
-    var allCatMains: LiveData<List<CategoryMain>> = daoCatMain.getAll()
-    var allCatSubs: LiveData<List<CategorySub>> = daoCatSub.getAll()
-    var allCards: LiveData<List<Card>> = daoCard.getAll()
+    var allGroups = daoGroup.getAll()
+    var allAccounts = daoAccount.getAll()
+    var allCatMains = daoCatMain.getAll()
+    var allCatSubs = daoCatSub.getAll()
+    var allCards = daoCard.getAll()
+    var allHomes = daoHome.getAll()
 
     fun initialize() {
-        db.openHelper.close()
         db = AppDatabase.getDatabase(application, scope)
         daoGroup = db.daoGroup()
         daoAccount = db.daoAccount()
@@ -52,6 +52,7 @@ class AppRepository(val application: Application, val scope: CoroutineScope) {
         allCatMains = daoCatMain.getAll()
         allCatSubs = daoCatSub.getAll()
         allCards = daoCard.getAll()
+        allHomes = daoHome.getAll()
     }
 
     fun getGroup(id: Int?) = daoGroup.get(id)
@@ -61,6 +62,9 @@ class AppRepository(val application: Application, val scope: CoroutineScope) {
     fun getAccount(number: String?) = daoAccount.get(number)
     fun getAccountByCode(code: String?) = daoAccount.getByCode(code)
     fun getAccountsByGroup(id: Int?) = daoAccount.getByGroup(id)
+
+    fun getHomeByIdAccount(id_account: Int?) = daoHome.getByIdAccount(id_account)
+    fun getHomesByGroup(group: String?) = daoHome.getByGroup(group)
 
     fun getCatMain(id: Int?) = daoCatMain.get(id)
     fun getCatMain(kind: String?) = daoCatMain.get(kind)
@@ -99,6 +103,7 @@ class AppRepository(val application: Application, val scope: CoroutineScope) {
     fun getLastDairyKRW(id_account: Int?, date: String?) = daoDairyKRW.getLast(id_account, date)
     fun getLastIOForeign(id_account: Int?, date: String?) = daoIOForeign.getLast(id_account, date)
     fun getLastDairyForeign(id_account: Int?, date: String?) = daoDairyForeign.getLast(id_account, date)
+    fun getLastDiaryTotal(id_account: Int?, date: String?) = daoDairyTotal.getLast(id_account, date)
 
     fun sumOfSpendCashForDate(id_account: Int?, date: String?) = daoSpend.sumOfSpendCash(id_account, date)
     fun sumOfSpendCardForDate(id_account: Int?, date: String?) = daoSpend.sumOfSpendCard(id_account, date)
@@ -134,6 +139,7 @@ class AppRepository(val application: Application, val scope: CoroutineScope) {
         if(t is DairyKRW) daoDairyKRW.insert(t)
         if(t is DairyForeign) daoDairyForeign.insert(t)
         if(t is DairyTotal) daoDairyTotal.insert(t)
+        if(t is Home) daoHome.insert(t)
     }
 
     @WorkerThread
@@ -152,6 +158,7 @@ class AppRepository(val application: Application, val scope: CoroutineScope) {
         if(t is DairyKRW) daoDairyKRW.update(t)
         if(t is DairyForeign) daoDairyForeign.update(t)
         if(t is DairyTotal) daoDairyTotal.update(t)
+        if(t is Home) daoHome.update(t)
     }
 
     @WorkerThread
@@ -170,5 +177,6 @@ class AppRepository(val application: Application, val scope: CoroutineScope) {
         if(t is DairyKRW) daoDairyKRW.delete(t)
         if(t is DairyForeign) daoDairyForeign.delete(t)
         if(t is DairyTotal) daoDairyTotal.delete(t)
+        if(t is Home) daoHome.delete(t)
     }
 }

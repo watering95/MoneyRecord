@@ -55,8 +55,6 @@
     <string name="title_select">선택</string>
     <string name="title_inout_krw">입출금 : 원화</string>
     <string name="title_inout_foreign">입출금 : 외화</string>
-    <string name="toast_drive_connect_ok">Google Drive 에 연결되었습니다.</string>
-    <string name="toast_drive_connect_error">Google Drive 연결에 실패했습니다.</string>
     <string name="toast_db_del_ok">DB File을 삭제하였습니다.</string>
     <string name="toast_db_del_error">DB File을 삭제하지 못했습니다.</string>
     <string name="toast_db_open_error">DB File을 열지 못했습니다.</string>

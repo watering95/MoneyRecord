@@ -5,13 +5,18 @@ import android.view.*
 import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditAccountBinding
 import com.watering.moneyrecord.entities.Account
+import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditAccount
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 class FragmentEditAccount : Fragment() {
     private lateinit var item: Account
@@ -55,12 +60,45 @@ class FragmentEditAccount : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
             R.id.menu_edit_save -> {
-                mViewModel.allGroups.observe(this, Observer { list -> list?.let {
+                mViewModel.allGroups.observeOnce( Observer { list -> list?.let {
                     binding.viewmodel?.run {
-                        account?.apply { selected?.let { group = list[it].id } }.let {account ->
+                        account?.apply { selected?.let { group = list[it].id } }.let { account ->
                             when {
-                                this@FragmentEditAccount.item.id == null -> mViewModel.insert(account)
-                                else -> mViewModel.update(account)
+                                this@FragmentEditAccount.item.id == null -> {
+                                    runBlocking {
+                                        mViewModel.run {
+                                            insert(account).cancelAndJoin()
+                                            delay(100)
+                                            getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce( Observer { account -> account?.let {
+                                                getGroup(account.group).observeOnce( Observer { group -> group?.let {
+                                                    val home = Home()
+                                                    home.id_account = account.id
+                                                    home.account = account.number
+                                                    home.description = account.institute + account.description
+                                                    home.group = group.name
+                                                    insert(home)
+                                                }})
+                                            } })
+                                        }
+                                    }
+                                }
+                                else -> {
+                                    runBlocking {
+                                        mViewModel.run {
+                                            update(account).cancelAndJoin()
+                                            delay(100)
+                                            getHomeByIdAccount(account?.id).observeOnce( Observer { home -> home?.let {
+                                                getGroup(account?.group).observeOnce( Observer { group -> group?.let {
+                                                    home.account = account?.number
+                                                    home.description = account?.institute + account?.description
+                                                    home.group = group.name
+                                                    update(home)
+                                                } })
+                                            } })
+
+                                        }
+                                    }
+                                }
                             }
                         }
                     }}
@@ -71,5 +109,14 @@ class FragmentEditAccount : Fragment() {
         fragmentManager?.popBackStack()
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+        observeForever(object: Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }

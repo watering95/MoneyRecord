@@ -24,6 +24,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     val allCatMains = repository.allCatMains
     val allCatSubs = repository.allCatSubs
     val allCards = repository.allCards
+    val allHomes = repository.allHomes
 
     fun <T> insert(t: T) = scope.launch(Dispatchers.IO) { repository.insert(t) }
     fun <T> update(t: T) = scope.launch(Dispatchers.IO) { repository.update(t) }
@@ -47,6 +48,9 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun getAccountByNumber(number: String?) = repository.getAccount(number)
     fun getAccountsByGroup(id: Int?) = repository.getAccountsByGroup(id)
 
+    fun getHomeByIdAccount(id_account: Int?) = repository.getHomeByIdAccount(id_account)
+    fun getHomesByGroup(group: String?) = repository.getHomesByGroup(group)
+
     fun getCatMain(id: Int?) = repository.getCatMain(id)
     fun getCatMainsByKind(kind: String?) = repository.getCatMain(kind)
     fun getCatMainBySub(id_sub: Int?) = repository.getCatMainBySub(id_sub)
@@ -69,6 +73,8 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun getAfterDairyKRW(id_account: Int?, date: String?) = repository.getAfterDairyKRW(id_account, date)
     fun getAfterDairyForeign(id_account: Int?, date: String?, currency: Int?) = repository.getAfterDairyForeign(id_account, date, currency)
     fun getAfterDairyTotal(id_account: Int?, date: String?) = repository.getAfterDairyTotal(id_account, date)
+
+    fun getLastDairyTotal(id_account: Int?, date: String?) = repository.getLastDiaryTotal(id_account, date)
 
     fun loadingIOKRW(id_account: Int?, date: String?): LiveData<IOKRW> {
         return Transformations.switchMap(getPreviousEvaluationOfKRW(id_account, date)) { previousEvaluation ->
@@ -159,6 +165,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
             }
         }
     }
+
     fun loadingDairyTotal(id_account: Int?, date: String?): LiveData<DairyTotal> {
         return Transformations.switchMap(getLastDairyForeign(id_account, date)) { listOf_last_dairy_foreign ->
             Transformations.switchMap(getLastIOForeign(id_account, date)) { listOf_last_io_foreign ->

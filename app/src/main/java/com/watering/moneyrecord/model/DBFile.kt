@@ -17,11 +17,10 @@ class DBFile(val context: Context) {
 
     fun requestDownload() {
         val file = Uri.fromFile(app.getDatabasePath(dbFileName))
-        val mountainsRef = mStorageRef.child("database/${file.lastPathSegment}")
-        mountainsRef.getFile(file).addOnSuccessListener {
+        val fileRef = mStorageRef.child("${app.mUser?.uid}/database/${file.lastPathSegment}")
+
+        fileRef.getFile(file).addOnSuccessListener {
             Toast.makeText(context, R.string.toast_db_download_ok, Toast.LENGTH_SHORT).show()
-            app.mViewModel.close()
-            app.mViewModel.initialize()
         }.addOnFailureListener {
             Toast.makeText(context, R.string.toast_db_download_error, Toast.LENGTH_SHORT).show()
         }
@@ -29,9 +28,9 @@ class DBFile(val context: Context) {
 
     fun requestUpload() {
         val file = Uri.fromFile(app.getDatabasePath(dbFileName))
-        val fileRef = mStorageRef.child("database/${file.lastPathSegment}")
-        val uploadTask = fileRef.putFile(file)
-        uploadTask.addOnFailureListener {
+        val fileRef = mStorageRef.child("${app.mUser?.uid}/database/${file.lastPathSegment}")
+
+        fileRef.putFile(file).addOnFailureListener {
             Toast.makeText(context, R.string.toast_db_upload_error, Toast.LENGTH_SHORT).show()
         }.addOnSuccessListener {
             Toast.makeText(context, R.string.toast_db_upload_ok, Toast.LENGTH_SHORT).show()

@@ -10,7 +10,7 @@ import com.watering.moneyrecord.entities.Home
 import java.text.DecimalFormat
 import java.util.*
 
-class RecyclerViewAdapterHome(val lists:List<Home>, private val clickListener: (Int) -> Unit): RecyclerView.Adapter<RecyclerViewAdapterHome.ViewHolder>() {
+class RecyclerViewAdapterHome(val lists:List<Home>, val total:Double, private val clickListener: (Int) -> Unit): RecyclerView.Adapter<RecyclerViewAdapterHome.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val cardView = LayoutInflater.from(parent.context)
             .inflate(R.layout.card_home, parent, false)
@@ -23,7 +23,7 @@ class RecyclerViewAdapterHome(val lists:List<Home>, private val clickListener: (
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(lists[position], position, clickListener)
+        holder.bind(lists[position], total, position, clickListener)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -34,9 +34,9 @@ class RecyclerViewAdapterHome(val lists:List<Home>, private val clickListener: (
         private var rate: TextView = view.findViewById(R.id.text_rate_card_home)
         private var ratioAccount: TextView = view.findViewById(R.id.text_rate_account_card_home)
 
-        fun bind(home: Home, position: Int, clickListener: (Int) -> Unit) {
+        fun bind(home: Home, total:Double, position: Int, clickListener: (Int) -> Unit) {
             val df = DecimalFormat("#,###")
-            val ratio = if(home.evaluationKRW == 0) 0.0 else home.evaluationKRW!!.toDouble()/home.total!!*100
+            val ratio = if(home.evaluationKRW == 0) 0.0 else home.evaluationKRW!!.toDouble()/total*100
 
             accountNumber.text = home.account
             accountDescription.text = home.description
