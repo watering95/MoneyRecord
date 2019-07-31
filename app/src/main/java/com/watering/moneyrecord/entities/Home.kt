@@ -10,7 +10,7 @@ class Home {
     @PrimaryKey(autoGenerate = true)
     var id:Int? = null
     @ColumnInfo(name = "id_account")
-    var id_account: Int? = 0
+    var idAccount: Int? = 0
     @ColumnInfo(name = "group")
     var group: String? = null
     @ColumnInfo(name = "account")

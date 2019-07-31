@@ -1,36 +1,33 @@
 package com.watering.moneyrecord.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.watering.moneyrecord.BR
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentHomeBinding
 import com.watering.moneyrecord.entities.Home
-import com.watering.moneyrecord.model.ModelCalendar
+import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.view.RecyclerViewAdapterHome
 import com.watering.moneyrecord.viewmodel.ViewModelHome
 
 class FragmentHome : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager as FragmentManager }
+    private lateinit var processing: Processing
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_home, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = ViewModelProviders.of(this).get(ViewModelHome::class.java)
+        processing = Processing(binding.viewmodel, fragmentManager)
+        processing.initHome()
         initLayout()
         return binding.root
     }
@@ -69,30 +66,27 @@ class FragmentHome : Fragment() {
         binding.viewmodel?.run {
             if(indexOfGroup == 0) {
                 allHomes.observe(this@FragmentHome, Observer { listOfHomes -> listOfHomes?.let {
-                    it.forEach {
-                        totalEvaluation += it.evaluationKRW!!
+                    totalEvaluation = 0
+                    totalPrincipal = 0
+                    it.forEach { home ->
+                        totalEvaluation += home.evaluationKRW!!
+                        totalPrincipal += home.principalKRW!!
                     }
-                    onChangedRecyclerView(it)
+                    onChangedRecyclerView(listOfHomes)
                 } })
             } else {
                 listOfGroup.observe(this@FragmentHome, Observer { listOfGroup -> listOfGroup?.let {
-                    getHomesByGroup(it[indexOfGroup]).observe(this@FragmentHome, Observer { listOfHome -> listOfHome?.let {
-                        listOfHome.forEach {
-                            totalEvaluation += it.evaluationKRW!!
+                    getHomesByGroup(it[indexOfGroup]).observe(this@FragmentHome, Observer { listOfHomes -> listOfHomes?.let {
+                        totalEvaluation = 0
+                        totalPrincipal = 0
+                        listOfHomes.forEach { home ->
+                            totalEvaluation += home.evaluationKRW!!
+                            totalPrincipal += home.principalKRW!!
                         }
-                        onChangedRecyclerView(it)
+                        onChangedRecyclerView(listOfHomes)
                     } })
                 } })
             }
         }
-    }
-
-    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
-        observeForever(object: Observer<T> {
-            override fun onChanged(t: T) {
-                observer.onChanged(t)
-                removeObserver(this)
-            }
-        })
     }
 }

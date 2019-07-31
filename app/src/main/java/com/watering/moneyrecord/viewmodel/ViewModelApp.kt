@@ -48,17 +48,17 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun getAccountByNumber(number: String?) = repository.getAccount(number)
     fun getAccountsByGroup(id: Int?) = repository.getAccountsByGroup(id)
 
-    fun getHomeByIdAccount(id_account: Int?) = repository.getHomeByIdAccount(id_account)
+    fun getHomeByIdAccount(idAccount: Int?) = repository.getHomeByIdAccount(idAccount)
     fun getHomesByGroup(group: String?) = repository.getHomesByGroup(group)
 
     fun getCatMain(id: Int?) = repository.getCatMain(id)
     fun getCatMainsByKind(kind: String?) = repository.getCatMain(kind)
-    fun getCatMainBySub(id_sub: Int?) = repository.getCatMainBySub(id_sub)
+    fun getCatMainBySub(idSub: Int?) = repository.getCatMainBySub(idSub)
 
     fun getCatSub(id: Int?) = repository.getCatSub(id)
     fun getCatSub(nameOfSub:String?, nameOfMain:String?) = repository.getCatSub(nameOfSub, nameOfMain)
     fun getCatSubsByMain(nameOfMain: String?) = repository.getCatSubsByMain(nameOfMain)
-    fun getCatSubsByMain(id_main: Int?) = repository.getCatSubsByMain(id_main)
+    fun getCatSubsByMain(idMain: Int?) = repository.getCatSubsByMain(idMain)
 
     fun getSpends(date: String?) = repository.getSpends(date)
     fun getSpendCash(code: String?) = repository.getSpendCash(code)
@@ -68,25 +68,25 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun getCardByCode(code: String?) = repository.getCardByCode(code)
     fun getCardByNumber(number: String?) = repository.getCardByNumber(number)
     fun getLastSpendCode(date: String?) = repository.getLastSpendCode(date)
-    fun getLogs(id_account: Int?) = repository.getLogs(id_account)
+    fun getLogs(idAccount: Int?) = repository.getLogs(idAccount)
 
-    fun getAfterDairyKRW(id_account: Int?, date: String?) = repository.getAfterDairyKRW(id_account, date)
-    fun getAfterDairyForeign(id_account: Int?, date: String?, currency: Int?) = repository.getAfterDairyForeign(id_account, date, currency)
-    fun getAfterDairyTotal(id_account: Int?, date: String?) = repository.getAfterDairyTotal(id_account, date)
+    fun getAfterDairyKRW(idAccount: Int?, date: String?) = repository.getAfterDairyKRW(idAccount, date)
+    fun getAfterDairyForeign(idAccount: Int?, date: String?, currency: Int?) = repository.getAfterDairyForeign(idAccount, date, currency)
+    fun getAfterDairyTotal(idAccount: Int?, date: String?) = repository.getAfterDairyTotal(idAccount, date)
 
-    fun getLastDairyTotal(id_account: Int?, date: String?) = repository.getLastDiaryTotal(id_account, date)
+    fun getLastDairyTotal(idAccount: Int?, date: String?) = repository.getLastDiaryTotal(idAccount, date)
 
-    fun loadingIOKRW(id_account: Int?, date: String?): LiveData<IOKRW> {
-        return Transformations.switchMap(getPreviousEvaluationOfKRW(id_account, date)) { previousEvaluation ->
-            Transformations.switchMap(sumOfSpendCashForDate(id_account, date)) { sumOfSpendsCash ->
-                Transformations.switchMap(sumOfSpendCardForDate(id_account, date)) { sumOfSpendsCard ->
-                    Transformations.switchMap(sumOfIncomeForDate(id_account, date)) { sumOfIncome ->
-                        Transformations.map(getIOKRW(id_account, date)) { io ->
+    fun loadingIOKRW(idAccount: Int?, date: String?): LiveData<IOKRW> {
+        return Transformations.switchMap(getPreviousEvaluationOfKRW(idAccount, date)) { previousEvaluation ->
+            Transformations.switchMap(sumOfSpendCashForDate(idAccount, date)) { sumOfSpendsCash ->
+                Transformations.switchMap(sumOfSpendCardForDate(idAccount, date)) { sumOfSpendsCard ->
+                    Transformations.switchMap(sumOfIncomeForDate(idAccount, date)) { sumOfIncome ->
+                        Transformations.map(getIOKRW(idAccount, date)) { io ->
                             if(io == null) {
                                 val new = IOKRW()
                                 new.date = date
                                 new.evaluationKRW = previousEvaluation - sumOfSpendsCard - sumOfSpendsCash + sumOfIncome
-                                new.account = id_account
+                                new.account = idAccount
                                 new.spendCash = sumOfSpendsCash
                                 new.spendCard = sumOfSpendsCard
                                 new.income = sumOfIncome
@@ -104,12 +104,12 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
             }
         }
     }
-    fun loadingIOForeign(id_account: Int?, date: String?, currency: Int?): LiveData<IOForeign> {
-        return Transformations.switchMap(getPreviousEvaluationKRWOfForeign(id_account, date, currency)) { previousEvaluation ->
-            Transformations.map(getIOForeign(id_account, date, currency)) { io ->
+    fun loadingIOForeign(idAccount: Int?, date: String?, currency: Int?): LiveData<IOForeign> {
+        return Transformations.switchMap(getPreviousEvaluationKRWOfForeign(idAccount, date, currency)) { previousEvaluation ->
+            Transformations.map(getIOForeign(idAccount, date, currency)) { io ->
                 if(io == null) {
                     val new = IOForeign()
-                    new.account = id_account
+                    new.account = idAccount
                     new.currency = currency
                     new.date = date
                     new.evaluationKRW = previousEvaluation
@@ -121,15 +121,15 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
             }
         }
     }
-    fun loadingDairyKRW(id_account: Int?, date: String?): LiveData<DairyKRW> {
-        return Transformations.switchMap(getDairyKRW(id_account, date)) { dairy ->
-            Transformations.switchMap(calculatePrincipalOfKRW(id_account, date)) { principal ->
-                Transformations.map(calculateRateOfKRW(id_account, date)) { rate ->
+    fun loadingDairyKRW(idAccount: Int?, date: String?): LiveData<DairyKRW> {
+        return Transformations.switchMap(getDairyKRW(idAccount, date)) { dairy ->
+            Transformations.switchMap(calculatePrincipalOfKRW(idAccount, date)) { principal ->
+                Transformations.map(calculateRateOfKRW(idAccount, date)) { rate ->
                     if(dairy == null) {
                         val new = DairyKRW()
                         new.principalKRW = principal
                         new.rate = rate
-                        new.account = id_account
+                        new.account = idAccount
                         new.date = date
                         new
                     } else {
@@ -141,17 +141,17 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
             }
         }
     }
-    fun loadingDairyForeign(id_account: Int?, date: String?, currency: Int?): LiveData<DairyForeign> {
-        return Transformations.switchMap(getDairyForeign(id_account, date, currency)) { dairy ->
-            Transformations.switchMap(calculatePrincipalOfForeign(id_account, date, currency)) { principal ->
-                Transformations.switchMap(calculatePrincipalKRWOfForeign(id_account, date, currency)) { principal_krw ->
-                    Transformations.map(calculateRateOfForeign(id_account, date, currency)) { rate ->
+    fun loadingDairyForeign(idAccount: Int?, date: String?, currency: Int?): LiveData<DairyForeign> {
+        return Transformations.switchMap(getDairyForeign(idAccount, date, currency)) { dairy ->
+            Transformations.switchMap(calculatePrincipalOfForeign(idAccount, date, currency)) { principal ->
+                Transformations.switchMap(calculatePrincipalKRWOfForeign(idAccount, date, currency)) { principal_krw ->
+                    Transformations.map(calculateRateOfForeign(idAccount, date, currency)) { rate ->
                         if(dairy == null) {
                             val new = DairyForeign()
                             new.principal = principal
                             new.principalKRW = principal_krw
                             new.rate = rate
-                            new.account = id_account
+                            new.account = idAccount
                             new.date = date
                             new
                         } else {
@@ -166,12 +166,12 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun loadingDairyTotal(id_account: Int?, date: String?): LiveData<DairyTotal> {
-        return Transformations.switchMap(getLastDairyForeign(id_account, date)) { listOf_last_dairy_foreign ->
-            Transformations.switchMap(getLastIOForeign(id_account, date)) { listOf_last_io_foreign ->
-                Transformations.switchMap(loadingDairyKRW(id_account, date)) { dairy_krw ->
-                    Transformations.switchMap(loadingIOKRW(id_account, date)) { io_krw ->
-                        Transformations.map(getDairyTotal(id_account, date)) { dairy_total ->
+    fun loadingDairyTotal(idAccount: Int?, date: String?): LiveData<DairyTotal> {
+        return Transformations.switchMap(getLastDairyForeign(idAccount, date)) { listOf_last_dairy_foreign ->
+            Transformations.switchMap(getLastIOForeign(idAccount, date)) { listOf_last_io_foreign ->
+                Transformations.switchMap(loadingDairyKRW(idAccount, date)) { dairy_krw ->
+                    Transformations.switchMap(loadingIOKRW(idAccount, date)) { io_krw ->
+                        Transformations.map(getDairyTotal(idAccount, date)) { dairy_total ->
                             var principal = 0
                             var evaluation = 0
                             var rate = 0.0
@@ -186,7 +186,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
 
                             if(dairy_total == null) {
                                 val new = DairyTotal()
-                                new.account = id_account
+                                new.account = idAccount
                                 new.date = date
                                 new.evaluationKRW = evaluation
                                 new.principalKRW = principal
@@ -205,53 +205,53 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         }
     }
 
-    private fun getPreviousEvaluationOfKRW(id_account:Int?, date:String?): LiveData<Int> {
+    private fun getPreviousEvaluationOfKRW(idAccount:Int?, date:String?): LiveData<Int> {
         val before = ModelCalendar.calendarToStr(ModelCalendar.changeDate(date, -1))
 
-        return Transformations.map(getLastIOKRW(id_account, before)) { last ->
+        return Transformations.map(getLastIOKRW(idAccount, before)) { last ->
             if(last == null) 0 else last.evaluationKRW
         }
     }
-    private fun getPreviousEvaluationKRWOfForeign(id_account:Int?, date:String?, currency: Int?): LiveData<Double> {
+    private fun getPreviousEvaluationKRWOfForeign(idAccount:Int?, date:String?, currency: Int?): LiveData<Double> {
         val before = ModelCalendar.calendarToStr(ModelCalendar.changeDate(date, -1))
 
-        return Transformations.map(getLastIOForeign(id_account, before, currency)) { last ->
+        return Transformations.map(getLastIOForeign(idAccount, before, currency)) { last ->
             if(last == null) 0.0 else last.evaluationKRW
         }
     }
 
-    private fun getIOKRW(id_account: Int?, date: String?) = repository.getIOKRW(id_account, date)
-    private fun getIOForeign(id_account: Int?, date: String?, currency: Int?) = repository.getIOForeign(id_account, date, currency)
-    private fun getDairyKRW(id_account: Int?, date: String?) = repository.getDairyKRW(id_account, date)
-    private fun getDairyForeign(id_account: Int?, date: String?, currency: Int?) = repository.getDairyForeign(id_account, date, currency)
-    private fun getDairyTotal(id_account: Int?, date: String?) = repository.getDairyTotal(id_account, date)
+    private fun getIOKRW(idAccount: Int?, date: String?) = repository.getIOKRW(idAccount, date)
+    private fun getIOForeign(idAccount: Int?, date: String?, currency: Int?) = repository.getIOForeign(idAccount, date, currency)
+    private fun getDairyKRW(idAccount: Int?, date: String?) = repository.getDairyKRW(idAccount, date)
+    private fun getDairyForeign(idAccount: Int?, date: String?, currency: Int?) = repository.getDairyForeign(idAccount, date, currency)
+    private fun getDairyTotal(idAccount: Int?, date: String?) = repository.getDairyTotal(idAccount, date)
 
-    private fun getLastIOKRW(id_account: Int?, date: String?) = repository.getLastIOKRW(id_account, date)
-    private fun getLastIOForeign(id_account: Int?, date: String?, currency: Int?) = repository.getLastIOForeign(id_account, date, currency)
-    private fun getLastDairyKRW(id_account: Int?, date: String?) = repository.getLastDairyKRW(id_account, date)
-    private fun getLastIOForeign(id_account: Int?, date: String?) = repository.getLastIOForeign(id_account, date)
-    private fun getLastDairyForeign(id_account: Int?, date: String?) = repository.getLastDairyForeign(id_account, date)
+    private fun getLastIOKRW(idAccount: Int?, date: String?) = repository.getLastIOKRW(idAccount, date)
+    private fun getLastIOForeign(idAccount: Int?, date: String?, currency: Int?) = repository.getLastIOForeign(idAccount, date, currency)
+    private fun getLastDairyKRW(idAccount: Int?, date: String?) = repository.getLastDairyKRW(idAccount, date)
+    private fun getLastIOForeign(idAccount: Int?, date: String?) = repository.getLastIOForeign(idAccount, date)
+    private fun getLastDairyForeign(idAccount: Int?, date: String?) = repository.getLastDairyForeign(idAccount, date)
 
-    private fun sumOfSpendCashForDate(id_account:Int?, date: String?) = repository.sumOfSpendCashForDate(id_account, date)
-    private fun sumOfSpendCardForDate(id_account:Int?, date: String?) = repository.sumOfSpendCardForDate(id_account, date)
-    private fun sumOfIncomeForDate(id_account:Int?, date: String?) = repository.sumOfIncomeForDate(id_account, date)
-    private fun sumOfInputOfKRWUntilDate(id_account: Int?, date: String?) = repository.sumOfInputOfKRWUntilDate(id_account, date)
-    private fun sumOfOutputOfKRWUntilDate(id_account: Int?, date: String?) = repository.sumOfOutputOfKRWUntilDate(id_account, date)
-    private fun sumOfInputOfForeignUntilDate(id_account: Int?, date: String?, currency: Int?) = repository.sumOfInputOfForeignUntilDate(id_account, date, currency)
-    private fun sumOfOutputOfForeignUntilDate(id_account: Int?, date: String?, currency: Int?) = repository.sumOfOutputOfForeignUntilDate(id_account, date, currency)
-    private fun sumOfInputKRWOfForeignUntilDate(id_account: Int?, date: String?, currency: Int?) = repository.sumOfInputKRWOfForeignUntilDate(id_account, date, currency)
-    private fun sumOfOutputKRWOfForeignUntilDate(id_account: Int?, date: String?, currency: Int?) = repository.sumOfOutputKRWOfForeignUntilDate(id_account, date, currency)
-    private fun sumOfIncomeUntilDate(id_account: Int?, date: String?) = repository.sumOfIncomeUntilDate(id_account, date)
-    private fun sumOfSpendCardUntilDate(id_account: Int?, date: String?) = repository.sumOfSpendCardUntilDate(id_account, date)
-    private fun sumOfSpendCashUntilDate(id_account: Int?, date: String?) = repository.sumOfSpendCashUntilDate(id_account, date)
+    private fun sumOfSpendCashForDate(idAccount:Int?, date: String?) = repository.sumOfSpendCashForDate(idAccount, date)
+    private fun sumOfSpendCardForDate(idAccount:Int?, date: String?) = repository.sumOfSpendCardForDate(idAccount, date)
+    private fun sumOfIncomeForDate(idAccount:Int?, date: String?) = repository.sumOfIncomeForDate(idAccount, date)
+    private fun sumOfInputOfKRWUntilDate(idAccount: Int?, date: String?) = repository.sumOfInputOfKRWUntilDate(idAccount, date)
+    private fun sumOfOutputOfKRWUntilDate(idAccount: Int?, date: String?) = repository.sumOfOutputOfKRWUntilDate(idAccount, date)
+    private fun sumOfInputOfForeignUntilDate(idAccount: Int?, date: String?, currency: Int?) = repository.sumOfInputOfForeignUntilDate(idAccount, date, currency)
+    private fun sumOfOutputOfForeignUntilDate(idAccount: Int?, date: String?, currency: Int?) = repository.sumOfOutputOfForeignUntilDate(idAccount, date, currency)
+    private fun sumOfInputKRWOfForeignUntilDate(idAccount: Int?, date: String?, currency: Int?) = repository.sumOfInputKRWOfForeignUntilDate(idAccount, date, currency)
+    private fun sumOfOutputKRWOfForeignUntilDate(idAccount: Int?, date: String?, currency: Int?) = repository.sumOfOutputKRWOfForeignUntilDate(idAccount, date, currency)
+    private fun sumOfIncomeUntilDate(idAccount: Int?, date: String?) = repository.sumOfIncomeUntilDate(idAccount, date)
+    private fun sumOfSpendCardUntilDate(idAccount: Int?, date: String?) = repository.sumOfSpendCardUntilDate(idAccount, date)
+    private fun sumOfSpendCashUntilDate(idAccount: Int?, date: String?) = repository.sumOfSpendCashUntilDate(idAccount, date)
 
     // 지정일까지 원화 원금을 원화 입금액, 출금액, 지출, 수입 전체로 계산
-    private fun calculatePrincipalOfKRW(id_account: Int?, date: String?): LiveData<Int> {
-       return Transformations.switchMap(sumOfInputOfKRWUntilDate(id_account, date)) { sum_input ->
-           Transformations.switchMap(sumOfIncomeUntilDate(id_account, date)) { sum_income ->
-               Transformations.switchMap(sumOfOutputOfKRWUntilDate(id_account, date)) { sum_output ->
-                   Transformations.switchMap(sumOfSpendCardUntilDate(id_account, date)) { sum_card ->
-                       Transformations.map(sumOfSpendCashUntilDate(id_account, date)) { sum_cash ->
+    private fun calculatePrincipalOfKRW(idAccount: Int?, date: String?): LiveData<Int> {
+       return Transformations.switchMap(sumOfInputOfKRWUntilDate(idAccount, date)) { sum_input ->
+           Transformations.switchMap(sumOfIncomeUntilDate(idAccount, date)) { sum_income ->
+               Transformations.switchMap(sumOfOutputOfKRWUntilDate(idAccount, date)) { sum_output ->
+                   Transformations.switchMap(sumOfSpendCardUntilDate(idAccount, date)) { sum_card ->
+                       Transformations.map(sumOfSpendCashUntilDate(idAccount, date)) { sum_cash ->
                            var input = 0
                            var output = 0
 
@@ -269,9 +269,9 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
        }
     }
     // 지정일까지 외화 원금을 외화 입금액, 출금액 전체로 계산
-    private fun calculatePrincipalOfForeign(id_account: Int?, date: String?, currency: Int?): LiveData<Double> {
-        return Transformations.switchMap(sumOfInputOfForeignUntilDate(id_account, date, currency)) { sum_input ->
-            Transformations.map(sumOfOutputOfForeignUntilDate(id_account, date, currency)) { sum_output ->
+    private fun calculatePrincipalOfForeign(idAccount: Int?, date: String?, currency: Int?): LiveData<Double> {
+        return Transformations.switchMap(sumOfInputOfForeignUntilDate(idAccount, date, currency)) { sum_input ->
+            Transformations.map(sumOfOutputOfForeignUntilDate(idAccount, date, currency)) { sum_output ->
                 var input = 0.0
                 var output = 0.0
                 sum_input?.let { input = it }
@@ -282,9 +282,9 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         }
     }
     // 지정일까지 외화의 입금, 출금을 원화 기준으로 계산
-    private fun calculatePrincipalKRWOfForeign(id_account: Int?, date: String?, currency: Int?): LiveData<Int> {
-        return Transformations.switchMap(sumOfInputKRWOfForeignUntilDate(id_account, date, currency)) { sum_input_krw ->
-            Transformations.map(sumOfOutputKRWOfForeignUntilDate(id_account, date, currency)) { sum_output_krw ->
+    private fun calculatePrincipalKRWOfForeign(idAccount: Int?, date: String?, currency: Int?): LiveData<Int> {
+        return Transformations.switchMap(sumOfInputKRWOfForeignUntilDate(idAccount, date, currency)) { sum_input_krw ->
+            Transformations.map(sumOfOutputKRWOfForeignUntilDate(idAccount, date, currency)) { sum_output_krw ->
                 var input = 0
                 var output = 0
 
@@ -296,16 +296,16 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         }
     }
 
-    private fun calculateRateOfKRW(id_account: Int?, date: String?): LiveData<Double> {
-        return Transformations.switchMap(loadingIOKRW(id_account, date)) { io ->
-            Transformations.map(calculatePrincipalOfKRW(id_account, date)) { principal ->
+    private fun calculateRateOfKRW(idAccount: Int?, date: String?): LiveData<Double> {
+        return Transformations.switchMap(loadingIOKRW(idAccount, date)) { io ->
+            Transformations.map(calculatePrincipalOfKRW(idAccount, date)) { principal ->
                 io.evaluationKRW!!.toDouble() / principal * 100 - 100
             }
         }
     }
-    private fun calculateRateOfForeign(id_account: Int?, date: String?, currency: Int?): LiveData<Double> {
-        return Transformations.switchMap(loadingIOForeign(id_account, date, currency)) { io ->
-            Transformations.map(calculatePrincipalKRWOfForeign(id_account, date, currency)) { principalKRW ->
+    private fun calculateRateOfForeign(idAccount: Int?, date: String?, currency: Int?): LiveData<Double> {
+        return Transformations.switchMap(loadingIOForeign(idAccount, date, currency)) { io ->
+            Transformations.map(calculatePrincipalKRWOfForeign(idAccount, date, currency)) { principalKRW ->
                 io.evaluationKRW!! / principalKRW * 100 - 100
             }
         }

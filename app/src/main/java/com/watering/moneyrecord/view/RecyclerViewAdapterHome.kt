@@ -10,7 +10,7 @@ import com.watering.moneyrecord.entities.Home
 import java.text.DecimalFormat
 import java.util.*
 
-class RecyclerViewAdapterHome(val lists:List<Home>, val total:Double, private val clickListener: (Int) -> Unit): RecyclerView.Adapter<RecyclerViewAdapterHome.ViewHolder>() {
+class RecyclerViewAdapterHome(val lists:List<Home>, private val total:Double, private val clickListener: (Int) -> Unit): RecyclerView.Adapter<RecyclerViewAdapterHome.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val cardView = LayoutInflater.from(parent.context)
             .inflate(R.layout.card_home, parent, false)

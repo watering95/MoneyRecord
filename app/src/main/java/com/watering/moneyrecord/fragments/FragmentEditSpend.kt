@@ -21,6 +21,7 @@ import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditSpend
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -232,6 +233,7 @@ class FragmentEditSpend : Fragment() {
                     jobSpend1.cancelAndJoin()
                     jobSpend2.cancelAndJoin()
                     jobDelete.cancelAndJoin()
+                    delay(100)
                     processing.ioKRW(idAccount, spend.date)
                 }
             } })

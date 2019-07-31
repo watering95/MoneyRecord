@@ -72,7 +72,7 @@ class FragmentEditAccount : Fragment() {
                                             getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce( Observer { account -> account?.let {
                                                 getGroup(account.group).observeOnce( Observer { group -> group?.let {
                                                     val home = Home()
-                                                    home.id_account = account.id
+                                                    home.idAccount = account.id
                                                     home.account = account.number
                                                     home.description = account.institute + account.description
                                                     home.group = group.name
@@ -90,7 +90,7 @@ class FragmentEditAccount : Fragment() {
                                             getHomeByIdAccount(account?.id).observeOnce( Observer { home -> home?.let {
                                                 getGroup(account?.group).observeOnce( Observer { group -> group?.let {
                                                     home.account = account?.number
-                                                    home.description = account?.institute + account?.description
+                                                    home.description = account?.institute + " " + account?.description
                                                     home.group = group.name
                                                     update(home)
                                                 } })
@@ -104,7 +104,14 @@ class FragmentEditAccount : Fragment() {
                     }}
                 })
             }
-            R.id.menu_edit_delete -> { mViewModel.delete(this.item) }
+            R.id.menu_edit_delete -> {
+                mViewModel.run {
+                    delete(this@FragmentEditAccount.item)
+                    getHomeByIdAccount(this@FragmentEditAccount.item.id).observeOnce(Observer { home -> home?.let {
+                        delete(it)
+                    } })
+                }
+            }
         }
         fragmentManager?.popBackStack()
 
