@@ -91,7 +91,7 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     fun getDairyForeign(id_account: Int?, date: String?, currency: Int?) = daoDairyForeign.get(id_account, date, currency)
     fun getDairyTotal(id_account: Int?, date: String?) = daoDairyTotal.get(id_account, date)
 
-    fun getLogs(id_account: Int?) = daoDairyTotal.getLogs(id_account)
+    fun getDairyTotalOrderByDate(id_account: Int?) = daoDairyTotal.getOrderByDate(id_account)
 
     fun getAfterDairyKRW(id_account: Int?, date: String?) = daoDairyKRW.getAfter(id_account, date)
     fun getAfterDairyForeign(id_account: Int?, date: String?, currency: Int?) = daoDairyForeign.getAfter(id_account, date, currency)
@@ -103,7 +103,6 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     fun getLastDairyKRW(id_account: Int?, date: String?) = daoDairyKRW.getLast(id_account, date)
     fun getLastIOForeign(id_account: Int?, date: String?) = daoIOForeign.getLast(id_account, date)
     fun getLastDairyForeign(id_account: Int?, date: String?) = daoDairyForeign.getLast(id_account, date)
-    fun getLastDiaryTotal(id_account: Int?, date: String?) = daoDairyTotal.getLast(id_account, date)
 
     fun sumOfSpendCashForDate(id_account: Int?, date: String?) = daoSpend.sumOfSpendCash(id_account, date)
     fun sumOfSpendCardForDate(id_account: Int?, date: String?) = daoSpend.sumOfSpendCard(id_account, date)

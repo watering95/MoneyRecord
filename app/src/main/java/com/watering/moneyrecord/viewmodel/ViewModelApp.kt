@@ -68,13 +68,11 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun getCardByCode(code: String?) = repository.getCardByCode(code)
     fun getCardByNumber(number: String?) = repository.getCardByNumber(number)
     fun getLastSpendCode(date: String?) = repository.getLastSpendCode(date)
-    fun getLogs(idAccount: Int?) = repository.getLogs(idAccount)
+    fun getDairyTotalOrderByDate(idAccount: Int?) = repository.getDairyTotalOrderByDate(idAccount)
 
     fun getAfterDairyKRW(idAccount: Int?, date: String?) = repository.getAfterDairyKRW(idAccount, date)
     fun getAfterDairyForeign(idAccount: Int?, date: String?, currency: Int?) = repository.getAfterDairyForeign(idAccount, date, currency)
     fun getAfterDairyTotal(idAccount: Int?, date: String?) = repository.getAfterDairyTotal(idAccount, date)
-
-    fun getLastDairyTotal(idAccount: Int?, date: String?) = repository.getLastDiaryTotal(idAccount, date)
 
     fun loadingIOKRW(idAccount: Int?, date: String?): LiveData<IOKRW> {
         return Transformations.switchMap(getPreviousEvaluationOfKRW(idAccount, date)) { previousEvaluation ->
@@ -165,7 +163,6 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
             }
         }
     }
-
     fun loadingDairyTotal(idAccount: Int?, date: String?): LiveData<DairyTotal> {
         return Transformations.switchMap(getLastDairyForeign(idAccount, date)) { listOf_last_dairy_foreign ->
             Transformations.switchMap(getLastIOForeign(idAccount, date)) { listOf_last_io_foreign ->

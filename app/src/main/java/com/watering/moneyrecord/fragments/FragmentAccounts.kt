@@ -91,7 +91,7 @@ class FragmentAccounts : Fragment() {
                 Transformations.map(getAccountByNumber(list[indexOfAccount])) { account -> account.id }
             }.observe(this@FragmentAccounts, Observer { id -> id?.let {
                 idAccount = id
-                getLogs(idAccount).observe(this@FragmentAccounts, Observer { logs -> logs?.let {
+                getDairyTotalOrderByDate(idAccount).observe(this@FragmentAccounts, Observer { logs -> logs?.let {
                     this@FragmentAccounts.logs = logs
                     binding.recyclerviewFragmentAccounts.run {
                         adapter = RecyclerViewAdapterAccounts(logs) { position -> itemClicked(position) }

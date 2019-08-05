@@ -9,13 +9,12 @@ import androidx.databinding.Observable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.watering.moneyrecord.BR
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentHomeBinding
-import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.model.Processing
-import com.watering.moneyrecord.view.RecyclerViewAdapterHome
+import com.watering.moneyrecord.view.PagerAdapterHome
 import com.watering.moneyrecord.viewmodel.ViewModelHome
 
 class FragmentHome : Fragment() {
@@ -43,22 +42,19 @@ class FragmentHome : Fragment() {
                 }
             })
         }
-    }
-
-    private fun itemClicked(position: Int) {
-        binding.viewmodel?.run {
-        }
-    }
-
-    private fun onChangedRecyclerView(list: List<Home>) {
-        binding.viewmodel?.run {
-            binding.recyclerviewFragmentHome.run {
-                if(adapter == null) {
-                    setHasFixedSize(true)
-                    layoutManager = LinearLayoutManager(this@FragmentHome.context)
+        binding.viewpagerFragmentHome.run{
+            adapter = PagerAdapterHome(childFragmentManager)
+            addOnPageChangeListener(object:ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) {
                 }
-                adapter = RecyclerViewAdapterHome(list, totalEvaluation.toDouble()) { position -> itemClicked(position) }
-            }
+
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                }
+
+                override fun onPageSelected(position: Int) {
+                }
+
+            })
         }
     }
 
@@ -72,7 +68,6 @@ class FragmentHome : Fragment() {
                         totalEvaluation += home.evaluationKRW!!
                         totalPrincipal += home.principalKRW!!
                     }
-                    onChangedRecyclerView(listOfHomes)
                 } })
             } else {
                 listOfGroup.observe(this@FragmentHome, Observer { listOfGroup -> listOfGroup?.let {
@@ -83,7 +78,6 @@ class FragmentHome : Fragment() {
                             totalEvaluation += home.evaluationKRW!!
                             totalPrincipal += home.principalKRW!!
                         }
-                        onChangedRecyclerView(listOfHomes)
                     } })
                 } })
             }
