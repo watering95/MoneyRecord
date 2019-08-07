@@ -18,6 +18,7 @@ import com.watering.moneyrecord.viewmodel.ViewModelApp
 class FragmentHomeList : Fragment() {
     private lateinit var mViewModel: ViewModelApp
     private lateinit var binding: FragmentHomeListBinding
+    var group: String? = ""
     private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager as FragmentManager }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -26,21 +27,24 @@ class FragmentHomeList : Fragment() {
         return binding.root
     }
 
+    fun updateList() {
+        (if(group == "") mViewModel.allHomes else mViewModel.getHomesByGroup(group))
+            .observe(this, Observer { listOfHomes -> listOfHomes?.let {
+                var totalEvaluation = 0
+
+                it.forEach { home ->
+                    totalEvaluation += home.evaluationKRW!!
+                }
+
+                onChangedRecyclerView(it, totalEvaluation)
+            } })
+    }
+
     private fun initLayout() {
         val activity = activity as MainActivity
 
         mViewModel = activity.mViewModel
-        TODO("group을 넘겨받")
-        val group = "가계"
-        mViewModel.getHomesByGroup(group).observe(this, Observer { listOfHomes -> listOfHomes?.let {
-            var totalEvaluation = 0
-
-            it.forEach { home ->
-                totalEvaluation += home.evaluationKRW!!
-            }
-
-            onChangedRecyclerView(it, totalEvaluation)
-        } })
+        updateList()
 
         setHasOptionsMenu(false)
     }

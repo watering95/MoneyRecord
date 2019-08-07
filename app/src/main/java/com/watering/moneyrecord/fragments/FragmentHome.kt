@@ -44,17 +44,6 @@ class FragmentHome : Fragment() {
         }
         binding.viewpagerFragmentHome.run{
             adapter = PagerAdapterHome(childFragmentManager)
-            addOnPageChangeListener(object:ViewPager.OnPageChangeListener {
-                override fun onPageScrollStateChanged(state: Int) {
-                }
-
-                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                }
-
-                override fun onPageSelected(position: Int) {
-                }
-
-            })
         }
     }
 
@@ -79,6 +68,12 @@ class FragmentHome : Fragment() {
                             totalPrincipal += home.principalKRW!!
                         }
                     } })
+                } })
+            }
+            binding.viewpagerFragmentHome.run {
+                if(indexOfGroup == 0) (adapter as PagerAdapterHome).setGroup("")
+                else listOfGroup.observe(this@FragmentHome, Observer { listOfGroup -> listOfGroup?.let {
+                    (adapter as PagerAdapterHome).setGroup(it[indexOfGroup])
                 } })
             }
         }
