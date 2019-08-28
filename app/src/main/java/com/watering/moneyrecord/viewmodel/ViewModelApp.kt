@@ -9,7 +9,7 @@ import androidx.lifecycle.Transformations
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.entities.*
 import com.watering.moneyrecord.model.AppRepository
-import com.watering.moneyrecord.model.ModelCalendar
+import com.watering.moneyrecord.model.MyCalendar
 import kotlinx.coroutines.*
 
 open class ViewModelApp(application: Application) : AndroidViewModel(application) {
@@ -18,6 +18,8 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     private val scope = CoroutineScope(coroutineContext)
 
     private val repository = AppRepository(application, scope)
+
+    var currentGroupId: Int? = -1
 
     val allGroups = repository.allGroups
     val allAccounts = repository.allAccounts
@@ -39,6 +41,8 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
             transaction.replace(R.id.frame_main, fragment).addToBackStack(null).commit()
         }
     }
+
+    fun getFirstDate() = repository.getFirstDate()
 
     fun getGroup(id: Int?) = repository.getGroup(id)
     fun getGroup(name: String?) = repository.getGroup(name)
@@ -90,7 +94,6 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                                 new.income = sumOfIncome
                                 new
                             } else {
-                                io.evaluationKRW = previousEvaluation - sumOfSpendsCard - sumOfSpendsCash + sumOfIncome - io.output!! + io.input!!
                                 io.spendCash = sumOfSpendsCash
                                 io.spendCard = sumOfSpendsCard
                                 io.income = sumOfIncome
@@ -113,7 +116,6 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                     new.evaluationKRW = previousEvaluation
                     new
                 } else {
-                    io.evaluationKRW = previousEvaluation + io.inputKRW!! - io.outputKRW!!
                     io
                 }
             }
@@ -203,14 +205,14 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     }
 
     private fun getPreviousEvaluationOfKRW(idAccount:Int?, date:String?): LiveData<Int> {
-        val before = ModelCalendar.calendarToStr(ModelCalendar.changeDate(date, -1))
+        val before = MyCalendar.calendarToStr(MyCalendar.changeDate(date, -1))
 
         return Transformations.map(getLastIOKRW(idAccount, before)) { last ->
             if(last == null) 0 else last.evaluationKRW
         }
     }
     private fun getPreviousEvaluationKRWOfForeign(idAccount:Int?, date:String?, currency: Int?): LiveData<Double> {
-        val before = ModelCalendar.calendarToStr(ModelCalendar.changeDate(date, -1))
+        val before = MyCalendar.calendarToStr(MyCalendar.changeDate(date, -1))
 
         return Transformations.map(getLastIOForeign(idAccount, before, currency)) { last ->
             if(last == null) 0.0 else last.evaluationKRW

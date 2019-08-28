@@ -2,7 +2,7 @@ package com.watering.moneyrecord.model
 
 import java.util.*
 
-object ModelCalendar {
+object MyCalendar {
     fun getToday(): String {
         return calendarToStr(Calendar.getInstance())
     }

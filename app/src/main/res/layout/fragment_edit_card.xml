@@ -9,6 +9,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <TextView
+                android:id="@+id/text_account_fragment_edit_card"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/title_accounts"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_account_fragment_edit_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/spinner_account_fragment_edit_card" />
+
         <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -56,15 +66,18 @@
                 android:id="@+id/edit_date_fragment_edit_card"
                 app:layout_constraintStart_toEndOf="@+id/text_date_fragment_edit_card" android:inputType="date"
         />
+
         <Spinner
+                android:id="@+id/spinner_account_fragment_edit_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_account_fragment_edit_card"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:adapter="@{adapter}"
                 android:selectedItemPosition="@={ viewmodel.selected }"
-                app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="8dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/text_account_fragment_edit_card"
+                app:layout_constraintTop_toTopOf="parent" />
         <TextView
                 android:text="@string/card_number"
                 android:layout_width="80dp"

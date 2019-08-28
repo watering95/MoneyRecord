@@ -14,7 +14,7 @@ import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentBookIncomeBinding
 import com.watering.moneyrecord.entities.Income
-import com.watering.moneyrecord.model.ModelCalendar
+import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.view.RecyclerViewAdapterBookIncome
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import java.util.*
@@ -33,17 +33,17 @@ class FragmentBookIncome : Fragment() {
         val activity = activity as MainActivity
 
         mViewModel = activity.mViewModel
-        binding.date = ModelCalendar.getToday()
+        binding.date = MyCalendar.getToday()
 
         setHasOptionsMenu(false)
 
         binding.buttonCalendarFragmentBookIncome.setOnClickListener {
             val dialog = DialogDate().newInstance(binding.date, object: DialogDate.Complete {
                 override fun onComplete(date: String?) {
-                    val select = ModelCalendar.strToCalendar(date)
+                    val select = MyCalendar.strToCalendar(date)
                     when {
                         Calendar.getInstance().before(select) -> Toast.makeText(activity, R.string.toast_date_error, Toast.LENGTH_SHORT).show()
-                        else -> binding.date = ModelCalendar.calendarToStr(select)
+                        else -> binding.date = MyCalendar.calendarToStr(select)
                     }
                 }
             })
@@ -51,18 +51,18 @@ class FragmentBookIncome : Fragment() {
         }
 
         binding.buttonBackwardFragmentBookIncome.setOnClickListener {
-            val date = ModelCalendar.changeDate(binding.date.toString(), -1)
-            binding.date = ModelCalendar.calendarToStr(date)
+            val date = MyCalendar.changeDate(binding.date.toString(), -1)
+            binding.date = MyCalendar.calendarToStr(date)
         }
         binding.buttonForwardFragmentBookIncome.setOnClickListener {
-            val date = ModelCalendar.changeDate(binding.date.toString(), 1)
+            val date = MyCalendar.changeDate(binding.date.toString(), 1)
             when {
                 Calendar.getInstance().before(date) -> Toast.makeText(
                     activity,
                     R.string.toast_date_error,
                     Toast.LENGTH_SHORT
                 ).show()
-                else -> binding.date = ModelCalendar.calendarToStr(date)
+                else -> binding.date = MyCalendar.calendarToStr(date)
             }
         }
 

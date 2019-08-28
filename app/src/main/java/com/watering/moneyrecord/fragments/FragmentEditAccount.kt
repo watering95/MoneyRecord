@@ -3,6 +3,7 @@ package com.watering.moneyrecord.fragments
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -60,62 +61,75 @@ class FragmentEditAccount : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
             R.id.menu_edit_save -> {
-                mViewModel.allGroups.observeOnce( Observer { list -> list?.let {
-                    binding.viewmodel?.run {
-                        account?.apply { selected?.let { group = list[it].id } }.let { account ->
-                            when {
-                                this@FragmentEditAccount.item.id == null -> {
-                                    runBlocking {
-                                        mViewModel.run {
-                                            insert(account).cancelAndJoin()
-                                            delay(100)
-                                            getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce( Observer { account -> account?.let {
-                                                getGroup(account.group).observeOnce( Observer { group -> group?.let {
-                                                    val home = Home()
-                                                    home.idAccount = account.id
-                                                    home.account = account.number
-                                                    home.description = account.institute + account.description
-                                                    home.group = group.name
-                                                    insert(home)
-                                                }})
-                                            } })
-                                        }
-                                    }
-                                }
-                                else -> {
-                                    runBlocking {
-                                        mViewModel.run {
-                                            update(account).cancelAndJoin()
-                                            delay(100)
-                                            getHomeByIdAccount(account?.id).observeOnce( Observer { home -> home?.let {
-                                                getGroup(account?.group).observeOnce( Observer { group -> group?.let {
-                                                    home.account = account?.number
-                                                    home.description = account?.institute + " " + account?.description
-                                                    home.group = group.name
-                                                    update(home)
-                                                } })
-                                            } })
-
-                                        }
-                                    }
-                                }
-                            }
+                binding.viewmodel?.run {
+                    account?.run {
+                        if(description.isNullOrEmpty() || institute.isNullOrEmpty() || number.isNullOrEmpty())
+                            Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                        else {
+                            save()
+                            fragmentManager?.popBackStack()
                         }
-                    }}
-                })
+                    }
+                }
             }
             R.id.menu_edit_delete -> {
                 mViewModel.run {
                     delete(this@FragmentEditAccount.item)
                     getHomeByIdAccount(this@FragmentEditAccount.item.id).observeOnce(Observer { home -> home?.let {
                         delete(it)
+                        fragmentManager?.popBackStack()
                     } })
                 }
             }
         }
-        fragmentManager?.popBackStack()
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun save() {
+        mViewModel.allGroups.observeOnce( Observer { list -> list?.let {
+            binding.viewmodel?.run {
+                account?.apply { selected?.let { group = list[it].id } }.let { account ->
+                    when {
+                        this@FragmentEditAccount.item.id == null -> {
+                            runBlocking {
+                                mViewModel.run {
+                                    insert(account).cancelAndJoin()
+                                    delay(100)
+                                    getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce( Observer { account -> account?.let {
+                                        getGroup(account.group).observeOnce( Observer { group -> group?.let {
+                                            val home = Home()
+                                            home.idAccount = account.id
+                                            home.account = account.number
+                                            home.description = account.institute + account.description
+                                            home.group = group.name
+                                            insert(home)
+                                        }})
+                                    } })
+                                }
+                            }
+                        }
+                        else -> {
+                            runBlocking {
+                                mViewModel.run {
+                                    update(account).cancelAndJoin()
+                                    delay(100)
+                                    getHomeByIdAccount(account?.id).observeOnce( Observer { home -> home?.let {
+                                        getGroup(account?.group).observeOnce( Observer { group -> group?.let {
+                                            home.account = account?.number
+                                            home.description = account?.institute + " " + account?.description
+                                            home.group = group.name
+                                            update(home)
+                                        } })
+                                    } })
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }}
+        })
     }
 
     private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {

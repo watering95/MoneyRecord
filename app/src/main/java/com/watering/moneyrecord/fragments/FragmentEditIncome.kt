@@ -5,18 +5,20 @@ import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
+import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
-import com.watering.moneyrecord.BR
+
 import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditIncomeBinding
 import com.watering.moneyrecord.entities.Income
-import com.watering.moneyrecord.model.ModelCalendar
+import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditIncome
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -48,7 +50,7 @@ class FragmentEditIncome : Fragment() {
 
             income = this@FragmentEditIncome.income
             if(income.id == null) {
-                income = income.apply { this.date = ModelCalendar.getToday() }
+                income = income.apply { this.date = MyCalendar.getToday() }
                 notifyPropertyChanged(BR.income)
             }
 
@@ -85,11 +87,11 @@ class FragmentEditIncome : Fragment() {
             binding.viewmodel?.run {
                 val dialog = DialogDate().newInstance(income.date, object:DialogDate.Complete {
                     override fun onComplete(date: String?) {
-                        val select = ModelCalendar.strToCalendar(date)
+                        val select = MyCalendar.strToCalendar(date)
                         when {
                             Calendar.getInstance().before(select) -> Toast.makeText(activity, R.string.toast_date_error, Toast.LENGTH_SHORT).show()
                             else -> {
-                                income = income.apply { this.date = ModelCalendar.calendarToStr(select) }
+                                income = income.apply { this.date = MyCalendar.calendarToStr(select) }
                                 notifyPropertyChanged(BR.income)
                             }
                         }
@@ -124,33 +126,43 @@ class FragmentEditIncome : Fragment() {
 
     fun onChangedIndexOfSub() {
         binding.viewmodel?.run {
-            Transformations.switchMap(listOfMain) { listOfMain ->
-                Transformations.switchMap(listOfSub) { listOfSub ->
-                    if(indexOfSub < 0 || indexOfMain < 0) null
-                    else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
-                }
-            }.observe(this@FragmentEditIncome, Observer { sub -> sub?.let {
-                income.category = sub.id
-            } })
+            runBlocking {
+                delay(100)
+                Transformations.switchMap(listOfMain) { listOfMain ->
+                    Transformations.switchMap(listOfSub) { listOfSub ->
+                        if(indexOfSub < 0 || indexOfMain < 0) null
+                        else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
+                    }
+                }.observe(this@FragmentEditIncome, Observer { sub -> sub?.let {
+                    income.category = sub.id
+                } })
+            }
         }
     }
     fun onChangedIndexOfAccount() {
         binding.viewmodel?.run {
-            Transformations.switchMap(listOfAccount) { list ->
-                if(indexOfAccount < 0) null else getAccountByNumber(list[indexOfAccount])
-            }.observe(this@FragmentEditIncome, Observer { account -> account?.let {
-                idAccount = account.id
-                income.account = account.id
-            } })
+            runBlocking {
+                delay(100)
+                Transformations.switchMap(listOfAccount) { list ->
+                    if(indexOfAccount < 0) null else getAccountByNumber(list[indexOfAccount])
+                }.observe(this@FragmentEditIncome, Observer { account -> account?.let {
+                    idAccount = account.id
+                    income.account = account.id
+                } })
+            }
         }
     }
     private fun save() {
         binding.viewmodel?.run {
-            val jobIncome = if(income.id == null) insert(income) else update(income)
+            if(income.details.isNullOrEmpty() || indexOfMain < 0 || indexOfSub < 0 || indexOfAccount < 0) {
+                Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+            } else {
+                val jobIncome = if(income.id == null) insert(income) else update(income)
 
-            runBlocking {
-                jobIncome.cancelAndJoin()
-                processing.ioKRW(idAccount, income.date)
+                runBlocking {
+                    jobIncome.cancelAndJoin()
+                    processing.ioKRW(idAccount, income.date)
+                }
             }
         }
     }

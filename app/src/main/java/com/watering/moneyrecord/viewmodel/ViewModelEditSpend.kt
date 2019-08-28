@@ -2,8 +2,9 @@ package com.watering.moneyrecord.viewmodel
 
 import android.app.Application
 import androidx.databinding.Bindable
+import androidx.databinding.library.baseAdapters.BR
 import androidx.lifecycle.*
-import com.watering.moneyrecord.BR
+
 import com.watering.moneyrecord.entities.Spend
 
 class ViewModelEditSpend(application:Application) : ObservableViewModel(application) {
@@ -13,19 +14,15 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
     var idCard:Int? = 0
 
     var listOfMain = MutableLiveData<List<String?>>()
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.listOfMain)
     }
 
     var spend: Spend = Spend()
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    @Bindable get
+        set(value) {
         field = value
 
         value.apply {
@@ -35,11 +32,9 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
         notifyPropertyChanged(BR.spend)
     }
 
-    var indexOfMain: Int = 0
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    var indexOfMain: Int = -1
+    @Bindable get
+        set(value) {
         field = value
         listOfSub = Transformations.switchMap(listOfMain) { listOfMain ->
             Transformations.map(getCatSubsByMain(listOfMain[field])) { listOfSub -> listOfSub.map { it.name } }
@@ -49,37 +44,29 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
     }
 
     var listOfSub = MutableLiveData<List<String?>> ()
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.listOfSub)
     }
 
-    var indexOfSub: Int = 0
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    var indexOfSub: Int = -1
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.indexOfSub)
     }
 
     var listOfPay2 = MutableLiveData<List<String?>> ()
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.listOfPay2)
     }
 
-    var indexOfPay1:Int = 0
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    var indexOfPay1:Int = -1
+    @Bindable get
+        set(value) {
         field = value
         newCode = newCode.replaceRange(0,1,"${field+1}")
         when(field) {
@@ -90,11 +77,9 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
         notifyPropertyChanged(BR.indexOfPay1)
     }
 
-    var indexOfPay2:Int = 0
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    var indexOfPay2:Int = -1
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.indexOfPay2)
     }

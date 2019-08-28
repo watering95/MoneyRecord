@@ -2,38 +2,33 @@ package com.watering.moneyrecord.viewmodel
 
 import android.app.Application
 import androidx.databinding.Bindable
+import androidx.databinding.library.baseAdapters.BR
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.watering.moneyrecord.BR
+
 import com.watering.moneyrecord.entities.Income
 
 class ViewModelEditIncome(application: Application) : ObservableViewModel(application) {
     var idAccount:Int? = 0
 
     var income: Income = Income()
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    @Bindable get
+        set(value) {
         field = value
 
         notifyPropertyChanged(BR.income)
     }
 
     var listOfMain = MutableLiveData<List<String?>>()
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.listOfMain)
     }
 
-    var indexOfMain: Int = 0
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    var indexOfMain: Int = -1
+    @Bindable get
+        set(value) {
         field = value
         listOfSub = Transformations.switchMap(listOfMain) { listOfMain ->
             Transformations.map(getCatSubsByMain(listOfMain[field])) { listOfSub -> listOfSub.map { it.name } }
@@ -43,37 +38,29 @@ class ViewModelEditIncome(application: Application) : ObservableViewModel(applic
     }
 
     var listOfSub = MutableLiveData<List<String?>> ()
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.listOfSub)
     }
 
-    var indexOfSub: Int = 0
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    var indexOfSub: Int = -1
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.indexOfSub)
     }
 
     var listOfAccount = MutableLiveData<List<String?>> ()
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.listOfAccount)
     }
 
-    var indexOfAccount: Int = 0
-    @Bindable get() {
-        return field
-    }
-    set(value) {
+    var indexOfAccount: Int = -1
+    @Bindable get
+        set(value) {
         field = value
         notifyPropertyChanged(BR.indexOfAccount)
     }

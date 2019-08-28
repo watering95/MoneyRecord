@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
+import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.viewpager.widget.ViewPager
-import com.watering.moneyrecord.BR
+
+import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentHomeBinding
 import com.watering.moneyrecord.model.Processing
@@ -48,8 +49,10 @@ class FragmentHome : Fragment() {
     }
 
     fun onChangedIndexOfGroup() {
+        val viewModel = (activity as MainActivity).mViewModel
         binding.viewmodel?.run {
             if(indexOfGroup == 0) {
+                viewModel.currentGroupId = -1
                 allHomes.observe(this@FragmentHome, Observer { listOfHomes -> listOfHomes?.let {
                     totalEvaluation = 0
                     totalPrincipal = 0
@@ -60,6 +63,7 @@ class FragmentHome : Fragment() {
                 } })
             } else {
                 listOfGroup.observe(this@FragmentHome, Observer { listOfGroup -> listOfGroup?.let {
+                    getGroup(it[indexOfGroup]).observe(this@FragmentHome, Observer { group -> group?.let { viewModel.currentGroupId = it.id } })
                     getHomesByGroup(it[indexOfGroup]).observe(this@FragmentHome, Observer { listOfHomes -> listOfHomes?.let {
                         totalEvaluation = 0
                         totalPrincipal = 0

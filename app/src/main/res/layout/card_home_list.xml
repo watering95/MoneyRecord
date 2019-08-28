@@ -19,7 +19,7 @@
 
             <TextView
                     android:text="@string/text"
-                    android:layout_width="140dp"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/text_account_num_card_home" android:layout_marginTop="8dp"
                     card_view:layout_constraintTop_toTopOf="parent" card_view:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
                     android:textAlignment="center"/>
             <TextView
                     android:text="@string/text"
-                    android:layout_width="60dp"
+                    android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/text_principal_card_home"
                     card_view:layout_constraintStart_toEndOf="@+id/text_account_num_card_home"
@@ -36,7 +36,7 @@
                     card_view:layout_constraintBottom_toBottomOf="parent" android:textAlignment="textEnd"/>
             <TextView
                     android:text="@string/text"
-                    android:layout_width="60dp"
+                    android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/text_evaluation_card_home"
                     android:layout_marginTop="8dp"
@@ -55,13 +55,13 @@
                     android:layout_marginEnd="8dp" card_view:layout_constraintEnd_toEndOf="parent"
                     android:textAlignment="textEnd" android:layout_marginBottom="8dp"
                     card_view:layout_constraintBottom_toBottomOf="parent"/>
-            <TextView android:layout_width="140dp" android:layout_height="wrap_content"
+            <TextView android:layout_width="150dp" android:layout_height="wrap_content"
                       android:id="@+id/text_description_card_home"
                       card_view:layout_constraintTop_toBottomOf="@+id/text_account_num_card_home"
                       card_view:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
                       android:layout_marginBottom="8dp" card_view:layout_constraintBottom_toBottomOf="parent"
                       android:text="@string/text" android:textAlignment="center"/>
-            <TextView android:layout_width="60dp" android:layout_height="wrap_content"
+            <TextView android:layout_width="70dp" android:layout_height="wrap_content"
                       android:id="@+id/text_rate_account_card_home"
                       card_view:layout_constraintTop_toBottomOf="@+id/text_evaluation_card_home"
                       card_view:layout_constraintEnd_toEndOf="@+id/text_evaluation_card_home"

@@ -12,7 +12,7 @@ import com.watering.moneyrecord.BR
 import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditInoutKrwBinding
-import com.watering.moneyrecord.model.ModelCalendar
+import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditInoutKRW
 import kotlinx.coroutines.cancelAndJoin
@@ -62,11 +62,11 @@ class FragmentEditInoutKRW : Fragment() {
             binding.viewmodel?.run {
                 val dialog = DialogDate().newInstance(date, object:DialogDate.Complete {
                     override fun onComplete(date: String?) {
-                        val select = ModelCalendar.strToCalendar(date)
+                        val select = MyCalendar.strToCalendar(date)
                         when {
                             Calendar.getInstance().before(select) -> Toast.makeText(activity, R.string.toast_date_error, Toast.LENGTH_SHORT).show()
                             else -> {
-                                this@run.date = ModelCalendar.calendarToStr(select)
+                                this@run.date = MyCalendar.calendarToStr(select)
                                 notifyPropertyChanged(BR.date)
                             }
                         }

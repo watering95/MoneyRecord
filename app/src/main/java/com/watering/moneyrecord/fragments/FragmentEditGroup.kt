@@ -2,6 +2,7 @@ package com.watering.moneyrecord.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
 import com.watering.moneyrecord.MainActivity
@@ -41,13 +42,19 @@ class FragmentEditGroup : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
             R.id.menu_edit_save -> {
-                if(this.item.id == null) mViewModel.insert(binding.group)
-                else mViewModel.update(binding.group)
+                if(binding.group!!.name.isNullOrEmpty()) {
+                    Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                } else {
+                    if(this.item.id == null) mViewModel.insert(binding.group)
+                    else mViewModel.update(binding.group)
+                    fragmentManager?.popBackStack()
+                }
             }
-            R.id.menu_edit_delete -> { mViewModel.delete(this.item) }
+            R.id.menu_edit_delete -> {
+                mViewModel.delete(this.item)
+                fragmentManager?.popBackStack()
+            }
         }
-
-        fragmentManager?.popBackStack()
 
         return super.onOptionsItemSelected(item)
     }

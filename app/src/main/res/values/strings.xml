@@ -64,6 +64,7 @@
     <string name="toast_db_upload_ok">DB File이 Upload 되었습니다.</string>
     <string name="toast_db_upload_error">DB File이 Upload 되지 았않습니다.</string>
     <string name="toast_date_error">오늘 이전 날짜로 선택해 주세요.</string>
+    <string name="toast_warning_input">입력값을 확인해 주세요.</string>
     <array name="category">
         <item name="spend">spend</item>
         <item name="income">income</item>

@@ -11,7 +11,6 @@ import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentHomeListBinding
 import com.watering.moneyrecord.entities.Home
-import com.watering.moneyrecord.entities.Income
 import com.watering.moneyrecord.view.RecyclerViewAdapterHomeList
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 
@@ -29,15 +28,15 @@ class FragmentHomeList : Fragment() {
 
     fun updateList() {
         (if(group == "") mViewModel.allHomes else mViewModel.getHomesByGroup(group))
-            .observe(this, Observer { listOfHomes -> listOfHomes?.let {
-                var totalEvaluation = 0
+        .observe(this, Observer { listOfHomes -> listOfHomes?.let {
+            var totalEvaluation = 0
 
-                it.forEach { home ->
-                    totalEvaluation += home.evaluationKRW!!
-                }
+            it.forEach { home ->
+                totalEvaluation += home.evaluationKRW!!
+            }
 
-                onChangedRecyclerView(it, totalEvaluation)
-            } })
+            onChangedRecyclerView(it, totalEvaluation)
+        } })
     }
 
     private fun initLayout() {

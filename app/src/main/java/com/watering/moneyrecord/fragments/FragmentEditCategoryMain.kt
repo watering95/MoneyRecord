@@ -2,6 +2,7 @@ package com.watering.moneyrecord.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
 import com.watering.moneyrecord.MainActivity
@@ -47,17 +48,25 @@ class FragmentEditCategoryMain : Fragment() {
         when(item?.itemId) {
             R.id.menu_edit_save -> {
                 binding.viewmodel?.run {
-                    categoryMain?.apply { selected?.let { kind = mList[it] } }.let { main ->
-                        when {
-                            this@FragmentEditCategoryMain.item.id == null -> mViewModel.insert(main)
-                            else -> mViewModel.update(main)
+                    categoryMain?.run {
+                        if(name.isNullOrEmpty()) Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                        else {
+                            categoryMain?.apply { selected?.let { kind = mList[it] } }.let { main ->
+                                when {
+                                    this@FragmentEditCategoryMain.item.id == null -> mViewModel.insert(main)
+                                    else -> mViewModel.update(main)
+                                }
+                                fragmentManager?.popBackStack()
+                            }
                         }
                     }
                 }
             }
-            R.id.menu_edit_delete -> { mViewModel.delete(this.item) }
+            R.id.menu_edit_delete -> {
+                mViewModel.delete(this.item)
+                fragmentManager?.popBackStack()
+            }
         }
-        fragmentManager?.popBackStack()
 
         return super.onOptionsItemSelected(item)
     }

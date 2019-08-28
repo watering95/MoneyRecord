@@ -3,6 +3,7 @@ package com.watering.moneyrecord.fragments
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -56,19 +57,28 @@ class FragmentEditCategorySub : Fragment() {
         when(item?.itemId) {
             R.id.menu_edit_save -> {
                 binding.viewmodel?.run {
-                    mViewModel.allCatMains.observe(this@FragmentEditCategorySub, Observer { list -> list?.let {
-                        categorySub?.apply { selected?.let { categoryMain = list[it].id } }.let { sub ->
-                            when {
-                                this@FragmentEditCategorySub.item.id == null -> mViewModel.insert(sub)
-                                else -> mViewModel.update(sub)
-                            }
+                    categorySub?.run {
+                        if(name.isNullOrEmpty() || selected < 0) {
+                            Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                        }else {
+                            mViewModel.allCatMains.observe(this@FragmentEditCategorySub, Observer { list -> list?.let {
+                                apply { selected.let { categoryMain = list[it].id } }.let { sub ->
+                                    when {
+                                        this@FragmentEditCategorySub.item.id == null -> mViewModel.insert(sub)
+                                        else -> mViewModel.update(sub)
+                                    }
+                                    fragmentManager?.popBackStack()
+                                }
+                            } })
                         }
-                    } })
+                    }
                 }
             }
-            R.id.menu_edit_delete -> { mViewModel.delete(this.item) }
+            R.id.menu_edit_delete -> {
+                mViewModel.delete(this.item)
+                fragmentManager?.popBackStack()
+            }
         }
-        fragmentManager?.popBackStack()
 
         return super.onOptionsItemSelected(item)
     }
