@@ -72,7 +72,7 @@ class FragmentHomeGraph : Fragment() {
                         val strDate = MyCalendar.calendarToStr(date)
 
                         listOfAccounts.forEach {account ->
-                            mViewModel.loadingDairyTotal(account.id, strDate).observeOnce( Observer { dairy -> dairy?.let {
+                            mViewModel.loadingDairyTotal(account.id, strDate, false).observeOnce( Observer { dairy -> dairy?.let {
                                 sumEvaluation += dairy.evaluationKRW!!
                                 sumPrincipal += dairy.principalKRW!!
                                 if(account == listOfAccounts.last()) {

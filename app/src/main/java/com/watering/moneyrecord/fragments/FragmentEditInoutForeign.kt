@@ -114,7 +114,7 @@ class FragmentEditInoutForeign : Fragment() {
 
     private fun onChangedDate() {
         binding.viewmodel?.run {
-            loadingIOForeign(idAccount, date, currency).observe(this@FragmentEditInoutForeign,  Observer { io -> io?.let {
+            loadingIOForeign(idAccount, date, currency, false).observe(this@FragmentEditInoutForeign,  Observer { io -> io?.let {
                 deposit = io.input
                 withdraw = io.output
                 depositKRW = io.inputKRW
@@ -122,7 +122,7 @@ class FragmentEditInoutForeign : Fragment() {
                 indexOfCurrency = io.currency
                 evaluationKRW = io.evaluationKRW
                 this.io = io
-                loadingDairyForeign(idAccount, date, currency).observe(this@FragmentEditInoutForeign, Observer { dairy -> dairy?.let {
+                loadingDairyForeign(idAccount, date, currency, false).observe(this@FragmentEditInoutForeign, Observer { dairy -> dairy?.let {
                     principal = dairy.principal
                 } })
             } })

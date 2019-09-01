@@ -92,10 +92,10 @@ class FragmentEditAccount : Fragment() {
                 account?.apply { selected?.let { group = list[it].id } }.let { account ->
                     when {
                         this@FragmentEditAccount.item.id == null -> {
-                            runBlocking {
-                                mViewModel.run {
-                                    insert(account).cancelAndJoin()
-                                    delay(100)
+                            mViewModel.run {
+                                val job = insert(account)
+                                runBlocking {
+                                    job.cancelAndJoin()
                                     getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce( Observer { account -> account?.let {
                                         getGroup(account.group).observeOnce( Observer { group -> group?.let {
                                             val home = Home()
@@ -110,10 +110,10 @@ class FragmentEditAccount : Fragment() {
                             }
                         }
                         else -> {
-                            runBlocking {
-                                mViewModel.run {
-                                    update(account).cancelAndJoin()
-                                    delay(100)
+                            mViewModel.run {
+                                val job = update(account)
+                                runBlocking {
+                                    job.cancelAndJoin()
                                     getHomeByIdAccount(account?.id).observeOnce( Observer { home -> home?.let {
                                         getGroup(account?.group).observeOnce( Observer { group -> group?.let {
                                             home.account = account?.number
@@ -122,7 +122,6 @@ class FragmentEditAccount : Fragment() {
                                             update(home)
                                         } })
                                     } })
-
                                 }
                             }
                         }

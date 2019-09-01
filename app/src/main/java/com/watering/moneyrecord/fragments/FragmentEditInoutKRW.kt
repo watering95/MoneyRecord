@@ -112,14 +112,14 @@ class FragmentEditInoutKRW : Fragment() {
 
     private fun onChangedDate() {
         binding.viewmodel?.run {
-            loadingIOKRW(idAccount, date).observe(this@FragmentEditInoutKRW, Observer { io -> io?.let {
+            loadingIOKRW(idAccount, date, false).observe(this@FragmentEditInoutKRW, Observer { io -> io?.let {
                 income = io.income
                 evaluation = io.evaluationKRW
                 deposit = io.input
                 spend = io.spendCard!! + io.spendCash!!
                 withdraw = io.output
                 this.io = io
-                loadingDairyKRW(idAccount, date).observe(this@FragmentEditInoutKRW, Observer { dairy -> dairy?.let {
+                loadingDairyKRW(idAccount, date, false).observe(this@FragmentEditInoutKRW, Observer { dairy -> dairy?.let {
                     principal = dairy.principalKRW
                 }})
             } })

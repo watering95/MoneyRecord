@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.viewmodel.ViewModelApp
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -19,7 +20,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                         when(home) {
                             null -> {
                                 getGroup(account.group).observeOnce(Observer { group -> group?.let {
-                                    loadingDairyTotal(account.id, MyCalendar.getToday()).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
+                                    loadingDairyTotal(account.id, MyCalendar.getToday(), false).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
                                         val newHome = Home()
                                         newHome.idAccount = account.id
                                         newHome.group = group.name
@@ -33,7 +34,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                                 } })
                             }
                             else -> {
-                                loadingDairyTotal(account.id, MyCalendar.getToday()).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
+                                loadingDairyTotal(account.id, MyCalendar.getToday(), false).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
                                     home.evaluationKRW = dairyTotal.evaluationKRW
                                     home.principalKRW = dairyTotal.principalKRW
                                     home.rate = dairyTotal.rate
@@ -48,11 +49,12 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
     }
     fun ioKRW(idAccount:Int?, selectedDate:String?) {
         viewmodel?.run {
-            loadingIOKRW(idAccount, selectedDate).observeOnce(Observer { io -> io?.let {
+            loadingIOKRW(idAccount, selectedDate, false).observeOnce(Observer { io -> io?.let {
                 val jobIO = if(io.id == null) insert(io) else update(io)
 
                 runBlocking {
                     jobIO.cancelAndJoin()
+                    delay(100)
                     dairyKRW(idAccount, selectedDate)
                 }
             } })
@@ -60,22 +62,31 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
     }
     fun dairyKRW(idAccount:Int?, selectedDate:String?) {
         viewmodel?.run {
-            loadingDairyKRW(idAccount, selectedDate).observeOnce(Observer { dairy -> dairy?.let {
+            loadingDairyKRW(idAccount, selectedDate, false).observeOnce(Observer { dairy -> dairy?.let {
                 val jobDairyKRW = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {
                     jobDairyKRW.cancelAndJoin()
+                    delay(100)
 
                     getAfterDairyKRW(idAccount, selectedDate).observeOnce(Observer { list ->
                         list?.let {
                             when {
                                 list.isNotEmpty() -> list.forEach { date ->
-                                    loadingDairyKRW(idAccount, date).observeOnce(Observer { d -> d?.let {
-                                        runBlocking {
-                                            update(d).cancelAndJoin()
-                                            if(date == list.last()) dairyTotal(idAccount, selectedDate)
-                                        }
+                                    var jobUpdateIO = Job()
+                                    var jobUpdateDairy = Job()
+                                    loadingIOKRW(idAccount, date, true).observeOnce(Observer { io -> io?.let {
+                                        jobUpdateIO = update(io)
+                                    } })
+                                    loadingDairyKRW(idAccount, date, true).observeOnce(Observer { d -> d?.let {
+                                        jobUpdateDairy = update(d)
                                     }})
+                                    runBlocking {
+                                        jobUpdateIO.cancelAndJoin()
+                                        jobUpdateDairy.cancelAndJoin()
+                                        delay(100)
+                                        if(date == list.last()) dairyTotal(idAccount, selectedDate)
+                                    }
                                 }
                                 else -> dairyTotal(idAccount, selectedDate)
                             }
@@ -87,22 +98,32 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
     }
     fun dairyForeign(idAccount:Int?, selectedDate:String?, currency: Int?) {
         viewmodel?.run {
-            loadingDairyForeign(idAccount, selectedDate, currency).observeOnce(Observer { dairy -> dairy?.let {
+            loadingDairyForeign(idAccount, selectedDate, currency, false).observeOnce(Observer { dairy -> dairy?.let {
                 val jobDairyForeign = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {
                     jobDairyForeign.cancelAndJoin()
+                    delay(100)
 
                     getAfterDairyForeign(idAccount, selectedDate, currency).observeOnce(Observer { list ->
                         list?.let {
                             when {
                                 list.isNotEmpty() -> list.forEach { date ->
-                                    loadingDairyForeign(idAccount, date, currency).observeOnce(Observer { d -> d?.let {
-                                        runBlocking {
-                                            update(d).cancelAndJoin()
-                                            if(date == list.last()) dairyTotal(idAccount, selectedDate)
-                                        }
+                                    var jobUpdateIO = Job()
+                                    var jobUpdateDairy = Job()
+                                    loadingIOForeign(idAccount, date, currency, true).observeOnce( Observer { io -> io?.let {
+                                        jobUpdateIO = update(io)
+                                    } })
+                                    loadingDairyForeign(idAccount, date, currency, true).observeOnce(Observer { d -> d?.let {
+                                        jobUpdateDairy = update(d)
+
                                     }})
+                                    runBlocking {
+                                        jobUpdateIO.cancelAndJoin()
+                                        jobUpdateDairy.cancelAndJoin()
+                                        delay(100)
+                                        if(date == list.last()) dairyTotal(idAccount, selectedDate)
+                                    }
                                 }
                                 else -> dairyTotal(idAccount, selectedDate)
                             }
@@ -116,7 +137,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
     }
     private fun dairyTotal(idAccount:Int?, selectedDate:String?) {
         viewmodel?.run {
-            loadingDairyTotal(idAccount, selectedDate).observeOnce(Observer { dairy -> dairy?.let {
+            loadingDairyTotal(idAccount, selectedDate, false).observeOnce(Observer { dairy -> dairy?.let {
                 val jobDairyTotal = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {
@@ -124,18 +145,23 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                     delay(100)
 
                     getAfterDairyTotal(idAccount, selectedDate).observeOnce(Observer { list -> list?.let {
+                        var jobUpdateHome: Job
                         when {
                             list.isNotEmpty() -> list.forEach { date ->
-                                loadingDairyTotal(idAccount, date).observeOnce(Observer { d -> d?.let {
+                                loadingDairyTotal(idAccount, date, true).observeOnce(Observer { d -> d?.let {
+                                    val jobUpdateDairyTotal = update(d)
                                     runBlocking {
-                                        update(d).cancelAndJoin()
+                                        jobUpdateDairyTotal.cancelAndJoin()
+                                        delay(100)
                                         if (date == list.last()) {
                                             getHomeByIdAccount(d.account).observeOnce(Observer { home -> home?.let {
                                                 home.rate = d.rate
                                                 home.principalKRW = d.principalKRW
                                                 home.evaluationKRW = d.evaluationKRW
+                                                jobUpdateHome = update(home)
                                                 runBlocking {
-                                                    update(home).cancelAndJoin()
+                                                    jobUpdateHome.cancelAndJoin()
+                                                    delay(100)
                                                     fragmentManager?.popBackStack()
                                                 }
                                             } })
@@ -148,8 +174,10 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                                     home.rate = dairy.rate
                                     home.principalKRW = dairy.principalKRW
                                     home.evaluationKRW = dairy.evaluationKRW
+                                    jobUpdateHome = update(home)
                                     runBlocking {
-                                        update(home).cancelAndJoin()
+                                        jobUpdateHome.cancelAndJoin()
+                                        delay(100)
                                         fragmentManager?.popBackStack()
                                     }
                                 } })
