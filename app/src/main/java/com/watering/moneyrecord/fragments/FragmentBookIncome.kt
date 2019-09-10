@@ -47,7 +47,7 @@ class FragmentBookIncome : Fragment() {
                     }
                 }
             })
-            dialog.show(fragmentManager, "dialog")
+            fragmentManager?.let { it -> dialog.show(it, "dialog") }
         }
 
         binding.buttonBackwardFragmentBookIncome.setOnClickListener {

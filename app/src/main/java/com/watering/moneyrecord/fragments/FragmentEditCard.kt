@@ -50,14 +50,14 @@ class FragmentEditCard : Fragment() {
         } })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        menu?.clear()
-        inflater?.inflate(R.menu.menu_edit,menu)
+        menu.clear()
+        inflater.inflate(R.menu.menu_edit,menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
             R.id.menu_edit_save -> {
                 binding.viewmodel?.run {
                     card?.run {

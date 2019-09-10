@@ -33,14 +33,14 @@ class FragmentEditGroup : Fragment() {
         binding.group = this.item
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        menu?.clear()
-        inflater?.inflate(R.menu.menu_edit,menu)
+        menu.clear()
+        inflater.inflate(R.menu.menu_edit,menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
             R.id.menu_edit_save -> {
                 if(binding.group!!.name.isNullOrEmpty()) {
                     Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()

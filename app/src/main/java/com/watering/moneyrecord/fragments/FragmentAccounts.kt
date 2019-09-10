@@ -27,7 +27,7 @@ import com.watering.moneyrecord.viewmodel.ViewModelAccounts
 class FragmentAccounts : Fragment() {
     private val mViewModel by lazy { (activity as MainActivity).mViewModel }
     private lateinit var binding: FragmentAccountsBinding
-    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager as FragmentManager }
+    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager }
     private lateinit var logs:List<DairyTotal>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -72,7 +72,7 @@ class FragmentAccounts : Fragment() {
                             }
                         }
                     })
-                    dialog.show(fragmentManager, "dialog")
+                    fragmentManager?.let { it -> dialog.show(it, "dialog") }
                 }
 
             }
@@ -90,7 +90,7 @@ class FragmentAccounts : Fragment() {
                     }
                 }
             })
-            dialog.show(fragmentManager, "dialog")
+            fragmentManager?.let { dialog.show(it, "dialog") }
         }
     }
 

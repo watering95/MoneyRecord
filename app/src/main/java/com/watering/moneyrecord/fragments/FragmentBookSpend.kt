@@ -47,7 +47,7 @@ class FragmentBookSpend : Fragment() {
                     }
                 }
             })
-            dialog.show(fragmentManager, "dialog")
+            fragmentManager?.let { it -> dialog.show(it, "dialog") }
         }
         binding.buttonBackwardFragmentBookSpend.setOnClickListener {
             val date = MyCalendar.changeDate(binding.date.toString(), -1)

@@ -16,7 +16,6 @@ import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditAccount
 import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 class FragmentEditAccount : Fragment() {
@@ -52,14 +51,14 @@ class FragmentEditAccount : Fragment() {
         } })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        menu?.clear()
-        inflater?.inflate(R.menu.menu_edit,menu)
+        menu.clear()
+        inflater.inflate(R.menu.menu_edit,menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
             R.id.menu_edit_save -> {
                 binding.viewmodel?.run {
                     account?.run {
