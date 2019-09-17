@@ -17,6 +17,7 @@ import com.watering.moneyrecord.databinding.FragmentEditSpendBinding
 import com.watering.moneyrecord.entities.Spend
 import com.watering.moneyrecord.entities.SpendCard
 import com.watering.moneyrecord.entities.SpendCash
+import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditSpend
@@ -121,6 +122,8 @@ class FragmentEditSpend : Fragment() {
                 fragmentManager?.let { dialog.show(it, "dialog") }
             }
         }
+
+        Converter.addTextChangedListener(binding.editAmountFragmentEditSpend)
 
         setHasOptionsMenu(true)
     }

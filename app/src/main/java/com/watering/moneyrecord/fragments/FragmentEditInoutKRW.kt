@@ -12,6 +12,7 @@ import com.watering.moneyrecord.BR
 import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditInoutKrwBinding
+import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditInoutKRW
@@ -75,6 +76,10 @@ class FragmentEditInoutKRW : Fragment() {
                 fragmentManager?.let { dialog.show(it, "dialog") }
             }
         }
+
+        Converter.addTextChangedListener(binding.editWithdrawFragmentEditInoutKrw)
+        Converter.addTextChangedListener(binding.editDepositFragmentEditInoutKrw)
+        Converter.addTextChangedListener(binding.editEvaluationFragmentEditInoutKrw)
 
         setHasOptionsMenu(true)
     }

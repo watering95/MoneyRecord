@@ -14,6 +14,7 @@ import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditIncomeBinding
 import com.watering.moneyrecord.entities.Income
+import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditIncome
@@ -81,6 +82,7 @@ class FragmentEditIncome : Fragment() {
                     }
                 }
             })
+
         }
 
         binding.buttonDateFragmentEditIncome.setOnClickListener {
@@ -100,6 +102,8 @@ class FragmentEditIncome : Fragment() {
                 fragmentManager?.let { it -> dialog.show(it, "dialog") }
             }
         }
+
+        Converter.addTextChangedListener(binding.editAmountFragmentEditIncome)
 
         setHasOptionsMenu(true)
     }
