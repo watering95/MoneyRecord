@@ -41,7 +41,7 @@ class FragmentAccounts : Fragment() {
         setHasOptionsMenu(false)
 
         binding.viewmodel?.run {
-            listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number } } as MutableLiveData<List<String?>>
+            listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description } } as MutableLiveData<List<String?>>
 
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
@@ -96,16 +96,16 @@ class FragmentAccounts : Fragment() {
 
     fun onIndexOfAccountChanged() {
         binding.viewmodel?.run {
-            Transformations.switchMap(listOfAccount) { list -> list?.let {
-                Transformations.map(getAccountByNumber(list[indexOfAccount])) { account -> account.id } }
-            }.observe(this@FragmentAccounts, Observer { id -> id?.let {
-                idAccount = id
-                getDairyTotalOrderByDate(idAccount).observe(this@FragmentAccounts, Observer { logs -> logs?.let {
-                    this@FragmentAccounts.logs = logs
-                    binding.recyclerviewFragmentAccounts.run {
-                        adapter = RecyclerViewAdapterAccounts(logs) { position -> itemClicked(position) }
-                    }
-                } })
+            allAccounts.observe(this@FragmentAccounts, Observer { list -> list?.let {
+                list[indexOfAccount].id?.let {
+                    idAccount = it
+                    getDairyTotalOrderByDate(idAccount).observe(this@FragmentAccounts, Observer { logs -> logs?.let {
+                        this@FragmentAccounts.logs = logs
+                        binding.recyclerviewFragmentAccounts.run {
+                            adapter = RecyclerViewAdapterAccounts(logs) { position -> itemClicked(position) }
+                        }
+                    } })
+                }
             } })
         }
     }
