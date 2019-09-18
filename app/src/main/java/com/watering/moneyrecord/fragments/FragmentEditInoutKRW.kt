@@ -77,9 +77,9 @@ class FragmentEditInoutKRW : Fragment() {
             }
         }
 
-        Converter.addTextChangedListener(binding.editWithdrawFragmentEditInoutKrw)
-        Converter.addTextChangedListener(binding.editDepositFragmentEditInoutKrw)
-        Converter.addTextChangedListener(binding.editEvaluationFragmentEditInoutKrw)
+        Converter.addConvertedTextChangedListener(binding.editWithdrawFragmentEditInoutKrw)
+        Converter.addConvertedTextChangedListener(binding.editDepositFragmentEditInoutKrw)
+        Converter.addConvertedTextChangedListener(binding.editEvaluationFragmentEditInoutKrw)
 
         setHasOptionsMenu(true)
     }

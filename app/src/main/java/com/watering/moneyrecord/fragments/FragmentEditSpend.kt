@@ -123,7 +123,7 @@ class FragmentEditSpend : Fragment() {
             }
         }
 
-        Converter.addTextChangedListener(binding.editAmountFragmentEditSpend)
+        Converter.addConvertedTextChangedListener(binding.editAmountFragmentEditSpend)
 
         setHasOptionsMenu(true)
     }

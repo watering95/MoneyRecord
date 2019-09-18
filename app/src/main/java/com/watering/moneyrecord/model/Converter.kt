@@ -44,10 +44,15 @@ object Converter {
         }
     }
 
-    fun addTextChangedListener(e: EditText) {
+    fun addConvertedTextChangedListener(e: EditText) {
         e.run {
             addTextChangedListener(object : TextWatcher {
+
+                var length = 0
+                var position = 0
+
                 override fun afterTextChanged(s: Editable?) {
+                    setSelection(position+(text.length-length))
                 }
 
                 override fun beforeTextChanged(
@@ -56,10 +61,11 @@ object Converter {
                     count: Int,
                     after: Int
                 ) {
+                    s?.let { length = it.length }
+                    position = selectionStart
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    setSelection(text.length)
                 }
             })
         }

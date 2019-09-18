@@ -103,7 +103,7 @@ class FragmentEditIncome : Fragment() {
             }
         }
 
-        Converter.addTextChangedListener(binding.editAmountFragmentEditIncome)
+        Converter.addConvertedTextChangedListener(binding.editAmountFragmentEditIncome)
 
         setHasOptionsMenu(true)
     }

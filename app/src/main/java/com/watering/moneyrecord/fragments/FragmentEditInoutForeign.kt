@@ -78,10 +78,10 @@ class FragmentEditInoutForeign : Fragment() {
             }
         }
 
-        Converter.addTextChangedListener(binding.editDepositKrwFragmentEditInoutForeign)
-        Converter.addTextChangedListener(binding.editWithdrawKrwFragmentEditInoutForeign)
-        Converter.addTextChangedListener(binding.editDepositFragmentEditInoutForeign)
-        Converter.addTextChangedListener(binding.editWithdrawFragmentEditInoutForeign)
+        Converter.addConvertedTextChangedListener(binding.editDepositKrwFragmentEditInoutForeign)
+        Converter.addConvertedTextChangedListener(binding.editWithdrawKrwFragmentEditInoutForeign)
+        Converter.addConvertedTextChangedListener(binding.editDepositFragmentEditInoutForeign)
+        Converter.addConvertedTextChangedListener(binding.editWithdrawFragmentEditInoutForeign)
 
         setHasOptionsMenu(true)
     }
