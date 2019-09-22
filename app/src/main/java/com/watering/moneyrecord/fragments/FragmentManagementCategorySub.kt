@@ -2,7 +2,9 @@ package com.watering.moneyrecord.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,18 +32,77 @@ class FragmentManagementCategorySub : Fragment() {
 
         setHasOptionsMenu(false)
 
+        val button = mView.findViewById<Button>(R.id.button_automatic_fragment_management_category_sub)
+        button.setOnClickListener { generateBasicCategory() }
+
         mViewModel.allCatSubs.observe(this, Observer { categorySubs -> categorySubs?.let {
             mView.findViewById<RecyclerView>(R.id.recyclerview_fragment_management_category_sub).run {
-                setHasFixedSize(true)
-                layoutManager = LinearLayoutManager(mView.context)
-                adapter = RecyclerViewAdapterManagementCategorySub(it) { position -> itemClicked(it[position]) }
+                val list = mutableListOf<String>()
+                it.forEach { catSub -> mViewModel.getCatMain(catSub.categoryMain).observeOnce(Observer {
+                    list.add(catSub.name + " : " + it.name)
+                    if(list.size == categorySubs.size) {
+                        setHasFixedSize(true)
+                        layoutManager = LinearLayoutManager(mView.context)
+                        adapter = RecyclerViewAdapterManagementCategorySub(list) { position -> itemClicked(list[position]) }
+                    }
+                }) }
             }
         } })
 
         val floating = mView.findViewById<FloatingActionButton>(R.id.floating_fragment_management_category_sub)
         floating.setOnClickListener { mViewModel.replaceFragment(fragmentManager!!, FragmentEditCategorySub().initInstance(CategorySub())) }
     }
-    private fun itemClicked(item: CategorySub) {
-        mViewModel.replaceFragment(fragmentManager!!, FragmentEditCategorySub().initInstance(item))
+    private fun itemClicked(item: String) {
+        mViewModel.run {
+            val cat = item.split(" : ")
+            getCatSub(cat[0], cat[1]).observeOnce(Observer { sub ->
+                mViewModel.replaceFragment(fragmentManager!!, FragmentEditCategorySub().initInstance(sub))
+            })
+        }
+    }
+    private fun generateBasicCategory() {
+        mViewModel.run {
+            categoryOfSpend.keys.forEach {
+                getCatMainByName(it).observeOnce(Observer { main ->
+                    if(main != null) {
+                        categoryOfSpend[it]?.forEach { sub ->
+                            getCatSub(sub, it).observeOnce(Observer { catSub ->
+                                if(catSub == null) {
+                                    val category = CategorySub()
+                                    category.categoryMain = main.id
+                                    category.name = sub
+                                    insert(category)
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+            categoryOfIncome.keys.forEach {
+                getCatMainByName(it).observeOnce(Observer { main ->
+                    if(main != null) {
+                        categoryOfIncome[it]?.forEach { sub ->
+                            getCatSub(sub, it).observeOnce(Observer { catSub ->
+                                if(catSub == null) {
+                                    val category = CategorySub()
+                                    category.categoryMain = main.id
+                                    category.name = sub
+                                    insert(category)
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+        observeForever(object: Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }

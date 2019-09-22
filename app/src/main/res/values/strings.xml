@@ -37,6 +37,7 @@
     <string name="payment_method">지불방식</string>
     <string name="forward">forward</string>
     <string name="backward">backward</string>
+    <string name="auto">자동생성</string>
     <string name="text"> </string>
     <string name="db_file_list">DB 파일 목록</string>
     <string name="title_spend">가계부 : 지출</string>
@@ -65,6 +66,8 @@
     <string name="toast_db_upload_error">DB File이 Upload 되지 았않습니다.</string>
     <string name="toast_date_error">오늘 이전 날짜로 선택해 주세요.</string>
     <string name="toast_warning_input">입력값을 확인해 주세요.</string>
+    <string name="toast_save_success">저장되었습니다.</string>
+    <string name="toast_delete_success">삭제되었습니다.</string>
     <array name="category">
         <item name="spend">spend</item>
         <item name="income">income</item>

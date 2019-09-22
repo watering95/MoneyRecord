@@ -10,6 +10,8 @@ import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditGroupBinding
 import com.watering.moneyrecord.entities.Group
 import com.watering.moneyrecord.viewmodel.ViewModelApp
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.runBlocking
 
 class FragmentEditGroup : Fragment() {
     private lateinit var item: Group
@@ -45,14 +47,24 @@ class FragmentEditGroup : Fragment() {
                 if(binding.group!!.name.isNullOrEmpty()) {
                     Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
                 } else {
-                    if(this.item.id == null) mViewModel.insert(binding.group)
-                    else mViewModel.update(binding.group)
-                    fragmentManager?.popBackStack()
+                    val job = when {
+                        this.item.id == null -> mViewModel.insert(binding.group)
+                        else -> mViewModel.update(binding.group)
+                    }
+                    runBlocking {
+                        job.cancelAndJoin()
+                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                        fragmentManager?.popBackStack()
+                    }
                 }
             }
             R.id.menu_edit_delete -> {
-                mViewModel.delete(this.item)
-                fragmentManager?.popBackStack()
+                val job = mViewModel.delete(this.item)
+                runBlocking {
+                    job.cancelAndJoin()
+                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                    fragmentManager?.popBackStack()
+                }
             }
         }
 

@@ -118,10 +118,13 @@ class FragmentEditIncome : Fragment() {
         when(item.itemId) {
             R.id.menu_edit_save -> save()
             R.id.menu_edit_delete -> binding.viewmodel?.run {
+                val job = delete(income)
                 runBlocking {
-                    delete(income).cancelAndJoin()
-                    processing.ioKRW(idAccount, income.date)
+                    job.cancelAndJoin()
+                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                    fragmentManager?.popBackStack()
                 }
+
             }
         }
 
@@ -165,7 +168,9 @@ class FragmentEditIncome : Fragment() {
 
                 runBlocking {
                     jobIncome.cancelAndJoin()
+                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                     processing.ioKRW(idAccount, income.date)
+                    fragmentManager?.popBackStack()
                 }
             }
         }

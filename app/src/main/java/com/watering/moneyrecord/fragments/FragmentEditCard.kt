@@ -13,6 +13,9 @@ import com.watering.moneyrecord.databinding.FragmentEditCardBinding
 import com.watering.moneyrecord.entities.Card
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditCard
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.runBlocking
 
 class FragmentEditCard : Fragment() {
     private lateinit var item: Card
@@ -66,11 +69,15 @@ class FragmentEditCard : Fragment() {
                         else {
                             mViewModel.allAccounts.observe(this@FragmentEditCard, Observer { list -> list?.let {
                                 card?.apply { selected.let { account = list[it].id } }.let { card ->
-                                    when {
+                                    val job = when {
                                         this@FragmentEditCard.item.id == null -> mViewModel.insert(card)
                                         else -> mViewModel.update(card)
                                     }
-                                    fragmentManager?.popBackStack()
+                                    runBlocking {
+                                        job.cancelAndJoin()
+                                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                        fragmentManager?.popBackStack()
+                                    }
                                 }
                             } })
                         }
@@ -78,11 +85,14 @@ class FragmentEditCard : Fragment() {
                 }
             }
             R.id.menu_edit_delete -> {
-                mViewModel.delete(this.item)
-                fragmentManager?.popBackStack()
+                val job = mViewModel.delete(this.item)
+                runBlocking {
+                    job.cancelAndJoin()
+                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                    fragmentManager?.popBackStack()
+                }
             }
         }
-
 
         return super.onOptionsItemSelected(item)
     }

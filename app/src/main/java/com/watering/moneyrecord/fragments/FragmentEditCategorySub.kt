@@ -13,6 +13,8 @@ import com.watering.moneyrecord.databinding.FragmentEditCategorysubBinding
 import com.watering.moneyrecord.entities.CategorySub
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditCategorySub
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.runBlocking
 
 class FragmentEditCategorySub : Fragment() {
     private lateinit var item: CategorySub
@@ -39,10 +41,14 @@ class FragmentEditCategorySub : Fragment() {
                 when {
                     this.item.id != null -> mViewModel.getCatMain(this.item.categoryMain).observe(this, Observer { main -> main?.let {
                         binding.viewmodel = ViewModelEditCategorySub(this.item, list.indexOf(main.name))
+                        binding.adapter = ArrayAdapter(activity,android.R.layout.simple_spinner_item,list)
+
                     } })
-                    else -> binding.viewmodel = ViewModelEditCategorySub(this.item, 0)
+                    else -> {
+                        binding.viewmodel = ViewModelEditCategorySub(this.item, 0)
+                        binding.adapter = ArrayAdapter(activity,android.R.layout.simple_spinner_item,list)
+                    }
                 }
-                binding.adapter = ArrayAdapter(activity,android.R.layout.simple_spinner_item,list)
             }
         } })
     }
@@ -63,11 +69,15 @@ class FragmentEditCategorySub : Fragment() {
                         }else {
                             mViewModel.allCatMains.observe(this@FragmentEditCategorySub, Observer { list -> list?.let {
                                 apply { selected.let { categoryMain = list[it].id } }.let { sub ->
-                                    when {
+                                    val job = when {
                                         this@FragmentEditCategorySub.item.id == null -> mViewModel.insert(sub)
                                         else -> mViewModel.update(sub)
                                     }
-                                    fragmentManager?.popBackStack()
+                                    runBlocking {
+                                        job.cancelAndJoin()
+                                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                        fragmentManager?.popBackStack()
+                                    }
                                 }
                             } })
                         }
@@ -75,8 +85,12 @@ class FragmentEditCategorySub : Fragment() {
                 }
             }
             R.id.menu_edit_delete -> {
-                mViewModel.delete(this.item)
-                fragmentManager?.popBackStack()
+                val job = mViewModel.delete(this.item)
+                runBlocking {
+                    job.cancelAndJoin()
+                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                    fragmentManager?.popBackStack()
+                }
             }
         }
 

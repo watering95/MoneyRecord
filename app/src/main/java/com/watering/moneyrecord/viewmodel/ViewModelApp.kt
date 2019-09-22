@@ -28,6 +28,24 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     val allCards = repository.allCards
     val allHomes = repository.allHomes
 
+    val categoryOfSpend = mapOf(
+        "식비" to listOf("식자재","외식비","간식비","기타"),
+        "교통" to listOf("대중교통비","주유비","차량관리비","보험료","자동차세","기타"),
+        "구입" to listOf("가구구입","가전구입","기타"),
+        "생활" to listOf("관리비","공공요금","소모품","수리비","기타"),
+        "통신" to listOf("유선전화","이동통신","인터넷","기타"),
+        "의료" to listOf("병원비","약값","기타"),
+        "교육" to listOf("학원비","납부금","교재","학용품","기타"),
+        "의류" to listOf("의류구입","신발구입","수선","세탁","기타"),
+        "가족행복" to listOf("용돈지급","선물","여행","기타"),
+        "사회활동" to listOf("모임회비","경조사","기부","기타"),
+        "금융" to listOf("저축","투자"))
+    val categoryOfIncome = mapOf(
+        "정규수입" to listOf("월급","용돈"),
+        "상여" to listOf("명절상여","성과급","기타"),
+        "금융" to listOf("이자","배당","투자수익","기타"),
+        "기타수입" to listOf("기타"))
+
     fun <T> insert(t: T) = scope.launch(Dispatchers.IO) { repository.insert(t) }
     fun <T> update(t: T) = scope.launch(Dispatchers.IO) { repository.update(t) }
     fun <T> delete(t: T) = scope.launch(Dispatchers.IO) { repository.delete(t) }
@@ -58,6 +76,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun getCatMain(id: Int?) = repository.getCatMain(id)
     fun getCatMainsByKind(kind: String?) = repository.getCatMain(kind)
     fun getCatMainBySub(idSub: Int?) = repository.getCatMainBySub(idSub)
+    fun getCatMainByName(name: String?) = repository.getCatMainByName(name)
 
     fun getCatSub(id: Int?) = repository.getCatSub(id)
     fun getCatSub(nameOfSub:String?, nameOfMain:String?) = repository.getCatSub(nameOfSub, nameOfMain)

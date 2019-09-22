@@ -149,10 +149,14 @@ class FragmentEditSpend : Fragment() {
                     }})
                 }
 
+                val job = delete(spend)
+
                 runBlocking {
-                    delete(spend).cancelAndJoin()
+                    job.cancelAndJoin()
                     jobDelete.cancelAndJoin()
+                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                     processing.ioKRW(idAccount, spend.date)
+                    fragmentManager?.popBackStack()
                 }
             }
         }
@@ -250,7 +254,9 @@ class FragmentEditSpend : Fragment() {
                         jobSpend2.cancelAndJoin()
                         jobDelete.cancelAndJoin()
                         delay(100)
+                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                         processing.ioKRW(idAccount, spend.date)
+                        fragmentManager?.popBackStack()
                     }
                 } })
             }

@@ -71,6 +71,7 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     fun getCatMain(id: Int?) = daoCatMain.get(id)
     fun getCatMain(kind: String?) = daoCatMain.get(kind)
     fun getCatMainBySub(id_sub: Int?) = daoCatMain.getBySub(id_sub)
+    fun getCatMainByName(name: String?) = daoCatMain.getByName(name)
 
     fun getCardByCode(code: String?) = daoCard.getByCode(code)
     fun getCardByNumber(number: String?) = daoCard.getByNumber(number)
@@ -78,7 +79,7 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     fun getIncomes(date: String?) = daoIncome.get(date)
 
     fun getCatSub(id: Int?) = daoCatSub.get(id)
-    fun getCatSub(nameOfSub: String?, nameOfMain:String?) = daoCatSub.get(nameOfSub, nameOfMain)
+    fun getCatSub(nameOfSub: String?, nameOfMain: String?) = daoCatSub.get(nameOfSub, nameOfMain)
     fun getCatSubsByMain(nameOfMain: String?) = daoCatSub.getByMain(nameOfMain)
     fun getCatSubsByMain(id_main: Int?) = daoCatSub.getByMain(id_main)
 

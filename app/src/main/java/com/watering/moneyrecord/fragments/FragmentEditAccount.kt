@@ -64,10 +64,7 @@ class FragmentEditAccount : Fragment() {
                     account?.run {
                         if(description.isNullOrEmpty() || institute.isNullOrEmpty() || number.isNullOrEmpty())
                             Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
-                        else {
-                            save()
-                            fragmentManager?.popBackStack()
-                        }
+                        else save()
                     }
                 }
             }
@@ -75,8 +72,12 @@ class FragmentEditAccount : Fragment() {
                 mViewModel.run {
                     delete(this@FragmentEditAccount.item)
                     getHomeByIdAccount(this@FragmentEditAccount.item.id).observeOnce(Observer { home -> home?.let {
-                        delete(it)
-                        fragmentManager?.popBackStack()
+                        val job = delete(it)
+                        runBlocking {
+                            job.cancelAndJoin()
+                            Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                            fragmentManager?.popBackStack()
+                        }
                     } })
                 }
             }
@@ -102,7 +103,12 @@ class FragmentEditAccount : Fragment() {
                                             home.account = account.number
                                             home.description = account.institute + account.description
                                             home.group = group.name
-                                            insert(home)
+                                            val jj = insert(home)
+                                            runBlocking {
+                                                jj.cancelAndJoin()
+                                                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                                fragmentManager?.popBackStack()
+                                            }
                                         }})
                                     } })
                                 }
@@ -113,12 +119,18 @@ class FragmentEditAccount : Fragment() {
                                 val job = update(account)
                                 runBlocking {
                                     job.cancelAndJoin()
+                                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                     getHomeByIdAccount(account?.id).observeOnce( Observer { home -> home?.let {
                                         getGroup(account?.group).observeOnce( Observer { group -> group?.let {
                                             home.account = account?.number
                                             home.description = account?.institute + " " + account?.description
                                             home.group = group.name
-                                            update(home)
+                                            val jj = update(home)
+                                            runBlocking {
+                                                jj.cancelAndJoin()
+                                                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                                fragmentManager?.popBackStack()
+                                            }
                                         } })
                                     } })
                                 }

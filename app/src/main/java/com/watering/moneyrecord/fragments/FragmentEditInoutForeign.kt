@@ -96,9 +96,12 @@ class FragmentEditInoutForeign : Fragment() {
         when(item.itemId) {
             R.id.menu_edit_save -> save()
             R.id.menu_edit_delete -> binding.viewmodel?.run {
+                val job = delete(io)
                 runBlocking {
-                    delete(io).cancelAndJoin()
+                    job.cancelAndJoin()
+                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                     processing.dairyForeign(idAccount, io.date, io.currency)
+                    fragmentManager?.popBackStack()
                 }
             }
         }
@@ -112,8 +115,9 @@ class FragmentEditInoutForeign : Fragment() {
 
             runBlocking {
                 jobIO.cancelAndJoin()
-
+                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                 processing.dairyForeign(idAccount, io.date, io.currency)
+                fragmentManager?.popBackStack()
             }
         }
     }

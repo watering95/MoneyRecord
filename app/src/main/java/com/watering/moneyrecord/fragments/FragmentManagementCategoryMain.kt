@@ -2,7 +2,9 @@ package com.watering.moneyrecord.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +32,9 @@ class FragmentManagementCategoryMain : Fragment() {
 
         setHasOptionsMenu(false)
 
+        val button = mView.findViewById<Button>(R.id.button_automatic_fragment_management_category_main)
+        button.setOnClickListener { generateBasicCategory() }
+
         mViewModel.allCatMains.observe(this, Observer { categoryMains -> categoryMains?.let {
             mView.findViewById<RecyclerView>(R.id.recyclerview_fragment_management_category_main).run {
                 setHasFixedSize(true)
@@ -43,5 +48,56 @@ class FragmentManagementCategoryMain : Fragment() {
     }
     private fun itemClicked(item: CategoryMain) {
         mViewModel.replaceFragment(fragmentManager!!, FragmentEditCategoryMain().initInstance(item))
+    }
+    private fun generateBasicCategory() {
+        mViewModel.run {
+            allCatMains.observeOnce( Observer { categoryMains ->
+                if(categoryMains.isNotEmpty()) {
+                    categoryOfSpend.keys.forEach {
+                        var isSame = false
+                        categoryMains.forEach { main -> if(main.name == it) isSame = true }
+                        if(!isSame) {
+                            val category = CategoryMain()
+                            category.kind = "spend"
+                            category.name = it
+                            insert(category)
+                        }
+                    }
+                    categoryOfIncome.keys.forEach {
+                        var isSame = false
+                        categoryMains.forEach { main -> if(main.name == it) isSame = true }
+                        if(!isSame) {
+                            val category = CategoryMain()
+                            category.kind = "income"
+                            category.name = it
+                            insert(category)
+                        }
+                    }
+                } else {
+                    categoryOfSpend.keys.forEach {
+                        val category = CategoryMain()
+                        category.kind = "spend"
+                        category.name = it
+                        insert(category)
+                    }
+                    categoryOfIncome.keys.forEach {
+                        val category = CategoryMain()
+                        category.kind = "income"
+                        category.name = it
+                        insert(category)
+                    }
+                }
+            })
+
+        }
+    }
+
+    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+        observeForever(object: Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }

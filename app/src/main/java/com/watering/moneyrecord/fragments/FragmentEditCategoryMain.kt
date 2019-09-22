@@ -11,6 +11,8 @@ import com.watering.moneyrecord.databinding.FragmentEditCategorymainBinding
 import com.watering.moneyrecord.entities.CategoryMain
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditCategoryMain
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.runBlocking
 
 class FragmentEditCategoryMain : Fragment() {
     private lateinit var item: CategoryMain
@@ -52,19 +54,27 @@ class FragmentEditCategoryMain : Fragment() {
                         if(name.isNullOrEmpty()) Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
                         else {
                             categoryMain?.apply { selected?.let { kind = mList[it] } }.let { main ->
-                                when {
+                                val job = when {
                                     this@FragmentEditCategoryMain.item.id == null -> mViewModel.insert(main)
                                     else -> mViewModel.update(main)
                                 }
-                                fragmentManager?.popBackStack()
+                                runBlocking {
+                                    job.cancelAndJoin()
+                                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                    fragmentManager?.popBackStack()
+                                }
                             }
                         }
                     }
                 }
             }
             R.id.menu_edit_delete -> {
-                mViewModel.delete(this.item)
-                fragmentManager?.popBackStack()
+                val job = mViewModel.delete(this.item)
+                runBlocking {
+                    job.cancelAndJoin()
+                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                    fragmentManager?.popBackStack()
+                }
             }
         }
 
