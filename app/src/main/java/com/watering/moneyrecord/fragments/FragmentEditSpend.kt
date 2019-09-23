@@ -72,18 +72,18 @@ class FragmentEditSpend : Fragment() {
             when(oldCode[0]) {
                 '1' -> {
                     indexOfPay1 = 0
-                    listOfPay2.observe(this@FragmentEditSpend, Observer { list -> list?.let {
+                    listOfPay2.observeOnce( Observer { list -> list?.let {
                         getAccountByCode(oldCode).observe(this@FragmentEditSpend, Observer { account -> account?.let {
-                            indexOfPay2 = list.indexOf(account.number)
+                            indexOfPay2 = list.indexOf(account.number + " " + account.institute + " " + account.description)
                             idAccount = account.id
                         } })
                     } })
                 }
                 '2' -> {
                     indexOfPay1 = 1
-                    listOfPay2.observe(this@FragmentEditSpend, Observer { list -> list?.let {
+                    listOfPay2.observeOnce( Observer { list -> list?.let {
                         getCardByCode(oldCode).observe(this@FragmentEditSpend, Observer { card -> card?.let {
-                            indexOfPay2 = list.indexOf(card.number)
+                            indexOfPay2 = list.indexOf(card.number + " " + card.company + " " + card.name)
                             idCard = card.id
                             idAccount = card.account
                         } })
@@ -92,12 +92,12 @@ class FragmentEditSpend : Fragment() {
             }
 
             getCatMainBySub(this@FragmentEditSpend.spend.category).observe(this@FragmentEditSpend, Observer { main -> main?.let {
-                Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observe(this@FragmentEditSpend, Observer { index -> index?.let {
+                Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let {
                     indexOfMain = index
                 } })
                 listOfSub = Transformations.map(getCatSubsByMain(main.id)) { list ->
                     list.map { it.name }.apply {
-                        getCatSub(this@FragmentEditSpend.spend.category).observe(this@FragmentEditSpend, Observer { sub -> sub?.let {
+                        getCatSub(this@FragmentEditSpend.spend.category).observeOnce( Observer { sub -> sub?.let {
                             indexOfSub = indexOf(sub.name)
                         } })
                     }
@@ -141,10 +141,10 @@ class FragmentEditSpend : Fragment() {
                 var jobDelete = Job()
 
                 when(oldCode[0]) {
-                    '1' -> getSpendCash(oldCode).observe(this@FragmentEditSpend, Observer { cash -> cash?.let {
+                    '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let {
                         jobDelete = delete(cash)
                     }})
-                    '2' -> getSpendCard(oldCode).observe(this@FragmentEditSpend, Observer { card -> card?.let {
+                    '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let {
                         jobDelete = delete(card)
                     }})
                 }
@@ -156,7 +156,6 @@ class FragmentEditSpend : Fragment() {
                     jobDelete.cancelAndJoin()
                     Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                     processing.ioKRW(idAccount, spend.date)
-                    fragmentManager?.popBackStack()
                 }
             }
         }
@@ -166,39 +165,33 @@ class FragmentEditSpend : Fragment() {
 
     fun onChangedIndexOfSub() {
         binding.viewmodel?.run {
-            runBlocking {
-                delay(100)
-                Transformations.switchMap(listOfMain) { listOfMain ->
-                    Transformations.switchMap(listOfSub) { listOfSub ->
-                        if(indexOfSub < 0 || indexOfMain < 0) null
-                        else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
-                    }
-                }.observe(this@FragmentEditSpend, Observer { sub -> sub?.let {
-                    spend.category = sub.id
-                } })
-            }
+            Transformations.switchMap(listOfMain) { listOfMain ->
+                Transformations.switchMap(listOfSub) { listOfSub ->
+                    if(indexOfSub < 0 || indexOfMain < 0) null
+                    else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
+                }
+            }.observeOnce( Observer { sub -> sub?.let {
+                spend.category = sub.id
+            } })
         }
     }
     fun onChangedIndexOfPay2() {
         binding.viewmodel?.run {
-            runBlocking {
-                delay(100)
-                when(newCode[0]) {
-                    '1' -> {
-                        Transformations.switchMap(listOfPay2) { list -> list?.let {
-                            if(list.isNotEmpty()) getAccountByNumber(it[indexOfPay2]) else null }
-                        }.observe(this@FragmentEditSpend, Observer { account -> account?.let {
-                            idAccount = account.id
-                        } })
-                    }
-                    '2' -> {
-                        Transformations.switchMap(listOfPay2) { list -> list?.let{
-                            if(list.isNotEmpty()) getCardByNumber(it[indexOfPay2]) else null }
-                        } .observe(this@FragmentEditSpend, Observer { card -> card?.let {
-                            idCard = card.id
-                            idAccount = card.account
-                        } })
-                    }
+            when(newCode[0]) {
+                '1' -> {
+                    Transformations.switchMap(listOfPay2) { list -> list?.let {
+                        if(list.isNotEmpty()) getAccountByNumber(it[indexOfPay2]!!.split(" ")[0]) else null }
+                    }.observeOnce( Observer { account -> account?.let {
+                        idAccount = account.id
+                    } })
+                }
+                '2' -> {
+                    Transformations.switchMap(listOfPay2) { list -> list?.let{
+                        if(list.isNotEmpty()) getCardByNumber(it[indexOfPay2]!!.split(" ")[0]) else null }
+                    } .observeOnce( Observer { card -> card?.let {
+                        idCard = card.id
+                        idAccount = card.account
+                    } })
                 }
             }
         }
@@ -221,10 +214,10 @@ class FragmentEditSpend : Fragment() {
                     val jobSpend1 = if(spend.id == null) insert(spend)
                     else {
                         when(oldCode[0]) {
-                            '1' -> getSpendCash(oldCode).observe(this@FragmentEditSpend, Observer { cash -> cash?.let {
+                            '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let {
                                 jobDelete = delete(cash)
                             } })
-                            '2' -> getSpendCard(oldCode).observe(this@FragmentEditSpend, Observer { card -> card?.let {
+                            '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let {
                                 jobDelete = delete(card)
                             } })
                         }
@@ -256,7 +249,6 @@ class FragmentEditSpend : Fragment() {
                         delay(100)
                         Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                         processing.ioKRW(idAccount, spend.date)
-                        fragmentManager?.popBackStack()
                     }
                 } })
             }

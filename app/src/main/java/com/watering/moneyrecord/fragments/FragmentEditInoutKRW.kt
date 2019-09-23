@@ -98,7 +98,6 @@ class FragmentEditInoutKRW : Fragment() {
                     delete(io).cancelAndJoin()
                     Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                     processing.dairyKRW(idAccount, io.date)
-                    fragmentManager?.popBackStack()
                 }
             }
         }
@@ -112,9 +111,8 @@ class FragmentEditInoutKRW : Fragment() {
 
             runBlocking {
                 jobIO.cancelAndJoin()
-                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                 processing.dairyKRW(idAccount, io.date)
-                fragmentManager?.popBackStack()
+                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
             }
         }
     }

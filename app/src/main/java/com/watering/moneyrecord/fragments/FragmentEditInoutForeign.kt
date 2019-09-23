@@ -101,7 +101,6 @@ class FragmentEditInoutForeign : Fragment() {
                     job.cancelAndJoin()
                     Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                     processing.dairyForeign(idAccount, io.date, io.currency)
-                    fragmentManager?.popBackStack()
                 }
             }
         }
@@ -117,7 +116,6 @@ class FragmentEditInoutForeign : Fragment() {
                 jobIO.cancelAndJoin()
                 Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                 processing.dairyForeign(idAccount, io.date, io.currency)
-                fragmentManager?.popBackStack()
             }
         }
     }

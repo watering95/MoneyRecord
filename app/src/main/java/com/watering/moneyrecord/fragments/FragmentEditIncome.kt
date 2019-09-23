@@ -47,7 +47,7 @@ class FragmentEditIncome : Fragment() {
 
         binding.viewmodel?.run {
             listOfMain = Transformations.map(getCatMainsByKind("income")) { list -> list.map { it.name } } as MutableLiveData<List<String?>>
-            listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number } } as MutableLiveData<List<String?>>
+            listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description } } as MutableLiveData<List<String?>>
 
             income = this@FragmentEditIncome.income
             if(income.id == null) {
@@ -65,7 +65,7 @@ class FragmentEditIncome : Fragment() {
                             indexOfSub = indexOf(sub.name)
                             listOfAccount.observe(this@FragmentEditIncome, Observer { list -> list?.let {
                                 getAccount(income.account).observe(this@FragmentEditIncome, Observer { account -> account?.let {
-                                    indexOfAccount = list.indexOf(account.number)
+                                    indexOfAccount = list.indexOf(account.number + " " + account.institute + " " + account.description )
                                     idAccount = account.id
                                 } })
                             } })
@@ -121,10 +121,9 @@ class FragmentEditIncome : Fragment() {
                 val job = delete(income)
                 runBlocking {
                     job.cancelAndJoin()
+                    processing.ioKRW(idAccount,income.date)
                     Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                    fragmentManager?.popBackStack()
                 }
-
             }
         }
 
@@ -133,30 +132,24 @@ class FragmentEditIncome : Fragment() {
 
     fun onChangedIndexOfSub() {
         binding.viewmodel?.run {
-            runBlocking {
-                delay(100)
-                Transformations.switchMap(listOfMain) { listOfMain ->
-                    Transformations.switchMap(listOfSub) { listOfSub ->
-                        if(indexOfSub < 0 || indexOfMain < 0) null
-                        else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
-                    }
-                }.observe(this@FragmentEditIncome, Observer { sub -> sub?.let {
-                    income.category = sub.id
-                } })
-            }
+            Transformations.switchMap(listOfMain) { listOfMain ->
+                Transformations.switchMap(listOfSub) { listOfSub ->
+                    if(indexOfSub < 0 || indexOfMain < 0) null
+                    else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
+                }
+            }.observe(this@FragmentEditIncome, Observer { sub -> sub?.let {
+                income.category = sub.id
+            } })
         }
     }
     fun onChangedIndexOfAccount() {
         binding.viewmodel?.run {
-            runBlocking {
-                delay(100)
-                Transformations.switchMap(listOfAccount) { list ->
-                    if(indexOfAccount < 0) null else getAccountByNumber(list[indexOfAccount])
-                }.observe(this@FragmentEditIncome, Observer { account -> account?.let {
-                    idAccount = account.id
-                    income.account = account.id
-                } })
-            }
+            Transformations.switchMap(listOfAccount) { list ->
+                if(indexOfAccount < 0) null else getAccountByNumber(list[indexOfAccount])
+            }.observe(this@FragmentEditIncome, Observer { account -> account?.let {
+                idAccount = account.id
+                income.account = account.id
+            } })
         }
     }
     private fun save() {
@@ -168,9 +161,8 @@ class FragmentEditIncome : Fragment() {
 
                 runBlocking {
                     jobIncome.cancelAndJoin()
-                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                     processing.ioKRW(idAccount, income.date)
-                    fragmentManager?.popBackStack()
+                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                 }
             }
         }

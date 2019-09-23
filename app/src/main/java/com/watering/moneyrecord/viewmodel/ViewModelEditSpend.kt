@@ -70,8 +70,8 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
         field = value
         newCode = newCode.replaceRange(0,1,"${field+1}")
         when(field) {
-            0 -> listOfPay2 = Transformations.map(allAccounts) { list -> list.map { it.number }} as MutableLiveData<List<String?>>
-            1 -> listOfPay2 = Transformations.map(allCards) { list -> list.map { it.number } } as MutableLiveData<List<String?>>
+            0 -> listOfPay2 = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description }} as MutableLiveData<List<String?>>
+            1 -> listOfPay2 = Transformations.map(allCards) { list -> list.map { it.number + " " + it.company + " " + it.name} } as MutableLiveData<List<String?>>
         }
         indexOfPay2 = 0
         notifyPropertyChanged(BR.indexOfPay1)
