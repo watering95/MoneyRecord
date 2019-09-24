@@ -19,7 +19,6 @@ import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditIncome
 import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -47,12 +46,11 @@ class FragmentEditIncome : Fragment() {
 
         binding.viewmodel?.run {
             listOfMain = Transformations.map(getCatMainsByKind("income")) { list -> list.map { it.name } } as MutableLiveData<List<String?>>
-            listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description } } as MutableLiveData<List<String?>>
+            listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description } } as MutableLiveData<List<String>>
 
             income = this@FragmentEditIncome.income
             if(income.id == null) {
                 income = income.apply { this.date = MyCalendar.getToday() }
-                notifyPropertyChanged(BR.income)
             }
 
             getCatMainBySub(this@FragmentEditIncome.income.category).observe(this@FragmentEditIncome, Observer { main -> main?.let {
@@ -92,10 +90,7 @@ class FragmentEditIncome : Fragment() {
                         val select = MyCalendar.strToCalendar(date)
                         when {
                             Calendar.getInstance().before(select) -> Toast.makeText(activity, R.string.toast_date_error, Toast.LENGTH_SHORT).show()
-                            else -> {
-                                income = income.apply { this.date = MyCalendar.calendarToStr(select) }
-                                notifyPropertyChanged(BR.income)
-                            }
+                            else -> income = income.apply { this.date = MyCalendar.calendarToStr(select) }
                         }
                     }
                 })

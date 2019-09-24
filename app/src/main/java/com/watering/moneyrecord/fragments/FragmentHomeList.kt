@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.watering.moneyrecord.MainActivity
@@ -18,7 +17,7 @@ class FragmentHomeList : Fragment() {
     private lateinit var mViewModel: ViewModelApp
     private lateinit var binding: FragmentHomeListBinding
     var group: String? = ""
-    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager as FragmentManager }
+    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_home_list, container, false)

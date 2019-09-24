@@ -56,7 +56,6 @@ class FragmentEditInoutKRW : Fragment() {
             })
 
             date = this@FragmentEditInoutKRW.date
-            notifyPropertyChanged(BR.date)
         }
 
         binding.buttonDateFragmentEditInoutKrw.setOnClickListener {
@@ -68,7 +67,6 @@ class FragmentEditInoutKRW : Fragment() {
                             Calendar.getInstance().before(select) -> Toast.makeText(activity, R.string.toast_date_error, Toast.LENGTH_SHORT).show()
                             else -> {
                                 this@run.date = MyCalendar.calendarToStr(select)
-                                notifyPropertyChanged(BR.date)
                             }
                         }
                     }

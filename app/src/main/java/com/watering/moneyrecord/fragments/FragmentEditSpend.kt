@@ -66,8 +66,7 @@ class FragmentEditSpend : Fragment() {
             spend = this@FragmentEditSpend.spend
             this@FragmentEditSpend.spend.code?.let { oldCode = it }
             if(spend.id == null) {
-                spend = spend.apply { this.date = MyCalendar.getToday() }
-                notifyPropertyChanged(BR.spend)
+                spend = spend.apply { date = MyCalendar.getToday() }
             }
             when(oldCode[0]) {
                 '1' -> {
@@ -112,10 +111,7 @@ class FragmentEditSpend : Fragment() {
                         val select = MyCalendar.strToCalendar(date)
                         when {
                             Calendar.getInstance().before(select) -> Toast.makeText(activity, R.string.toast_date_error, Toast.LENGTH_SHORT).show()
-                            else -> {
-                                spend = spend.apply { this.date = MyCalendar.calendarToStr(select) }
-                                notifyPropertyChanged(BR.spend)
-                            }
+                            else -> spend = spend.apply { this.date = MyCalendar.calendarToStr(select) }
                         }
                     }
                 })
@@ -141,12 +137,8 @@ class FragmentEditSpend : Fragment() {
                 var jobDelete = Job()
 
                 when(oldCode[0]) {
-                    '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let {
-                        jobDelete = delete(cash)
-                    }})
-                    '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let {
-                        jobDelete = delete(card)
-                    }})
+                    '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let { jobDelete = delete(it) }})
+                    '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let { jobDelete = delete(it) }})
                 }
 
                 val job = delete(spend)
@@ -170,9 +162,7 @@ class FragmentEditSpend : Fragment() {
                     if(indexOfSub < 0 || indexOfMain < 0) null
                     else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
                 }
-            }.observeOnce( Observer { sub -> sub?.let {
-                spend.category = sub.id
-            } })
+            }.observeOnce( Observer { sub -> sub?.let { spend.category = sub.id } })
         }
     }
     fun onChangedIndexOfPay2() {
@@ -180,14 +170,12 @@ class FragmentEditSpend : Fragment() {
             when(newCode[0]) {
                 '1' -> {
                     Transformations.switchMap(listOfPay2) { list -> list?.let {
-                        if(list.isNotEmpty()) getAccountByNumber(it[indexOfPay2]!!.split(" ")[0]) else null }
-                    }.observeOnce( Observer { account -> account?.let {
-                        idAccount = account.id
-                    } })
+                        if(list.isNotEmpty()) getAccountByNumber(it[indexOfPay2].split(" ")[0]) else null }
+                    }.observeOnce( Observer { account -> account?.let { idAccount = account.id } })
                 }
                 '2' -> {
                     Transformations.switchMap(listOfPay2) { list -> list?.let{
-                        if(list.isNotEmpty()) getCardByNumber(it[indexOfPay2]!!.split(" ")[0]) else null }
+                        if(list.isNotEmpty()) getCardByNumber(it[indexOfPay2].split(" ")[0]) else null }
                     } .observeOnce( Observer { card -> card?.let {
                         idCard = card.id
                         idAccount = card.account
@@ -212,17 +200,13 @@ class FragmentEditSpend : Fragment() {
 
                     var jobDelete = Job()
                     val jobSpend1 = if(spend.id == null) insert(spend)
-                    else {
-                        when(oldCode[0]) {
-                            '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let {
-                                jobDelete = delete(cash)
-                            } })
-                            '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let {
-                                jobDelete = delete(card)
-                            } })
-                        }
-                        update(spend)
-                    }
+                                    else {
+                                        when(oldCode[0]) {
+                                            '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let { jobDelete = delete(it) } })
+                                            '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let { jobDelete = delete(it) } })
+                                        }
+                                        update(spend)
+                                    }
 
                     val jobSpend2 = when(code[0]) {
                         '1' -> {
