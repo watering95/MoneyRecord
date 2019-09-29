@@ -19,6 +19,7 @@ import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditIncome
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -45,42 +46,24 @@ class FragmentEditIncome : Fragment() {
         (activity as MainActivity).supportActionBar?.setTitle(R.string.title_income)
 
         binding.viewmodel?.run {
-            listOfMain = Transformations.map(getCatMainsByKind("income")) { list -> list.map { it.name } } as MutableLiveData<List<String?>>
             listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description } } as MutableLiveData<List<String>>
 
             income = this@FragmentEditIncome.income
-            if(income.id == null) {
-                income = income.apply { this.date = MyCalendar.getToday() }
-            }
+            if(income.id == null) { income = income.apply { this.date = MyCalendar.getToday() } }
 
-            getCatMainBySub(this@FragmentEditIncome.income.category).observe(this@FragmentEditIncome, Observer { main -> main?.let {
-                Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observe(this@FragmentEditIncome, Observer { index -> index?.let {
-                    indexOfMain = index
-                } })
-                listOfSub = Transformations.map(getCatSubsByMain(main.id)) { list ->
-                    list.map { it.name }.apply {
-                        getCatSub(this@FragmentEditIncome.income.category).observe(this@FragmentEditIncome, Observer { sub -> sub?.let {
-                            indexOfSub = indexOf(sub.name)
-                            listOfAccount.observe(this@FragmentEditIncome, Observer { list -> list?.let {
-                                getAccount(income.account).observe(this@FragmentEditIncome, Observer { account -> account?.let {
-                                    indexOfAccount = list.indexOf(account.number + " " + account.institute + " " + account.description )
-                                    idAccount = account.id
-                                } })
-                            } })
-                        } })
-                    }
-                } as MutableLiveData<List<String?>>
+            getCatMainBySub(this@FragmentEditIncome.income.category).observeOnce( Observer { main -> main?.let {
+                Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let { indexOfMain = index } })
             } })
 
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                     when(propertyId) {
+                        BR.listOfSub -> onChangedListOfSub()
                         BR.indexOfSub -> onChangedIndexOfSub()
                         BR.indexOfAccount -> onChangedIndexOfAccount()
                     }
                 }
             })
-
         }
 
         binding.buttonDateFragmentEditIncome.setOnClickListener {
@@ -99,7 +82,6 @@ class FragmentEditIncome : Fragment() {
         }
 
         Converter.addConvertedTextChangedListener(binding.editAmountFragmentEditIncome)
-
         setHasOptionsMenu(true)
     }
 
@@ -125,6 +107,22 @@ class FragmentEditIncome : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    fun onChangedListOfSub() {
+        binding.viewmodel?.run {
+            getCatSub(this@FragmentEditIncome.income.category).observeOnce( Observer { sub -> sub?.let {
+                listOfSub.observeOnce( Observer { list-> list?.let {
+                    indexOfSub = list.indexOf(sub.name)
+                    listOfAccount.observeOnce( Observer { list -> list?.let {
+                        getAccount(income.account).observeOnce( Observer { account -> account?.let {
+                            indexOfAccount = list.indexOf(account.number + " " + account.institute + " " + account.description )
+                            idAccount = account.id
+                        } })
+                    } })
+                } })
+            } })
+        }
+    }
+
     fun onChangedIndexOfSub() {
         binding.viewmodel?.run {
             Transformations.switchMap(listOfMain) { listOfMain ->
@@ -132,16 +130,14 @@ class FragmentEditIncome : Fragment() {
                     if(indexOfSub < 0 || indexOfMain < 0) null
                     else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
                 }
-            }.observe(this@FragmentEditIncome, Observer { sub -> sub?.let {
-                income.category = sub.id
-            } })
+            }.observeOnce( Observer { sub -> sub?.let { income.category = sub.id } })
         }
     }
     fun onChangedIndexOfAccount() {
         binding.viewmodel?.run {
             Transformations.switchMap(listOfAccount) { list ->
                 if(indexOfAccount < 0) null else getAccountByNumber(list[indexOfAccount])
-            }.observe(this@FragmentEditIncome, Observer { account -> account?.let {
+            }.observeOnce( Observer { account -> account?.let {
                 idAccount = account.id
                 income.account = account.id
             } })
@@ -156,10 +152,20 @@ class FragmentEditIncome : Fragment() {
 
                 runBlocking {
                     jobIncome.cancelAndJoin()
-                    processing.ioKRW(idAccount, income.date)
+                    delay(100)
                     Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                    processing.ioKRW(idAccount, income.date)
                 }
             }
         }
+    }
+
+    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+        observeForever(object: Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }

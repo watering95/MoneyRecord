@@ -51,28 +51,21 @@ class FragmentEditSpend : Fragment() {
 
     private fun initLayout() {
         (activity as MainActivity).supportActionBar?.setTitle(R.string.title_spend)
+
         binding.viewmodel?.run {
-            addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
-                override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                    when(propertyId) {
-                        BR.indexOfSub -> onChangedIndexOfSub()
-                        BR.indexOfPay2 -> onChangedIndexOfPay2()
-                    }
-                }
-            })
-
-            listOfMain = Transformations.map(getCatMainsByKind("spend")) { list -> list.map { it.name } } as MutableLiveData<List<String?>>
-
             spend = this@FragmentEditSpend.spend
             this@FragmentEditSpend.spend.code?.let { oldCode = it }
-            if(spend.id == null) {
-                spend = spend.apply { date = MyCalendar.getToday() }
-            }
+            if(spend.id == null) { spend = spend.apply { date = MyCalendar.getToday() } }
+
+            getCatMainBySub(this@FragmentEditSpend.spend.category).observeOnce( Observer { main -> main?.let {
+                Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let { indexOfMain = index } })
+            } })
+
             when(oldCode[0]) {
                 '1' -> {
                     indexOfPay1 = 0
                     listOfPay2.observeOnce( Observer { list -> list?.let {
-                        getAccountByCode(oldCode).observe(this@FragmentEditSpend, Observer { account -> account?.let {
+                        getAccountByCode(oldCode).observeOnce( Observer { account -> account?.let {
                             indexOfPay2 = list.indexOf(account.number + " " + account.institute + " " + account.description)
                             idAccount = account.id
                         } })
@@ -81,7 +74,7 @@ class FragmentEditSpend : Fragment() {
                 '2' -> {
                     indexOfPay1 = 1
                     listOfPay2.observeOnce( Observer { list -> list?.let {
-                        getCardByCode(oldCode).observe(this@FragmentEditSpend, Observer { card -> card?.let {
+                        getCardByCode(oldCode).observeOnce( Observer { card -> card?.let {
                             indexOfPay2 = list.indexOf(card.number + " " + card.company + " " + card.name)
                             idCard = card.id
                             idAccount = card.account
@@ -90,18 +83,15 @@ class FragmentEditSpend : Fragment() {
                 }
             }
 
-            getCatMainBySub(this@FragmentEditSpend.spend.category).observe(this@FragmentEditSpend, Observer { main -> main?.let {
-                Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let {
-                    indexOfMain = index
-                } })
-                listOfSub = Transformations.map(getCatSubsByMain(main.id)) { list ->
-                    list.map { it.name }.apply {
-                        getCatSub(this@FragmentEditSpend.spend.category).observeOnce( Observer { sub -> sub?.let {
-                            indexOfSub = indexOf(sub.name)
-                        } })
+            addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
+                override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                    when(propertyId) {
+                        BR.listOfSub -> onChangedListOfSub()
+                        BR.indexOfSub -> onChangedIndexOfSub()
+                        BR.indexOfPay2 -> onChangedIndexOfPay2()
                     }
-                } as MutableLiveData<List<String?>>
-            } })
+                }
+            })
         }
 
         binding.buttonDateFragmentEditSpend.setOnClickListener {
@@ -120,7 +110,6 @@ class FragmentEditSpend : Fragment() {
         }
 
         Converter.addConvertedTextChangedListener(binding.editAmountFragmentEditSpend)
-
         setHasOptionsMenu(true)
     }
 
@@ -153,6 +142,14 @@ class FragmentEditSpend : Fragment() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    fun onChangedListOfSub() {
+        binding.viewmodel?.run {
+            getCatSub(this@FragmentEditSpend.spend.category).observeOnce( Observer { sub -> sub?.let {
+                listOfSub.observeOnce(Observer { list -> list?.let { indexOfSub = list.indexOf(sub.name) } })
+            } })
+        }
     }
 
     fun onChangedIndexOfSub() {

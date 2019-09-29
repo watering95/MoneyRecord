@@ -13,7 +13,7 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
     var idAccount:Int? = 0
     var idCard:Int? = 0
 
-    var listOfMain = MutableLiveData<List<String?>>()
+    var listOfMain = Transformations.map(getCatMainsByKind("spend")) { list -> list.map { it.name } }
     @Bindable get
         set(value) {
         field = value
