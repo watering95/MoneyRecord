@@ -11,6 +11,7 @@ import com.watering.moneyrecord.databinding.FragmentEditGroupBinding
 import com.watering.moneyrecord.entities.Group
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 class FragmentEditGroup : Fragment() {
@@ -44,26 +45,36 @@ class FragmentEditGroup : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.menu_edit_save -> {
-                if(binding.group!!.name.isNullOrEmpty()) {
-                    Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
-                } else {
-                    val job = when {
-                        this.item.id == null -> mViewModel.insert(binding.group)
-                        else -> mViewModel.update(binding.group)
-                    }
-                    runBlocking {
-                        job.cancelAndJoin()
-                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                        fragmentManager?.popBackStack()
+                runBlocking {
+                    delay(100)
+
+                    if(binding.group!!.name.isNullOrEmpty()) {
+                        Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                    } else {
+                        val job = when(this@FragmentEditGroup.item.id) {
+                            null -> mViewModel.insert(binding.group)
+                            else -> mViewModel.update(binding.group)
+                        }
+                        runBlocking {
+                            job.cancelAndJoin()
+                            delay(100)
+                            Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                            fragmentManager?.popBackStack()
+                        }
                     }
                 }
             }
             R.id.menu_edit_delete -> {
-                val job = mViewModel.delete(this.item)
                 runBlocking {
-                    job.cancelAndJoin()
-                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                    fragmentManager?.popBackStack()
+                    delay(100)
+
+                    val job = mViewModel.delete(this@FragmentEditGroup.item)
+                    runBlocking {
+                        job.cancelAndJoin()
+                        delay(100)
+                        Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                        fragmentManager?.popBackStack()
+                    }
                 }
             }
         }

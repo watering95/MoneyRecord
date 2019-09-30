@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
@@ -15,6 +16,7 @@ import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditCard
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 class FragmentEditCard : Fragment() {
@@ -37,10 +39,10 @@ class FragmentEditCard : Fragment() {
 
         setHasOptionsMenu(true)
 
-        mViewModel.allAccounts.observe(this, Observer { list -> list?.let {
+        mViewModel.allAccounts.observeOnce( Observer { list -> list?.let {
             list.map { it.number }.let { list ->
                 when {
-                    this.item.id != null -> mViewModel.getAccount(this.item.account).observe(this, Observer { account -> account?.let {
+                    this.item.id != null -> mViewModel.getAccount(this.item.account).observeOnce( Observer { account -> account?.let {
                         binding.viewmodel = ViewModelEditCard(this.item, list.indexOf(account.number))
                         binding.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_item,list)
                     } })
@@ -63,37 +65,56 @@ class FragmentEditCard : Fragment() {
         when(item.itemId) {
             R.id.menu_edit_save -> {
                 binding.viewmodel?.run {
-                    card?.run {
-                        if(selected < 0 || name.isNullOrEmpty() || number.isNullOrEmpty() || company.isNullOrEmpty() || drawDate.isNullOrEmpty())
-                            Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
-                        else {
-                            mViewModel.allAccounts.observe(this@FragmentEditCard, Observer { list -> list?.let {
-                                card?.apply { selected.let { account = list[it].id } }.let { card ->
-                                    val job = when {
-                                        this@FragmentEditCard.item.id == null -> mViewModel.insert(card)
-                                        else -> mViewModel.update(card)
+                    runBlocking {
+                        delay(100)
+
+                        card?.run {
+                            if(selected < 0 || name.isNullOrEmpty() || number.isNullOrEmpty() || company.isNullOrEmpty() || drawDate.isNullOrEmpty())
+                                Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                            else {
+                                mViewModel.allAccounts.observeOnce( Observer { list -> list?.let {
+                                    card?.apply { selected.let { account = list[it].id } }.let { card ->
+                                        val job = when(this@FragmentEditCard.item.id) {
+                                            null -> mViewModel.insert(card)
+                                            else -> mViewModel.update(card)
+                                        }
+                                        runBlocking {
+                                            job.cancelAndJoin()
+                                            delay(100)
+                                            Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                            fragmentManager?.popBackStack()
+                                        }
                                     }
-                                    runBlocking {
-                                        job.cancelAndJoin()
-                                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                                        fragmentManager?.popBackStack()
-                                    }
-                                }
-                            } })
+                                } })
+                            }
                         }
                     }
                 }
             }
             R.id.menu_edit_delete -> {
-                val job = mViewModel.delete(this.item)
                 runBlocking {
-                    job.cancelAndJoin()
-                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                    fragmentManager?.popBackStack()
+                    delay(100)
+
+                    val job = mViewModel.delete(this@FragmentEditCard.item)
+                    runBlocking {
+                        job.cancelAndJoin()
+                        delay(100)
+                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                        fragmentManager?.popBackStack()
+                    }
                 }
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+        observeForever(object: Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }

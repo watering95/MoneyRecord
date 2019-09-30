@@ -46,13 +46,18 @@ class FragmentEditIncome : Fragment() {
         (activity as MainActivity).supportActionBar?.setTitle(R.string.title_income)
 
         binding.viewmodel?.run {
-            listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description } } as MutableLiveData<List<String>>
-
             income = this@FragmentEditIncome.income
             if(income.id == null) { income = income.apply { this.date = MyCalendar.getToday() } }
+            else idAccount = income.account
 
             getCatMainBySub(this@FragmentEditIncome.income.category).observeOnce( Observer { main -> main?.let {
                 Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let { indexOfMain = index } })
+            } })
+
+            listOfAccount.observeOnce( Observer { list -> list?.let {
+                getAccount(income.account).observeOnce( Observer { account -> account?.let {
+                    indexOfAccount = list.indexOf(account.number + " " + account.institute + " " + account.description)
+                } })
             } })
 
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
@@ -95,11 +100,16 @@ class FragmentEditIncome : Fragment() {
         when(item.itemId) {
             R.id.menu_edit_save -> save()
             R.id.menu_edit_delete -> binding.viewmodel?.run {
-                val job = delete(income)
                 runBlocking {
-                    job.cancelAndJoin()
-                    processing.ioKRW(idAccount,income.date)
-                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                    delay(100)
+
+                    val job = delete(income)
+                    runBlocking {
+                        job.cancelAndJoin()
+                        delay(100)
+                        Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                        processing.ioKRW(idAccount,income.date)
+                    }
                 }
             }
         }
@@ -110,15 +120,7 @@ class FragmentEditIncome : Fragment() {
     fun onChangedListOfSub() {
         binding.viewmodel?.run {
             getCatSub(this@FragmentEditIncome.income.category).observeOnce( Observer { sub -> sub?.let {
-                listOfSub.observeOnce( Observer { list-> list?.let {
-                    indexOfSub = list.indexOf(sub.name)
-                    listOfAccount.observeOnce( Observer { list -> list?.let {
-                        getAccount(income.account).observeOnce( Observer { account -> account?.let {
-                            indexOfAccount = list.indexOf(account.number + " " + account.institute + " " + account.description )
-                            idAccount = account.id
-                        } })
-                    } })
-                } })
+                listOfSub.observeOnce( Observer { list-> list?.let { indexOfSub = list.indexOf(sub.name) } })
             } })
         }
     }
@@ -136,7 +138,7 @@ class FragmentEditIncome : Fragment() {
     fun onChangedIndexOfAccount() {
         binding.viewmodel?.run {
             Transformations.switchMap(listOfAccount) { list ->
-                if(indexOfAccount < 0) null else getAccountByNumber(list[indexOfAccount])
+                if(indexOfAccount < 0) null else getAccountByNumber(list[indexOfAccount].split(" ")[0])
             }.observeOnce( Observer { account -> account?.let {
                 idAccount = account.id
                 income.account = account.id
@@ -145,16 +147,20 @@ class FragmentEditIncome : Fragment() {
     }
     private fun save() {
         binding.viewmodel?.run {
-            if(income.details.isNullOrEmpty() || indexOfMain < 0 || indexOfSub < 0 || indexOfAccount < 0) {
-                Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
-            } else {
-                val jobIncome = if(income.id == null) insert(income) else update(income)
+            runBlocking {
+                delay(100)
 
-                runBlocking {
-                    jobIncome.cancelAndJoin()
-                    delay(100)
-                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                    processing.ioKRW(idAccount, income.date)
+                if(income.details.isNullOrEmpty() || indexOfMain < 0 || indexOfSub < 0 || indexOfAccount < 0) {
+                    Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                } else {
+                    val jobIncome = if(income.id == null) insert(income) else update(income)
+
+                    runBlocking {
+                        jobIncome.cancelAndJoin()
+                        delay(100)
+                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                        processing.ioKRW(idAccount, income.date)
+                    }
                 }
             }
         }

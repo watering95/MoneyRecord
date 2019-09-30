@@ -12,6 +12,7 @@ import com.watering.moneyrecord.entities.CategoryMain
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditCategoryMain
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 class FragmentEditCategoryMain : Fragment() {
@@ -50,18 +51,23 @@ class FragmentEditCategoryMain : Fragment() {
         when(item.itemId) {
             R.id.menu_edit_save -> {
                 binding.viewmodel?.run {
-                    categoryMain?.run {
-                        if(name.isNullOrEmpty()) Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
-                        else {
-                            categoryMain?.apply { selected?.let { kind = mList[it] } }.let { main ->
-                                val job = when {
-                                    this@FragmentEditCategoryMain.item.id == null -> mViewModel.insert(main)
-                                    else -> mViewModel.update(main)
-                                }
-                                runBlocking {
-                                    job.cancelAndJoin()
-                                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                                    fragmentManager?.popBackStack()
+                    runBlocking {
+                        delay(100)
+
+                        categoryMain?.run {
+                            if(name.isNullOrEmpty()) Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                            else {
+                                categoryMain?.apply { selected?.let { kind = mList[it] } }.let { main ->
+                                    val job = when(this@FragmentEditCategoryMain.item.id) {
+                                        null -> mViewModel.insert(main)
+                                        else -> mViewModel.update(main)
+                                    }
+                                    runBlocking {
+                                        job.cancelAndJoin()
+                                        delay(100)
+                                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                        fragmentManager?.popBackStack()
+                                    }
                                 }
                             }
                         }
@@ -69,11 +75,16 @@ class FragmentEditCategoryMain : Fragment() {
                 }
             }
             R.id.menu_edit_delete -> {
-                val job = mViewModel.delete(this.item)
                 runBlocking {
-                    job.cancelAndJoin()
-                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                    fragmentManager?.popBackStack()
+                    delay(100)
+
+                    val job = mViewModel.delete(this@FragmentEditCategoryMain.item)
+                    runBlocking {
+                        job.cancelAndJoin()
+                        delay(100)
+                        Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                        fragmentManager?.popBackStack()
+                    }
                 }
             }
         }

@@ -51,7 +51,7 @@ class ViewModelEditIncome(application: Application) : ObservableViewModel(applic
         notifyPropertyChanged(BR.indexOfSub)
     }
 
-    var listOfAccount = MutableLiveData<List<String>> ()
+    var listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description } } as MutableLiveData<List<String>>
     @Bindable get
         set(value) {
         field = value

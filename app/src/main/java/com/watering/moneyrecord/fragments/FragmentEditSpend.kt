@@ -123,20 +123,25 @@ class FragmentEditSpend : Fragment() {
         when(item.itemId) {
             R.id.menu_edit_save -> save()
             R.id.menu_edit_delete -> binding.viewmodel?.run {
-                var jobDelete = Job()
-
-                when(oldCode[0]) {
-                    '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let { jobDelete = delete(it) }})
-                    '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let { jobDelete = delete(it) }})
-                }
-
-                val job = delete(spend)
-
                 runBlocking {
-                    job.cancelAndJoin()
-                    jobDelete.cancelAndJoin()
-                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                    processing.ioKRW(idAccount, spend.date)
+                    delay(100)
+
+                    var jobDelete = Job()
+
+                    when(oldCode[0]) {
+                        '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let { jobDelete = delete(it) }})
+                        '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let { jobDelete = delete(it) }})
+                    }
+
+                    val job = delete(spend)
+
+                    runBlocking {
+                        job.cancelAndJoin()
+                        jobDelete.cancelAndJoin()
+                        delay(100)
+                        Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                        processing.ioKRW(idAccount, spend.date)
+                    }
                 }
             }
         }
@@ -184,54 +189,58 @@ class FragmentEditSpend : Fragment() {
 
     private fun save() {
         binding.viewmodel?.run {
-            if(spend.details.isNullOrEmpty() || indexOfMain < 0 || indexOfSub < 0 || indexOfPay1 < 0 || indexOfPay2 < 0) {
-                Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
-            }
-            else {
-                Transformations.map(getLastSpendCode(spend.date)) { code ->
-                    val index = code?.substring(10,12)?.toInt() ?: -1
-                    newCode = newCode.replaceRange(10, 12, String.format("%02d", index + 1))
-                    newCode
-                }.observeOnce(Observer { code -> code?.let {
-                    spend.code = code
+            runBlocking {
+                delay(100)
 
-                    var jobDelete = Job()
-                    val jobSpend1 = if(spend.id == null) insert(spend)
-                                    else {
-                                        when(oldCode[0]) {
-                                            '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let { jobDelete = delete(it) } })
-                                            '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let { jobDelete = delete(it) } })
-                                        }
-                                        update(spend)
-                                    }
+                if(spend.details.isNullOrEmpty() || indexOfMain < 0 || indexOfSub < 0 || indexOfPay1 < 0 || indexOfPay2 < 0) {
+                    Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    Transformations.map(getLastSpendCode(spend.date)) { code ->
+                        val index = code?.substring(10,12)?.toInt() ?: -1
+                        newCode = newCode.replaceRange(10, 12, String.format("%02d", index + 1))
+                        newCode
+                    }.observeOnce(Observer { code -> code?.let {
+                        spend.code = code
 
-                    val jobSpend2 = when(code[0]) {
-                        '1' -> {
-                            val spendCash = SpendCash().apply {
-                                this.code = code
-                                this.account = idAccount
+                        var jobDelete = Job()
+                        val jobSpend1 = if(spend.id == null) insert(spend)
+                        else {
+                            when(oldCode[0]) {
+                                '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let { jobDelete = delete(it) } })
+                                '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let { jobDelete = delete(it) } })
                             }
-                            insert(spendCash)
+                            update(spend)
                         }
-                        '2' -> {
-                            val spendCard = SpendCard().apply {
-                                this.code = code
-                                this.card = idCard
-                            }
-                            insert(spendCard)
-                        }
-                        else -> insert(null)
-                    }
 
-                    runBlocking {
-                        jobSpend1.cancelAndJoin()
-                        jobSpend2.cancelAndJoin()
-                        jobDelete.cancelAndJoin()
-                        delay(100)
-                        Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                        processing.ioKRW(idAccount, spend.date)
-                    }
-                } })
+                        val jobSpend2 = when(code[0]) {
+                            '1' -> {
+                                val spendCash = SpendCash().apply {
+                                    this.code = code
+                                    this.account = idAccount
+                                }
+                                insert(spendCash)
+                            }
+                            '2' -> {
+                                val spendCard = SpendCard().apply {
+                                    this.code = code
+                                    this.card = idCard
+                                }
+                                insert(spendCard)
+                            }
+                            else -> insert(null)
+                        }
+
+                        runBlocking {
+                            jobSpend1.cancelAndJoin()
+                            jobSpend2.cancelAndJoin()
+                            jobDelete.cancelAndJoin()
+                            delay(100)
+                            Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                            processing.ioKRW(idAccount, spend.date)
+                        }
+                    } })
+                }
             }
         }
     }

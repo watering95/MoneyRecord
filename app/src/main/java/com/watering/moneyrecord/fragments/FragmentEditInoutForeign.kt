@@ -17,6 +17,7 @@ import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditInoutForeign
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -94,11 +95,16 @@ class FragmentEditInoutForeign : Fragment() {
         when(item.itemId) {
             R.id.menu_edit_save -> save()
             R.id.menu_edit_delete -> binding.viewmodel?.run {
-                val job = delete(io)
                 runBlocking {
-                    job.cancelAndJoin()
-                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                    processing.dairyForeign(idAccount, io.date, io.currency)
+                    delay(100)
+
+                    val job = delete(io)
+                    runBlocking {
+                        job.cancelAndJoin()
+                        delay(100)
+                        Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                        processing.dairyForeign(idAccount, io.date, io.currency)
+                    }
                 }
             }
         }
@@ -108,19 +114,23 @@ class FragmentEditInoutForeign : Fragment() {
 
     private fun save() {
         binding.viewmodel?.run {
-            val jobIO = if(io.id == null) insert(io) else update(io)
-
             runBlocking {
-                jobIO.cancelAndJoin()
-                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                processing.dairyForeign(idAccount, io.date, io.currency)
+                delay(100)
+
+                val jobIO = if(io.id == null) insert(io) else update(io)
+                runBlocking {
+                    jobIO.cancelAndJoin()
+                    delay(100)
+                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                    processing.dairyForeign(idAccount, io.date, io.currency)
+                }
             }
         }
     }
 
     private fun onChangedDate() {
         binding.viewmodel?.run {
-            loadingIOForeign(idAccount, date, currency, false).observe(this@FragmentEditInoutForeign,  Observer { io -> io?.let {
+            loadingIOForeign(idAccount, date, currency, false).observeOnce( Observer { io -> io?.let {
                 deposit = io.input
                 withdraw = io.output
                 depositKRW = io.inputKRW
@@ -128,10 +138,19 @@ class FragmentEditInoutForeign : Fragment() {
                 indexOfCurrency = io.currency
                 evaluationKRW = io.evaluationKRW
                 this.io = io
-                loadingDairyForeign(idAccount, date, currency, false).observe(this@FragmentEditInoutForeign, Observer { dairy -> dairy?.let {
+                loadingDairyForeign(idAccount, date, currency, false).observeOnce( Observer { dairy -> dairy?.let {
                     principal = dairy.principal
                 } })
             } })
         }
+    }
+
+    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+        observeForever(object: Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }

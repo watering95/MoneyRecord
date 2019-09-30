@@ -16,6 +16,7 @@ import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditAccount
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 class FragmentEditAccount : Fragment() {
@@ -59,26 +60,22 @@ class FragmentEditAccount : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.menu_edit_save -> {
-                binding.viewmodel?.run {
-                    account?.run {
-                        if(description.isNullOrEmpty() || institute.isNullOrEmpty() || number.isNullOrEmpty())
-                            Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
-                        else save()
-                    }
-                }
-            }
+            R.id.menu_edit_save -> save()
             R.id.menu_edit_delete -> {
                 mViewModel.run {
-                    delete(this@FragmentEditAccount.item)
-                    getHomeByIdAccount(this@FragmentEditAccount.item.id).observeOnce(Observer { home -> home?.let {
-                        val job = delete(it)
-                        runBlocking {
-                            job.cancelAndJoin()
-                            Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                            fragmentManager?.popBackStack()
-                        }
-                    } })
+                    runBlocking {
+                        delay(100)
+                        delete(this@FragmentEditAccount.item)
+                        getHomeByIdAccount(this@FragmentEditAccount.item.id).observeOnce(Observer { home -> home?.let {
+                            val job = delete(it)
+                            runBlocking {
+                                job.cancelAndJoin()
+                                delay(100)
+                                Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                                fragmentManager?.popBackStack()
+                            }
+                        } })
+                    }
                 }
             }
         }
@@ -87,59 +84,73 @@ class FragmentEditAccount : Fragment() {
     }
 
     private fun save() {
-        mViewModel.allGroups.observeOnce( Observer { list -> list?.let {
-            binding.viewmodel?.run {
-                account?.apply { selected?.let { group = list[it].id } }.let { account ->
-                    when {
-                        this@FragmentEditAccount.item.id == null -> {
-                            mViewModel.run {
-                                val job = insert(account)
-                                runBlocking {
-                                    job.cancelAndJoin()
-                                    getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce( Observer { account -> account?.let {
-                                        getGroup(account.group).observeOnce( Observer { group -> group?.let {
-                                            val home = Home()
-                                            home.idAccount = account.id
-                                            home.account = account.number
-                                            home.description = account.institute + account.description
-                                            home.group = group.name
-                                            val jj = insert(home)
+        binding.viewmodel?.run {
+            runBlocking {
+                delay(100)
+
+                account?.run {
+                    if(description.isNullOrEmpty() || institute.isNullOrEmpty() || number.isNullOrEmpty())
+                        Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                    else {
+                        mViewModel.allGroups.observeOnce(Observer { list -> list?.let {
+                            account?.apply { selected?.let { group = list[it].id } }.let { account ->
+                                when(this@FragmentEditAccount.item.id) {
+                                    null -> {
+                                        mViewModel.run {
+                                            val job = insert(account)
                                             runBlocking {
-                                                jj.cancelAndJoin()
-                                                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                                                fragmentManager?.popBackStack()
+                                                job.cancelAndJoin()
+                                                delay(100)
+                                                getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce( Observer { account -> account?.let {
+                                                    getGroup(account.group).observeOnce(Observer { group -> group?.let {
+                                                        val home = Home()
+                                                        home.idAccount = account.id
+                                                        home.account = account.number
+                                                        home.description = account.institute + account.description
+                                                        home.group = group.name
+                                                        val jj = insert(home)
+                                                        runBlocking {
+                                                            jj.cancelAndJoin()
+                                                            delay(100)
+                                                            Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                                            fragmentManager?.popBackStack()
+                                                        }
+                                                    } })
+                                                } })
                                             }
-                                        }})
-                                    } })
+                                        }
+                                    }
+                                    else -> {
+                                        mViewModel.run {
+                                            val job = update(account)
+                                            runBlocking {
+                                                job.cancelAndJoin()
+                                                delay(100)
+                                                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                                getHomeByIdAccount(account?.id).observeOnce(Observer { home -> home?.let {
+                                                    getGroup(account?.group).observeOnce(Observer { group -> group?.let {
+                                                        home.account = account?.number
+                                                        home.description = account?.institute + " " + account?.description
+                                                        home.group = group.name
+                                                        val jj = update(home)
+                                                        runBlocking {
+                                                            jj.cancelAndJoin()
+                                                            delay(100)
+                                                            Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                                            fragmentManager?.popBackStack()
+                                                        }
+                                                    } })
+                                                } })
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        else -> {
-                            mViewModel.run {
-                                val job = update(account)
-                                runBlocking {
-                                    job.cancelAndJoin()
-                                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                                    getHomeByIdAccount(account?.id).observeOnce( Observer { home -> home?.let {
-                                        getGroup(account?.group).observeOnce( Observer { group -> group?.let {
-                                            home.account = account?.number
-                                            home.description = account?.institute + " " + account?.description
-                                            home.group = group.name
-                                            val jj = update(home)
-                                            runBlocking {
-                                                jj.cancelAndJoin()
-                                                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                                                fragmentManager?.popBackStack()
-                                            }
-                                        } })
-                                    } })
-                                }
-                            }
-                        }
+                        } })
                     }
                 }
-            }}
-        })
+            }
+        }
     }
 
     private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {

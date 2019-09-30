@@ -17,6 +17,7 @@ import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditInoutKRW
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -93,10 +94,16 @@ class FragmentEditInoutKRW : Fragment() {
             R.id.menu_edit_save -> save()
             R.id.menu_edit_delete -> binding.viewmodel?.run {
                 runBlocking {
-                    delete(io).cancelAndJoin()
-                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                    processing.dairyKRW(idAccount, io.date)
+                    delay(100)
+
+                    runBlocking {
+                        delete(io).cancelAndJoin()
+                        delay(100)
+                        Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                        processing.dairyKRW(idAccount, io.date)
+                    }
                 }
+
             }
         }
 
@@ -105,29 +112,42 @@ class FragmentEditInoutKRW : Fragment() {
 
     private fun save() {
         binding.viewmodel?.run {
-            val jobIO = if(io.id == null) insert(io) else update(io)
-
             runBlocking {
-                jobIO.cancelAndJoin()
-                processing.dairyKRW(idAccount, io.date)
-                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                delay(100)
+
+                val jobIO = if(io.id == null) insert(io) else update(io)
+
+                runBlocking {
+                    jobIO.cancelAndJoin()
+                    delay(100)
+                    Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                    processing.dairyKRW(idAccount, io.date)
+                }
             }
+
         }
     }
 
     private fun onChangedDate() {
         binding.viewmodel?.run {
-            loadingIOKRW(idAccount, date, false).observe(this@FragmentEditInoutKRW, Observer { io -> io?.let {
+            loadingIOKRW(idAccount, date, false).observeOnce( Observer { io -> io?.let {
                 income = io.income
                 evaluation = io.evaluationKRW
                 deposit = io.input
                 spend = io.spendCard!! + io.spendCash!!
                 withdraw = io.output
                 this.io = io
-                loadingDairyKRW(idAccount, date, false).observe(this@FragmentEditInoutKRW, Observer { dairy -> dairy?.let {
-                    principal = dairy.principalKRW
-                }})
+                loadingDairyKRW(idAccount, date, false).observeOnce( Observer { dairy -> dairy?.let { principal = dairy.principalKRW }})
             } })
         }
+    }
+
+    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+        observeForever(object: Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }
