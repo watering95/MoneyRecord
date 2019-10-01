@@ -16,7 +16,6 @@ import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditInoutKRW
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -97,7 +96,7 @@ class FragmentEditInoutKRW : Fragment() {
                     delay(100)
 
                     runBlocking {
-                        delete(io).cancelAndJoin()
+                        delete(io).join()
                         delay(100)
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                         processing.dairyKRW(idAccount, io.date)
@@ -118,7 +117,7 @@ class FragmentEditInoutKRW : Fragment() {
                 val jobIO = if(io.id == null) insert(io) else update(io)
 
                 runBlocking {
-                    jobIO.cancelAndJoin()
+                    jobIO.join()
                     delay(100)
                     Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                     processing.dairyKRW(idAccount, io.date)

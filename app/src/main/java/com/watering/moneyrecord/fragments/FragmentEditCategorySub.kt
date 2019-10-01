@@ -14,7 +14,6 @@ import com.watering.moneyrecord.databinding.FragmentEditCategorysubBinding
 import com.watering.moneyrecord.entities.CategorySub
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditCategorySub
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -79,7 +78,7 @@ class FragmentEditCategorySub : Fragment() {
                                             else -> mViewModel.update(sub)
                                         }
                                         runBlocking {
-                                            job.cancelAndJoin()
+                                            job.join()
                                             delay(100)
                                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                             fragmentManager?.popBackStack()
@@ -97,7 +96,7 @@ class FragmentEditCategorySub : Fragment() {
 
                     val job = mViewModel.delete(this@FragmentEditCategorySub.item)
                     runBlocking {
-                        job.cancelAndJoin()
+                        job.join()
                         delay(100)
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                         fragmentManager?.popBackStack()

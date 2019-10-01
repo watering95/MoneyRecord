@@ -16,7 +16,6 @@ import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditInoutForeign
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -100,7 +99,7 @@ class FragmentEditInoutForeign : Fragment() {
 
                     val job = delete(io)
                     runBlocking {
-                        job.cancelAndJoin()
+                        job.join()
                         delay(100)
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                         processing.dairyForeign(idAccount, io.date, io.currency)
@@ -119,7 +118,7 @@ class FragmentEditInoutForeign : Fragment() {
 
                 val jobIO = if(io.id == null) insert(io) else update(io)
                 runBlocking {
-                    jobIO.cancelAndJoin()
+                    jobIO.join()
                     delay(100)
                     Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                     processing.dairyForeign(idAccount, io.date, io.currency)

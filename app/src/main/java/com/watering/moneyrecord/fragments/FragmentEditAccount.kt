@@ -15,7 +15,6 @@ import com.watering.moneyrecord.entities.Account
 import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditAccount
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -69,7 +68,7 @@ class FragmentEditAccount : Fragment() {
                         getHomeByIdAccount(this@FragmentEditAccount.item.id).observeOnce(Observer { home -> home?.let {
                             val job = delete(it)
                             runBlocking {
-                                job.cancelAndJoin()
+                                job.join()
                                 delay(100)
                                 Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                                 fragmentManager?.popBackStack()
@@ -99,7 +98,7 @@ class FragmentEditAccount : Fragment() {
                                         mViewModel.run {
                                             val job = insert(account)
                                             runBlocking {
-                                                job.cancelAndJoin()
+                                                job.join()
                                                 delay(100)
                                                 getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce( Observer { account -> account?.let {
                                                     getGroup(account.group).observeOnce(Observer { group -> group?.let {
@@ -110,7 +109,7 @@ class FragmentEditAccount : Fragment() {
                                                         home.group = group.name
                                                         val jj = insert(home)
                                                         runBlocking {
-                                                            jj.cancelAndJoin()
+                                                            jj.join()
                                                             delay(100)
                                                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                                             fragmentManager?.popBackStack()
@@ -124,7 +123,7 @@ class FragmentEditAccount : Fragment() {
                                         mViewModel.run {
                                             val job = update(account)
                                             runBlocking {
-                                                job.cancelAndJoin()
+                                                job.join()
                                                 delay(100)
                                                 Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                                 getHomeByIdAccount(account?.id).observeOnce(Observer { home -> home?.let {
@@ -134,7 +133,7 @@ class FragmentEditAccount : Fragment() {
                                                         home.group = group.name
                                                         val jj = update(home)
                                                         runBlocking {
-                                                            jj.cancelAndJoin()
+                                                            jj.join()
                                                             delay(100)
                                                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                                             fragmentManager?.popBackStack()

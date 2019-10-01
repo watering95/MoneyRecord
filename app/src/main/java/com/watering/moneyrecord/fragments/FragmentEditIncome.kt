@@ -18,7 +18,6 @@ import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditIncome
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -105,7 +104,7 @@ class FragmentEditIncome : Fragment() {
 
                     val job = delete(income)
                     runBlocking {
-                        job.cancelAndJoin()
+                        job.join()
                         delay(100)
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                         processing.ioKRW(idAccount,income.date)
@@ -156,7 +155,7 @@ class FragmentEditIncome : Fragment() {
                     val jobIncome = if(income.id == null) insert(income) else update(income)
 
                     runBlocking {
-                        jobIncome.cancelAndJoin()
+                        jobIncome.join()
                         delay(100)
                         Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                         processing.ioKRW(idAccount, income.date)

@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -53,7 +52,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                 val jobIO = if(io.id == null) insert(io) else update(io)
 
                 runBlocking {
-                    jobIO.cancelAndJoin()
+                    jobIO.join()
                     delay(100)
                     dairyKRW(idAccount, selectedDate)
                 }
@@ -66,7 +65,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                 val jobDairyKRW = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {
-                    jobDairyKRW.cancelAndJoin()
+                    jobDairyKRW.join()
                     delay(100)
 
                     getAfterDairyKRW(idAccount, selectedDate).observeOnce(Observer { list ->
@@ -82,8 +81,8 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                                         jobUpdateDairy = update(d)
                                     }})
                                     runBlocking {
-                                        jobUpdateIO.cancelAndJoin()
-                                        jobUpdateDairy.cancelAndJoin()
+                                        jobUpdateIO.join()
+                                        jobUpdateDairy.join()
                                         delay(100)
                                         if(date == list.last()) dairyTotal(idAccount, selectedDate)
                                     }
@@ -102,7 +101,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                 val jobDairyForeign = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {
-                    jobDairyForeign.cancelAndJoin()
+                    jobDairyForeign.join()
                     delay(100)
 
                     getAfterDairyForeign(idAccount, selectedDate, currency).observeOnce(Observer { list ->
@@ -119,8 +118,8 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
 
                                     }})
                                     runBlocking {
-                                        jobUpdateIO.cancelAndJoin()
-                                        jobUpdateDairy.cancelAndJoin()
+                                        jobUpdateIO.join()
+                                        jobUpdateDairy.join()
                                         delay(100)
                                         if(date == list.last()) dairyTotal(idAccount, selectedDate)
                                     }
@@ -141,7 +140,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                 val jobDairyTotal = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {
-                    jobDairyTotal.cancelAndJoin()
+                    jobDairyTotal.join()
                     delay(100)
 
                     getAfterDairyTotal(idAccount, selectedDate).observeOnce(Observer { list -> list?.let {
@@ -151,7 +150,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                                 loadingDairyTotal(idAccount, date, true).observeOnce(Observer { d -> d?.let {
                                     val jobUpdateDairyTotal = update(d)
                                     runBlocking {
-                                        jobUpdateDairyTotal.cancelAndJoin()
+                                        jobUpdateDairyTotal.join()
                                         delay(100)
                                         if (date == list.last()) {
                                             getHomeByIdAccount(d.account).observeOnce(Observer { home -> home?.let {
@@ -160,7 +159,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                                                 home.evaluationKRW = d.evaluationKRW
                                                 jobUpdateHome = update(home)
                                                 runBlocking {
-                                                    jobUpdateHome.cancelAndJoin()
+                                                    jobUpdateHome.join()
                                                     delay(100)
                                                     fragmentManager?.popBackStack()
                                                 }
@@ -176,7 +175,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                                     home.evaluationKRW = dairy.evaluationKRW
                                     jobUpdateHome = update(home)
                                     runBlocking {
-                                        jobUpdateHome.cancelAndJoin()
+                                        jobUpdateHome.join()
                                         delay(100)
                                         fragmentManager?.popBackStack()
                                     }

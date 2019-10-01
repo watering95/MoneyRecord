@@ -14,8 +14,6 @@ import com.watering.moneyrecord.databinding.FragmentEditCardBinding
 import com.watering.moneyrecord.entities.Card
 import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditCard
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -79,7 +77,7 @@ class FragmentEditCard : Fragment() {
                                             else -> mViewModel.update(card)
                                         }
                                         runBlocking {
-                                            job.cancelAndJoin()
+                                            job.join()
                                             delay(100)
                                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                             fragmentManager?.popBackStack()
@@ -97,7 +95,7 @@ class FragmentEditCard : Fragment() {
 
                     val job = mViewModel.delete(this@FragmentEditCard.item)
                     runBlocking {
-                        job.cancelAndJoin()
+                        job.join()
                         delay(100)
                         Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                         fragmentManager?.popBackStack()
