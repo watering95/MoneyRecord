@@ -69,7 +69,6 @@ class FragmentEditAccount : Fragment() {
                             val job = delete(it)
                             runBlocking {
                                 job.join()
-                                delay(100)
                                 Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                                 fragmentManager?.popBackStack()
                             }
@@ -110,7 +109,6 @@ class FragmentEditAccount : Fragment() {
                                                         val jj = insert(home)
                                                         runBlocking {
                                                             jj.join()
-                                                            delay(100)
                                                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                                             fragmentManager?.popBackStack()
                                                         }
@@ -134,7 +132,6 @@ class FragmentEditAccount : Fragment() {
                                                         val jj = update(home)
                                                         runBlocking {
                                                             jj.join()
-                                                            delay(100)
                                                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                                             fragmentManager?.popBackStack()
                                                         }

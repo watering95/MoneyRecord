@@ -1,11 +1,12 @@
 package com.watering.moneyrecord.model
 
+import android.util.Log
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.watering.moneyrecord.entities.DairyTotal
 import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.viewmodel.ViewModelApp
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -19,7 +20,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                         when(home) {
                             null -> {
                                 getGroup(account.group).observeOnce(Observer { group -> group?.let {
-                                    loadingDairyTotal(account.id, MyCalendar.getToday(), false).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
+                                    loadingDairyTotal(account.id, MyCalendar.getToday(), true).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
                                         val newHome = Home()
                                         newHome.idAccount = account.id
                                         newHome.group = group.name
@@ -33,7 +34,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                                 } })
                             }
                             else -> {
-                                loadingDairyTotal(account.id, MyCalendar.getToday(), false).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
+                                loadingDairyTotal(account.id, MyCalendar.getToday(), true).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
                                     home.evaluationKRW = dairyTotal.evaluationKRW
                                     home.principalKRW = dairyTotal.principalKRW
                                     home.rate = dairyTotal.rate
@@ -46,56 +47,98 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
             } })
         }
     }
+
     fun ioKRW(idAccount:Int?, selectedDate:String?) {
         viewmodel?.run {
-            loadingIOKRW(idAccount, selectedDate, false).observeOnce(Observer { io -> io?.let {
+            loadingIOKRW(idAccount, selectedDate, false).observeOnce( Observer { io -> io?.let {
                 val jobIO = if(io.id == null) insert(io) else update(io)
 
                 runBlocking {
                     jobIO.join()
-                    delay(100)
-                    dairyKRW(idAccount, selectedDate)
+                    checkNextIOKRW(idAccount, selectedDate, selectedDate)
                 }
             } })
         }
     }
-    fun dairyKRW(idAccount:Int?, selectedDate:String?) {
+
+    private fun checkNextIOKRW(idAccount: Int?, selectedDate: String?, nextDate: String?) {
         viewmodel?.run {
-            loadingDairyKRW(idAccount, selectedDate, false).observeOnce(Observer { dairy -> dairy?.let {
+            getNextIOKRW(idAccount, nextDate).observeOnce( Observer { date ->
+                if(date.isNullOrEmpty()) dairyKRW(idAccount, selectedDate)
+                else {
+                    loadingIOKRW(idAccount, date, true).observeOnce( Observer { io -> io?.run {
+                        val job = update(io)
+                        runBlocking {
+                            job.join()
+                            checkNextIOKRW(idAccount, selectedDate, date)
+                        }
+                    } })
+                }
+            })
+        }
+    }
+
+    private fun dairyKRW(idAccount:Int?, selectedDate:String?) {
+        viewmodel?.run {
+            loadingDairyKRW(idAccount, selectedDate, false).observeOnce( Observer { dairy -> dairy?.let {
                 val jobDairyKRW = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {
                     jobDairyKRW.join()
-                    delay(100)
-
-                    getAfterDairyKRW(idAccount, selectedDate).observeOnce(Observer { list ->
-                        list?.let {
-                            when {
-                                list.isNotEmpty() -> list.forEach { date ->
-                                    var jobUpdateIO = Job()
-                                    var jobUpdateDairy = Job()
-                                    loadingIOKRW(idAccount, date, true).observeOnce(Observer { io -> io?.let {
-                                        jobUpdateIO = update(io)
-                                    } })
-                                    loadingDairyKRW(idAccount, date, true).observeOnce(Observer { d -> d?.let {
-                                        jobUpdateDairy = update(d)
-                                    }})
-                                    runBlocking {
-                                        jobUpdateIO.join()
-                                        jobUpdateDairy.join()
-                                        delay(100)
-                                        if(date == list.last()) dairyTotal(idAccount, selectedDate)
-                                    }
-                                }
-                                else -> dairyTotal(idAccount, selectedDate)
-                            }
-                        }
-                    })
+                    checkNextDairyKRW(idAccount, selectedDate, selectedDate)
                 }
             } })
         }
     }
-    fun dairyForeign(idAccount:Int?, selectedDate:String?, currency: Int?) {
+
+    private fun checkNextDairyKRW(idAccount: Int?, selectedDate: String?, nextDate: String?) {
+        viewmodel?.run {
+            getNextDairyKRW(idAccount, nextDate).observeOnce( Observer { date ->
+                if(date.isNullOrEmpty()) dairyTotal(idAccount, selectedDate)
+                else {
+                    loadingDairyKRW(idAccount, date, true).observeOnce( Observer { dairy -> dairy?.let {
+                        val job = update(dairy)
+                        runBlocking {
+                            job.join()
+                            checkNextDairyKRW(idAccount, selectedDate, date)
+                        }
+                    } })
+                }
+            })
+        }
+    }
+
+    fun ioForeign(idAccount:Int?, selectedDate:String?, currency: Int?) {
+        viewmodel?.run {
+            loadingIOForeign(idAccount, selectedDate, currency,false).observeOnce( Observer { io -> io?.let {
+                val jobIO = if(io.id == null) insert(io) else update(io)
+
+                runBlocking {
+                    jobIO.join()
+                    checkNextIOForeign(idAccount, currency, selectedDate, selectedDate)
+                }
+            } })
+        }
+    }
+
+    private fun checkNextIOForeign(idAccount: Int?, currency: Int?, selectedDate: String?, nextDate: String?) {
+        viewmodel?.run {
+            getNextIOForeign(idAccount, nextDate, currency).observeOnce( Observer { date ->
+                if(date.isNullOrEmpty()) dairyForeign(idAccount, selectedDate, currency)
+                else {
+                    loadingIOForeign(idAccount, date, currency,true).observeOnce( Observer { io -> io?.run {
+                        val job = update(io)
+                        runBlocking {
+                            job.join()
+                            checkNextIOForeign(idAccount, currency, selectedDate, date)
+                        }
+                    } })
+                }
+            })
+        }
+    }
+
+    private fun dairyForeign(idAccount:Int?, selectedDate:String?, currency: Int?) {
         viewmodel?.run {
             loadingDairyForeign(idAccount, selectedDate, currency, false).observeOnce(Observer { dairy -> dairy?.let {
                 val jobDairyForeign = if(dairy.id == null) insert(dairy) else update(dairy)
@@ -103,37 +146,29 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                 runBlocking {
                     jobDairyForeign.join()
                     delay(100)
-
-                    getAfterDairyForeign(idAccount, selectedDate, currency).observeOnce(Observer { list ->
-                        list?.let {
-                            when {
-                                list.isNotEmpty() -> list.forEach { date ->
-                                    var jobUpdateIO = Job()
-                                    var jobUpdateDairy = Job()
-                                    loadingIOForeign(idAccount, date, currency, true).observeOnce( Observer { io -> io?.let {
-                                        jobUpdateIO = update(io)
-                                    } })
-                                    loadingDairyForeign(idAccount, date, currency, true).observeOnce(Observer { d -> d?.let {
-                                        jobUpdateDairy = update(d)
-
-                                    }})
-                                    runBlocking {
-                                        jobUpdateIO.join()
-                                        jobUpdateDairy.join()
-                                        delay(100)
-                                        if(date == list.last()) dairyTotal(idAccount, selectedDate)
-                                    }
-                                }
-                                else -> dairyTotal(idAccount, selectedDate)
-                            }
-                        }
-                    })
-
-                    dairyTotal(idAccount, selectedDate)
+                    checkNextDairyForeign(idAccount, currency, selectedDate, selectedDate)
                 }
             } })
         }
     }
+
+    private fun checkNextDairyForeign(idAccount: Int?, currency: Int?, selectedDate: String?, nextDate: String?) {
+        viewmodel?.run {
+            getNextDairyForeign(idAccount, nextDate, currency).observeOnce( Observer { date ->
+                if(date.isNullOrEmpty()) dairyTotal(idAccount, selectedDate)
+                else {
+                    loadingDairyForeign(idAccount, date, currency, true).observeOnce( Observer { dairy -> dairy?.let {
+                        val job = update(dairy)
+                        runBlocking {
+                            job.join()
+                            checkNextDairyForeign(idAccount, currency, selectedDate, date)
+                        }
+                    } })
+                }
+            })
+        }
+    }
+
     private fun dairyTotal(idAccount:Int?, selectedDate:String?) {
         viewmodel?.run {
             loadingDairyTotal(idAccount, selectedDate, false).observeOnce(Observer { dairy -> dairy?.let {
@@ -141,52 +176,40 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
 
                 runBlocking {
                     jobDairyTotal.join()
-                    delay(100)
-
-                    getAfterDairyTotal(idAccount, selectedDate).observeOnce(Observer { list -> list?.let {
-                        var jobUpdateHome: Job
-                        when {
-                            list.isNotEmpty() -> list.forEach { date ->
-                                loadingDairyTotal(idAccount, date, true).observeOnce(Observer { d -> d?.let {
-                                    val jobUpdateDairyTotal = update(d)
-                                    runBlocking {
-                                        jobUpdateDairyTotal.join()
-                                        delay(100)
-                                        if (date == list.last()) {
-                                            getHomeByIdAccount(d.account).observeOnce(Observer { home -> home?.let {
-                                                home.rate = d.rate
-                                                home.principalKRW = d.principalKRW
-                                                home.evaluationKRW = d.evaluationKRW
-                                                jobUpdateHome = update(home)
-                                                runBlocking {
-                                                    jobUpdateHome.join()
-                                                    delay(100)
-                                                    fragmentManager?.popBackStack()
-                                                }
-                                            } })
-                                        }
-                                    }
-                                } })
-                            }
-                            else -> {
-                                getHomeByIdAccount(idAccount).observeOnce(Observer { home -> home?.let {
-                                    home.rate = dairy.rate
-                                    home.principalKRW = dairy.principalKRW
-                                    home.evaluationKRW = dairy.evaluationKRW
-                                    jobUpdateHome = update(home)
-                                    runBlocking {
-                                        jobUpdateHome.join()
-                                        delay(100)
-                                        fragmentManager?.popBackStack()
-                                    }
-                                } })
-                            }
-                        }
-                    } })
+                    checkNextDairyTotal(idAccount, selectedDate)
                 }
             } })
         }
     }
+
+    private fun checkNextDairyTotal(idAccount: Int?, selectedDate: String?) {
+        viewmodel?.run {
+            getNextDairyTotal(idAccount, selectedDate).observeOnce( Observer { date ->
+                if(!date.isNullOrEmpty()) {
+                    loadingDairyTotal(idAccount, date, true).observeOnce( Observer { dairy -> dairy?.let {
+                        val job = update(dairy)
+                        runBlocking {
+                            job.join()
+                            updateHome(idAccount, dairy)
+                            checkNextDairyTotal(idAccount, date)
+                        }
+                    } })
+                } else fragmentManager?.popBackStack()
+            })
+        }
+    }
+
+    private fun updateHome(idAccount: Int?, dairy: DairyTotal) {
+        viewmodel?.run {
+            getHomeByIdAccount(idAccount).observeOnce(Observer { home -> home?.let {
+                home.rate = dairy.rate
+                home.principalKRW = dairy.principalKRW
+                home.evaluationKRW = dairy.evaluationKRW
+                update(home)
+            } })
+        }
+    }
+
     private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
         observeForever(object: Observer<T> {
             override fun onChanged(t: T) {

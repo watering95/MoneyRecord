@@ -30,9 +30,7 @@ class FragmentHomeList : Fragment() {
         .observe(this, Observer { listOfHomes -> listOfHomes?.let {
             var totalEvaluation = 0
 
-            it.forEach { home ->
-                totalEvaluation += home.evaluationKRW!!
-            }
+            it.forEach { home -> totalEvaluation += home.evaluationKRW!! }
 
             onChangedRecyclerView(it, totalEvaluation)
         } })

@@ -100,9 +100,8 @@ class FragmentEditInoutForeign : Fragment() {
                     val job = delete(io)
                     runBlocking {
                         job.join()
-                        delay(100)
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                        processing.dairyForeign(idAccount, io.date, io.currency)
+                        processing.ioForeign(idAccount, io.date, io.currency)
                     }
                 }
             }
@@ -119,9 +118,8 @@ class FragmentEditInoutForeign : Fragment() {
                 val jobIO = if(io.id == null) insert(io) else update(io)
                 runBlocking {
                     jobIO.join()
-                    delay(100)
                     Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                    processing.dairyForeign(idAccount, io.date, io.currency)
+                    processing.ioForeign(idAccount, io.date, io.currency)
                 }
             }
         }

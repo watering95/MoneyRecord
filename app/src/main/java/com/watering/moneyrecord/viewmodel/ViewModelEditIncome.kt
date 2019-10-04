@@ -33,7 +33,6 @@ class ViewModelEditIncome(application: Application) : ObservableViewModel(applic
         listOfSub = Transformations.switchMap(listOfMain) { listOfMain ->
             Transformations.map(getCatSubsByMain(listOfMain[field])) { listOfSub -> listOfSub.map { it.name } }
         } as MutableLiveData<List<String?>>
-        indexOfSub = 0
         notifyPropertyChanged(BR.indexOfMain)
     }
 

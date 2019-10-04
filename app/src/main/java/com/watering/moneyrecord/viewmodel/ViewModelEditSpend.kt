@@ -39,7 +39,6 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
         listOfSub = Transformations.switchMap(listOfMain) { listOfMain ->
             Transformations.map(getCatSubsByMain(listOfMain[field])) { listOfSub -> listOfSub.map { it.name } }
         } as MutableLiveData<List<String?>>
-        indexOfSub = 0
         notifyPropertyChanged(BR.indexOfMain)
     }
 
@@ -73,7 +72,6 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
             0 -> listOfPay2 = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description }} as MutableLiveData<List<String>>
             1 -> listOfPay2 = Transformations.map(allCards) { list -> list.map { it.number + " " + it.company + " " + it.name} } as MutableLiveData<List<String>>
         }
-        indexOfPay2 = 0
         notifyPropertyChanged(BR.indexOfPay1)
     }
 

@@ -78,7 +78,6 @@ class FragmentEditCard : Fragment() {
                                         }
                                         runBlocking {
                                             job.join()
-                                            delay(100)
                                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                                             fragmentManager?.popBackStack()
                                         }
@@ -96,7 +95,6 @@ class FragmentEditCard : Fragment() {
                     val job = mViewModel.delete(this@FragmentEditCard.item)
                     runBlocking {
                         job.join()
-                        delay(100)
                         Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                         fragmentManager?.popBackStack()
                     }

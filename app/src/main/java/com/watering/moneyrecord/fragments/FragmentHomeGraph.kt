@@ -6,7 +6,6 @@ import android.view.*
 import android.webkit.WebView
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.databinding.FragmentHomeGraphBinding
@@ -28,7 +27,7 @@ class FragmentHomeGraph : Fragment() {
     var group: String? = ""
     var duration = 7
     var interval = 1
-    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager as FragmentManager }
+    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager  }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_home_graph, container, false)

@@ -1,8 +1,11 @@
 package com.watering.moneyrecord.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.watering.moneyrecord.MainActivity
@@ -21,7 +24,7 @@ class FragmentManagement : Fragment() {
     private val mFragmentManagementCard = FragmentManagementCard()
     private val mFragmentManagementDB = FragmentManagementDB()
 
-    val lists = arrayListOf("Group","Account","CategoryMain","CategorySub","Card","DB")
+    val lists = arrayListOf("Group","Account","CategoryMain","CategorySub","Card","DB", "test")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_management, container, false)
@@ -48,8 +51,26 @@ class FragmentManagement : Fragment() {
                 3 -> replaceFragment(fragmentManager!!, mFragmentManagementCategorySub)
                 4 -> replaceFragment(fragmentManager!!, mFragmentManagementCard)
                 5 -> replaceFragment(fragmentManager!!, mFragmentManagementDB)
-                else -> {  }
+                6 -> test()
+                else -> {}
             }
         }
+    }
+
+    private fun test() {
+        mViewModel.run {
+            getNextIOKRW(2, "2019-10-01").observeOnce( Observer { date -> date?.run {
+                Log.i("date", date)
+            } })
+        }
+    }
+
+    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+        observeForever(object: Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }

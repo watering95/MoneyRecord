@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
 import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations

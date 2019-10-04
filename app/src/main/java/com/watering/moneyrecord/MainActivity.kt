@@ -19,7 +19,7 @@ import com.watering.moneyrecord.viewmodel.ViewModelApp
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private val mFragmentManager = this.supportFragmentManager!!
+    private val mFragmentManager = this.supportFragmentManager
     private var mTransaction = mFragmentManager.beginTransaction()
     private val mFragmentHome = FragmentHome()
     private val mFragmentBook = FragmentBook()

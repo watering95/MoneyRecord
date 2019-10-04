@@ -18,6 +18,12 @@ interface DaoIOForeign {
     @Query("SELECT * FROM tbl_Info_IO_Foreign WHERE id_account = :id_account AND date <= :date AND id_currency = :currency ORDER BY date DESC LIMIT 1")
     fun getLast(id_account:Int?, date: String?, currency: Int?): LiveData<IOForeign>
 
+    @Query("SELECT date FROM tbl_Info_IO_Foreign WHERE id_account = :id_account AND date > :date AND id_currency = :currency")
+    fun getAfter(id_account: Int?, date: String?, currency: Int?): LiveData<List<String>>
+
+    @Query("SELECT date FROM tbl_Info_IO_Foreign WHERE id_account = :id_account AND date > :date AND id_currency = :currency ORDER BY date ASC LIMIT 1")
+    fun getNext(id_account: Int?, date: String?, currency: Int?): LiveData<String>
+
     @Query("SELECT SUM(input) FROM tbl_Info_IO_Foreign WHERE id_account = :id_account AND date <= :date AND id_currency = :currency")
     fun sumOfInput(id_account: Int?, date: String?, currency: Int?): LiveData<Double>
 

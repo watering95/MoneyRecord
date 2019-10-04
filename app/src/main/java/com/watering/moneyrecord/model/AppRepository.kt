@@ -29,6 +29,7 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     var allCatSubs = daoCatSub.getAll()
     var allCards = daoCard.getAll()
     var allHomes = daoHome.getAll()
+    var allSpendCashs = daoSpendCash.getAll()
 
     fun initialize() {
         db = AppDatabase.getDatabase(application, scope)
@@ -96,6 +97,13 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
 
     fun getDairyTotalOrderByDate(id_account: Int?) = daoDairyTotal.getOrderByDate(id_account)
 
+    fun getNextIOKRW(id_account: Int?, date: String?) = daoIOKRW.getNext(id_account, date)
+    fun getNextIOForeign(id_account: Int?, date: String?, currency: Int?) = daoIOForeign.getNext(id_account, date, currency)
+    fun getNextDairyKRW(id_account: Int?, date: String?) = daoDairyKRW.getNext(id_account, date)
+    fun getNextDairyForeign(id_account: Int?, date: String?, currency: Int?) = daoDairyForeign.getNext(id_account, date, currency)
+    fun getNextDairyTotal(id_account: Int?, date: String?) = daoDairyTotal.getNext(id_account, date)
+
+    fun getAfterIOKRW(id_account: Int?, date: String?) = daoIOKRW.getAfter(id_account, date)
     fun getAfterDairyKRW(id_account: Int?, date: String?) = daoDairyKRW.getAfter(id_account, date)
     fun getAfterDairyForeign(id_account: Int?, date: String?, currency: Int?) = daoDairyForeign.getAfter(id_account, date, currency)
     fun getAfterDairyTotal(id_account: Int?, date: String?) = daoDairyTotal.getAfter(id_account, date)

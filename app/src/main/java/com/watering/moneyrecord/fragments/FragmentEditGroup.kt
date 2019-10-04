@@ -56,7 +56,6 @@ class FragmentEditGroup : Fragment() {
                         }
                         runBlocking {
                             job.join()
-                            delay(100)
                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                             fragmentManager?.popBackStack()
                         }
@@ -70,7 +69,6 @@ class FragmentEditGroup : Fragment() {
                     val job = mViewModel.delete(this@FragmentEditGroup.item)
                     runBlocking {
                         job.join()
-                        delay(100)
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                         fragmentManager?.popBackStack()
                     }

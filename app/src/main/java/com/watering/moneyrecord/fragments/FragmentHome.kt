@@ -63,7 +63,7 @@ class FragmentHome : Fragment() {
                 } })
             } else {
                 listOfGroup.observe(this@FragmentHome, Observer { listOfGroup -> listOfGroup?.let {
-                    getGroup(it[indexOfGroup]).observe(this@FragmentHome, Observer { group -> group?.let { viewModel.currentGroupId = it.id } })
+                    getGroup(it[indexOfGroup]).observe(this@FragmentHome, Observer { group -> group?.let { viewModel.currentGroupId = group.id } })
                     getHomesByGroup(it[indexOfGroup]).observe(this@FragmentHome, Observer { listOfHomes -> listOfHomes?.let {
                         totalEvaluation = 0
                         totalPrincipal = 0

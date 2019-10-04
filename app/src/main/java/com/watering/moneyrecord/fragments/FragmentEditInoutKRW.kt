@@ -97,9 +97,8 @@ class FragmentEditInoutKRW : Fragment() {
 
                     runBlocking {
                         delete(io).join()
-                        delay(100)
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                        processing.dairyKRW(idAccount, io.date)
+                        processing.ioKRW(idAccount, io.date)
                     }
                 }
 
@@ -118,9 +117,8 @@ class FragmentEditInoutKRW : Fragment() {
 
                 runBlocking {
                     jobIO.join()
-                    delay(100)
                     Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                    processing.dairyKRW(idAccount, io.date)
+                    processing.ioKRW(idAccount, io.date)
                 }
             }
 

@@ -46,22 +46,16 @@ class FragmentEditIncome : Fragment() {
 
         binding.viewmodel?.run {
             income = this@FragmentEditIncome.income
-            if(income.id == null) { income = income.apply { this.date = MyCalendar.getToday() } }
-            else idAccount = income.account
+            if(income.id != null) idAccount = income.account
 
             getCatMainBySub(this@FragmentEditIncome.income.category).observeOnce( Observer { main -> main?.let {
                 Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let { indexOfMain = index } })
             } })
 
-            listOfAccount.observeOnce( Observer { list -> list?.let {
-                getAccount(income.account).observeOnce( Observer { account -> account?.let {
-                    indexOfAccount = list.indexOf(account.number + " " + account.institute + " " + account.description)
-                } })
-            } })
-
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                     when(propertyId) {
+                        BR.indexOfMain -> onChangedIndexOfMain()
                         BR.listOfSub -> onChangedListOfSub()
                         BR.indexOfSub -> onChangedIndexOfSub()
                         BR.indexOfAccount -> onChangedIndexOfAccount()
@@ -105,7 +99,6 @@ class FragmentEditIncome : Fragment() {
                     val job = delete(income)
                     runBlocking {
                         job.join()
-                        delay(100)
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
                         processing.ioKRW(idAccount,income.date)
                     }
@@ -114,6 +107,17 @@ class FragmentEditIncome : Fragment() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    fun onChangedIndexOfMain() {
+        // 화면 갱신이 동시에 되도록
+        binding.viewmodel?.run {
+            listOfAccount.observeOnce( Observer { list -> list?.let {
+                getAccount(income.account).observeOnce( Observer { account -> account?.let {
+                    indexOfAccount = list.indexOf(account.number + " " + account.institute + " " + account.description)
+                } })
+            } })
+        }
     }
 
     fun onChangedListOfSub() {
@@ -145,10 +149,9 @@ class FragmentEditIncome : Fragment() {
         }
     }
     private fun save() {
-        binding.viewmodel?.run {
-            runBlocking {
-                delay(100)
-
+        runBlocking {
+            delay(100)
+            binding.viewmodel?.run {
                 if(income.details.isNullOrEmpty() || indexOfMain < 0 || indexOfSub < 0 || indexOfAccount < 0) {
                     Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
                 } else {
@@ -156,7 +159,6 @@ class FragmentEditIncome : Fragment() {
 
                     runBlocking {
                         jobIncome.join()
-                        delay(100)
                         Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
                         processing.ioKRW(idAccount, income.date)
                     }

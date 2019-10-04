@@ -7,7 +7,6 @@ import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.watering.moneyrecord.MainActivity
@@ -22,7 +21,7 @@ import java.util.*
 class FragmentBookIncome : Fragment() {
     private lateinit var mViewModel: ViewModelApp
     private lateinit var binding: FragmentBookIncomeBinding
-    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager as FragmentManager }
+    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_book_income, container, false)
