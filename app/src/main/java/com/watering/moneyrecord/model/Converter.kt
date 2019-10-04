@@ -4,16 +4,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import androidx.databinding.InverseMethod
-import java.text.DecimalFormat
+import java.text.NumberFormat
 
 object Converter {
-    private val df_int = DecimalFormat("#,###")
-    private val df_double = DecimalFormat("#,##0.##")
+    private val nf_int = NumberFormat.getInstance()
+    private val nf_double = NumberFormat.getInstance()
 
     @InverseMethod("strToInt")
     @JvmStatic fun intToStr(value:Int): String {
         return try {
-            df_int.format(value)
+            nf_int.format(value)
         } catch (e: Exception) {
             ""
         }
@@ -21,7 +21,7 @@ object Converter {
 
     @JvmStatic fun strToInt(value:String): Int {
         return try {
-            df_int.parse(value).toInt()
+            nf_int.parse(value).toInt()
         } catch (e: Exception) {
             0
         }
@@ -30,7 +30,7 @@ object Converter {
     @InverseMethod("strToDouble")
     @JvmStatic fun doubleToStr(value:Double): String {
         return try {
-            df_double.format(value)
+            nf_double.format(value)
         } catch (e: Exception) {
             ""
         }
@@ -38,7 +38,7 @@ object Converter {
 
     @JvmStatic fun strToDouble(value:String): Double {
         return try {
-            df_double.parse(value).toDouble()
+            nf_double.parse(value).toDouble()
         } catch (e: Exception) {
             0.0
         }
@@ -52,7 +52,7 @@ object Converter {
                 var position = 0
 
                 override fun afterTextChanged(s: Editable?) {
-                    setSelection(position+(text.length-length))
+                    if(position == 0) setSelection(0) else setSelection(position+(text.length-length))
                 }
 
                 override fun beforeTextChanged(

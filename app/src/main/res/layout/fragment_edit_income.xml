@@ -62,17 +62,20 @@
                 android:id="@+id/textView8"
                 app:layout_constraintTop_toTopOf="@+id/edit_details_fragment_edit_income"
                 app:layout_constraintBottom_toBottomOf="@+id/edit_details_fragment_edit_income"/>
+
         <EditText
+                android:id="@+id/edit_amount_fragment_edit_income"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:text="@={Converter.intToStr(viewmodel.income.amount)}"
-                android:ems="10"
-                android:id="@+id/edit_amount_fragment_edit_income" android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/edit_details_fragment_edit_income"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/textView9"
-                android:layout_marginStart="8dp"/>
+                android:ems="10"
+                android:inputType="numberSigned"
+                android:text="@={Converter.intToStr(viewmodel.income.amount)}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView9"
+                app:layout_constraintTop_toBottomOf="@+id/edit_details_fragment_edit_income" />
         <TextView
                 android:text="@string/amount"
                 android:layout_width="80dp"

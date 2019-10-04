@@ -176,6 +176,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
 
                 runBlocking {
                     jobDairyTotal.join()
+                    updateHome(idAccount, dairy)
                     checkNextDairyTotal(idAccount, selectedDate)
                 }
             } })
@@ -185,7 +186,8 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
     private fun checkNextDairyTotal(idAccount: Int?, selectedDate: String?) {
         viewmodel?.run {
             getNextDairyTotal(idAccount, selectedDate).observeOnce( Observer { date ->
-                if(!date.isNullOrEmpty()) {
+                if(date.isNullOrEmpty()) fragmentManager?.popBackStack()
+                else {
                     loadingDairyTotal(idAccount, date, true).observeOnce( Observer { dairy -> dairy?.let {
                         val job = update(dairy)
                         runBlocking {
@@ -194,7 +196,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                             checkNextDairyTotal(idAccount, date)
                         }
                     } })
-                } else fragmentManager?.popBackStack()
+                }
             })
         }
     }

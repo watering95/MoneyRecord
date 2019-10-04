@@ -24,16 +24,18 @@
                 android:id="@+id/textView" app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="8dp"
                 app:layout_constraintTop_toTopOf="@+id/spinner_currency_fragment_edit_inout_foreign" app:layout_constraintBottom_toBottomOf="@+id/spinner_currency_fragment_edit_inout_foreign"/>
+
         <EditText
+                android:id="@+id/edit_deposit_fragment_edit_inout_foreign"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="@={Converter.doubleToStr(viewmodel.deposit)}"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:ems="10"
-                android:id="@+id/edit_deposit_fragment_edit_inout_foreign"
-                android:inputType="number" android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/spinner_currency_fragment_edit_inout_foreign"
-                app:layout_constraintStart_toEndOf="@+id/textView2" android:layout_marginStart="8dp"
-        />
+                android:inputType="numberSigned|number"
+                android:text="@={Converter.doubleToStr(viewmodel.deposit)}"
+                app:layout_constraintStart_toEndOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_currency_fragment_edit_inout_foreign" />
         <TextView
                 android:text="@string/deposit_amount"
                 android:layout_width="80dp"
@@ -42,17 +44,20 @@
                 android:layout_marginStart="8dp"
                 app:layout_constraintTop_toTopOf="@+id/edit_deposit_fragment_edit_inout_foreign"
                 app:layout_constraintBottom_toBottomOf="@+id/edit_deposit_fragment_edit_inout_foreign"/>
+
         <EditText
+                android:id="@+id/edit_deposit_krw_fragment_edit_inout_foreign"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:ems="10"
+                android:inputType="numberSigned|number"
                 android:text="@={Converter.intToStr(viewmodel.depositKRW)}"
-                android:id="@+id/edit_deposit_krw_fragment_edit_inout_foreign" android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/edit_deposit_fragment_edit_inout_foreign"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView3"
-                android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/edit_deposit_fragment_edit_inout_foreign" />
         <TextView
                 android:text="@string/krw"
                 android:layout_width="80dp"
@@ -78,36 +83,45 @@
                 android:layout_marginStart="8dp"
                 app:layout_constraintTop_toTopOf="@+id/edit_principal_fragment_edit_inout_foreign"
                 app:layout_constraintBottom_toBottomOf="@+id/edit_principal_fragment_edit_inout_foreign"/>
+
         <EditText
+                android:id="@+id/edit_withdraw_fragment_edit_inout_foreign"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:ems="10"
+                android:inputType="numberSigned|number"
                 android:text="@={Converter.doubleToStr(viewmodel.withdraw)}"
-                android:id="@+id/edit_withdraw_fragment_edit_inout_foreign" android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/edit_deposit_krw_fragment_edit_inout_foreign"
-                app:layout_constraintStart_toEndOf="@+id/textView6" android:layout_marginStart="8dp"
-        />
+                app:layout_constraintStart_toEndOf="@+id/textView6"
+                app:layout_constraintTop_toBottomOf="@+id/edit_deposit_krw_fragment_edit_inout_foreign" />
+
         <EditText
+                android:id="@+id/edit_withdraw_krw_fragment_edit_inout_foreign"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:ems="10"
+                android:inputType="numberSigned|number"
                 android:text="@={Converter.intToStr(viewmodel.withdrawKRW)}"
-                android:id="@+id/edit_withdraw_krw_fragment_edit_inout_foreign" android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/edit_withdraw_fragment_edit_inout_foreign"
-                app:layout_constraintStart_toEndOf="@+id/textView7" android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView7"
+                app:layout_constraintTop_toBottomOf="@+id/edit_withdraw_fragment_edit_inout_foreign" />
+
         <EditText
+                android:id="@+id/edit_principal_fragment_edit_inout_foreign"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:ems="10"
-                android:text="@{Converter.doubleToStr(viewmodel.principal)}"
                 android:enabled="false"
-                android:id="@+id/edit_principal_fragment_edit_inout_foreign" android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/edit_withdraw_krw_fragment_edit_inout_foreign"
-                app:layout_constraintStart_toEndOf="@+id/textView5" android:layout_marginStart="8dp"/>
+                android:inputType="numberSigned|number"
+                android:text="@{Converter.doubleToStr(viewmodel.principal)}"
+                app:layout_constraintStart_toEndOf="@+id/textView5"
+                app:layout_constraintTop_toBottomOf="@+id/edit_withdraw_krw_fragment_edit_inout_foreign" />
         <Spinner
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -179,16 +193,20 @@
                 app:layout_constraintBottom_toBottomOf="@+id/edit_evaluation_rate_fragment_edit_inout_foreign"
                 app:layout_constraintStart_toEndOf="@+id/edit_principal_fragment_edit_inout_foreign"
                 android:layout_marginStart="8dp"/>
+
         <EditText
+                android:id="@+id/edit_evaluation_krw_fragment_edit_inout_foreign"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:ems="10"
+                android:inputType="numberSigned|number"
                 android:text="@={Converter.doubleToStr(viewmodel.evaluationKRW)}"
-                android:id="@+id/edit_evaluation_krw_fragment_edit_inout_foreign" android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/edit_principal_fragment_edit_inout_foreign"
-                app:layout_constraintStart_toEndOf="@+id/textView15" android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView15"
+                app:layout_constraintTop_toBottomOf="@+id/edit_principal_fragment_edit_inout_foreign" />
         <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
