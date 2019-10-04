@@ -20,7 +20,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                         when(home) {
                             null -> {
                                 getGroup(account.group).observeOnce(Observer { group -> group?.let {
-                                    loadingDairyTotal(account.id, MyCalendar.getToday(), true).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
+                                    loadingDairyTotal(account.id, MyCalendar.getToday(), false).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
                                         val newHome = Home()
                                         newHome.idAccount = account.id
                                         newHome.group = group.name
@@ -34,7 +34,7 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
                                 } })
                             }
                             else -> {
-                                loadingDairyTotal(account.id, MyCalendar.getToday(), true).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
+                                loadingDairyTotal(account.id, MyCalendar.getToday(), false).observeOnce(Observer { dairyTotal -> dairyTotal?.let {
                                     home.evaluationKRW = dairyTotal.evaluationKRW
                                     home.principalKRW = dairyTotal.principalKRW
                                     home.rate = dairyTotal.rate
