@@ -123,8 +123,6 @@ class FragmentEditSpend : Fragment() {
                                 }
                             }})
                         }
-
-
                     }
                 }
             }

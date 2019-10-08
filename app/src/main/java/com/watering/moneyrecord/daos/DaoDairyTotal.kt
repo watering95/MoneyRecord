@@ -24,6 +24,18 @@ interface DaoDairyTotal {
     @Query("SELECT date FROM tbl_info_dairy_total ORDER BY date ASC LIMIT 1")
     fun getFirstDate(): LiveData<String>
 
+    @Query("SELECT SUM(evaluation) FROM (SELECT * FROM (SELECT * FROM tbl_Info_Dairy_Total WHERE id_account IN (SELECT _id FROM tbl_account WHERE id_group = :group) AND date <= :date ORDER BY date ASC) GROUP BY id_account)")
+    fun getSumOfEvaluation(group: Int?, date: String?): LiveData<Int>
+
+    @Query("SELECT SUM(evaluation) FROM (SELECT * FROM (SELECT * FROM tbl_Info_Dairy_Total WHERE date <= :date ORDER BY date ASC) GROUP BY id_account)")
+    fun getSumOfEvaluation(date: String?): LiveData<Int>
+
+    @Query("SELECT SUM(principal) FROM (SELECT * FROM (SELECT * FROM tbl_Info_Dairy_Total WHERE id_account IN (SELECT _id FROM tbl_account WHERE id_group = :group) AND date <= :date ORDER BY date ASC) GROUP BY id_account)")
+    fun getSumOfPrincipal(group: Int?, date: String?): LiveData<Int>
+
+    @Query("SELECT SUM(principal) FROM (SELECT * FROM (SELECT * FROM tbl_Info_Dairy_Total WHERE date <= :date ORDER BY date ASC) GROUP BY id_account)")
+    fun getSumOfPrincipal(date: String?): LiveData<Int>
+
     @Insert
     fun insert(dairy: DairyTotal)
 

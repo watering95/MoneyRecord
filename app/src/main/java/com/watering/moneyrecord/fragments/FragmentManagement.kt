@@ -59,8 +59,8 @@ class FragmentManagement : Fragment() {
 
     private fun test() {
         mViewModel.run {
-            getNextIOKRW(2, "2019-10-01").observeOnce( Observer { date -> date?.run {
-                Log.i("date", date)
+            sumOfPrincipal("2019-10-07").observeOnce(Observer { v -> v?.let {
+                it
             } })
         }
     }

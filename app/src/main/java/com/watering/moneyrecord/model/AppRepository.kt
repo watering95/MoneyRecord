@@ -129,6 +129,11 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     fun sumOfSpendCardUntilDate(id_account: Int?, date: String?) = daoIOKRW.sumOfSpendCard(id_account, date)
     fun sumOfSpendCashUntilDate(id_account: Int?, date: String?) = daoIOKRW.sumOfSpendCash(id_account, date)
 
+    fun sumOfEvaluation(group: Int?, date: String) = daoDairyTotal.getSumOfEvaluation(group, date)
+    fun sumOfEvaluation(date: String) = daoDairyTotal.getSumOfEvaluation(date)
+    fun sumOfPrincipal(group: Int?, date: String) = daoDairyTotal.getSumOfPrincipal(group, date)
+    fun sumOfPrincipal(date: String) = daoDairyTotal.getSumOfPrincipal(date)
+
     fun close() {
         if(db.isOpen) db.openHelper.close()
     }
