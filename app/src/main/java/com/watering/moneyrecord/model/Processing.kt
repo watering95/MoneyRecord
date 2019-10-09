@@ -1,6 +1,5 @@
 package com.watering.moneyrecord.model
 
-import android.util.Log
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer

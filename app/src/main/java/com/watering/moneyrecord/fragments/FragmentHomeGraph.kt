@@ -32,13 +32,14 @@ class FragmentHomeGraph : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_home_graph, container, false)
         initLayout()
+        
         return binding.root
     }
+
     private fun initLayout() {
         val activity = activity as MainActivity
 
         mViewModel = activity.mViewModel
-        makeHTMLFile()
 
         openWebView()
         setHasOptionsMenu(false)
@@ -112,7 +113,7 @@ class FragmentHomeGraph : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        makeHTMLFile()
+        makeHTMLFile()
         mWeb.reload()
     }
 

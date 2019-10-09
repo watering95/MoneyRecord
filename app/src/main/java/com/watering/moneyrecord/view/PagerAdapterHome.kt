@@ -3,6 +3,7 @@ package com.watering.moneyrecord.view
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.PagerAdapter
 import com.watering.moneyrecord.fragments.FragmentHomeGraph
 import com.watering.moneyrecord.fragments.FragmentHomeList
 
@@ -13,6 +14,7 @@ class PagerAdapterHome(fm: FragmentManager): FragmentPagerAdapter(fm) {
 
     fun setGroup(group: String?) {
         fragmentHomeList.group = group
+        fragmentHomeGraph.group = group
         fragmentHomeList.updateList()
     }
 
@@ -22,6 +24,10 @@ class PagerAdapterHome(fm: FragmentManager): FragmentPagerAdapter(fm) {
             1 -> { fragmentHomeGraph }
             else -> { fragmentHomeList }
         }
+    }
+
+    override fun getItemPosition(`object`: Any): Int {
+        return POSITION_NONE
     }
 
     override fun getCount(): Int {

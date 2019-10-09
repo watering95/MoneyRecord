@@ -12,6 +12,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 
 import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
@@ -87,6 +89,7 @@ class FragmentHome : Fragment() {
                 else listOfGroup.observe(this@FragmentHome, Observer { listOfGroup -> listOfGroup?.let {
                     (adapter as PagerAdapterHome).setGroup(it[indexOfGroup])
                 } })
+                adapter!!.notifyDataSetChanged()
             }
         }
     }
