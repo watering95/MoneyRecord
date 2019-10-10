@@ -56,6 +56,7 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
         allHomes = daoHome.getAll()
     }
 
+    fun getFirstDate(group: Int?) = daoDairyTotal.getFirstDate(group)
     fun getFirstDate() = daoDairyTotal.getFirstDate()
 
     fun getGroup(id: Int?) = daoGroup.get(id)

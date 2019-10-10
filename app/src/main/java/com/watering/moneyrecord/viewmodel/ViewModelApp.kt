@@ -63,8 +63,9 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getFirstDate() = repository.getFirstDate()
-
+    fun getFirstDate(group: String?)
+            = if(group != "") Transformations.switchMap(getGroup(group)) { repository.getFirstDate(it.id) }
+            else repository.getFirstDate()
     fun getGroup(id: Int?) = repository.getGroup(id)
     fun getGroup(name: String?) = repository.getGroup(name)
 
@@ -417,13 +418,9 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     private fun sumOfSpendCashUntilDate(idAccount: Int?, date: String?) =
         repository.sumOfSpendCashUntilDate(idAccount, date)
 
-    fun sumOfEvaluation(date: String):LiveData<Int> {
-        return if(currentGroupId!! > 0) repository.sumOfEvaluation(currentGroupId, date) else repository.sumOfEvaluation(date)
-    }
+    fun sumOfEvaluation(date: String) = if(currentGroupId!! > 0) repository.sumOfEvaluation(currentGroupId, date) else repository.sumOfEvaluation(date)
 
-    fun sumOfPrincipal(date: String): LiveData<Int> {
-        return if(currentGroupId!! > 0) repository.sumOfPrincipal(currentGroupId, date) else repository.sumOfPrincipal(date)
-    }
+    fun sumOfPrincipal(date: String) = if(currentGroupId!! > 0) repository.sumOfPrincipal(currentGroupId, date) else repository.sumOfPrincipal(date)
 
 
     // 지정일까지 원화 원금을 원화 입금액, 출금액, 지출, 수입 전체로 계산

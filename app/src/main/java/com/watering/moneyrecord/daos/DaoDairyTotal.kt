@@ -21,7 +21,10 @@ interface DaoDairyTotal {
     @Query("SELECT date FROM tbl_Info_Dairy_Total WHERE id_account = :id_account AND date > :date ORDER BY date ASC LIMIT 1")
     fun getNext(id_account: Int?, date: String?): LiveData<String>
 
-    @Query("SELECT date FROM tbl_info_dairy_total ORDER BY date ASC LIMIT 1")
+    @Query("SELECT date FROM (SELECT * FROM tbl_Info_Dairy_Total WHERE id_account IN (SELECT _id FROM tbl_account WHERE id_group = :group)) ORDER BY date ASC LIMIT 1")
+    fun getFirstDate(group: Int?): LiveData<String>
+
+    @Query("SELECT date FROM tbl_Info_Dairy_Total ORDER BY date ASC LIMIT 1")
     fun getFirstDate(): LiveData<String>
 
     @Query("SELECT SUM(evaluation) FROM (SELECT * FROM (SELECT * FROM tbl_Info_Dairy_Total WHERE id_account IN (SELECT _id FROM tbl_account WHERE id_group = :group) AND date <= :date ORDER BY date ASC) GROUP BY id_account)")

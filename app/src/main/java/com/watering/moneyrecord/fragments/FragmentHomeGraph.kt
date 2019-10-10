@@ -32,7 +32,7 @@ class FragmentHomeGraph : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_home_graph, container, false)
         initLayout()
-        
+
         return binding.root
     }
 
@@ -54,7 +54,7 @@ class FragmentHomeGraph : Fragment() {
     }
 
     private fun makeHTMLFile() = try {
-        mViewModel.getFirstDate().observeOnce( Observer { firstDate -> firstDate?.let {
+        mViewModel.getFirstDate(group).observeOnce( Observer { firstDate -> firstDate?.let {
             val data = StringBuilder().append("")
             val today = MyCalendar.getToday()
             makeData(firstDate, MyCalendar.strToCalendar(today), 0, data)
@@ -64,7 +64,7 @@ class FragmentHomeGraph : Fragment() {
     }
 
     private fun makeData(firstDate: String, date: Calendar, i: Int, data: StringBuilder) {
-        if(date > MyCalendar.strToCalendar(firstDate) && i < duration) {
+        if(date >= MyCalendar.strToCalendar(firstDate) && i < duration) {
             val strDate = MyCalendar.calendarToStr(date)
             mViewModel.sumOfEvaluation(strDate).observeOnce( Observer { sumEvaluation -> sumEvaluation?.let {
                 mViewModel.sumOfPrincipal(strDate).observeOnce( Observer { sumPrincipal -> sumPrincipal?.let {
@@ -72,7 +72,7 @@ class FragmentHomeGraph : Fragment() {
                     if (sumPrincipal != 0 && sumEvaluation != 0) rate = sumEvaluation.toDouble() / sumPrincipal.toDouble() * 100 - 100
                     data.append("[").append("new Date('").append(strDate).append("')").append(", ").append(sumEvaluation).append(", ").append(rate).append("],\n")
 
-                    makeData(firstDate, MyCalendar.changeDate(strDate, -i*interval), i+1, data)
+                    makeData(firstDate, MyCalendar.changeDate(strDate, -interval), i+1, data)
                 } })
             } })
         } else {
@@ -108,13 +108,13 @@ class FragmentHomeGraph : Fragment() {
             Log.i("html",html)
             bw.write(html)
             bw.close()
+            mWeb.reload()
         }
     }
 
     override fun onResume() {
         super.onResume()
         makeHTMLFile()
-        mWeb.reload()
     }
 
     private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
