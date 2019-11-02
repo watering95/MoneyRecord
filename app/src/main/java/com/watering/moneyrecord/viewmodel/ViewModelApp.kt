@@ -418,6 +418,9 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     private fun sumOfSpendCashUntilDate(idAccount: Int?, date: String?) =
         repository.sumOfSpendCashUntilDate(idAccount, date)
 
+    fun sumOfIncome(startDate: String, endDate: String) = repository.sumOfIncome(startDate, endDate)
+    fun sumOfSpend(startDate: String, endDate: String) = repository.sumOfSpend(startDate, endDate)
+
     fun sumOfEvaluation(date: String) = if(currentGroupId!! > 0) repository.sumOfEvaluation(currentGroupId, date) else repository.sumOfEvaluation(date)
 
     fun sumOfPrincipal(date: String) = if(currentGroupId!! > 0) repository.sumOfPrincipal(currentGroupId, date) else repository.sumOfPrincipal(date)

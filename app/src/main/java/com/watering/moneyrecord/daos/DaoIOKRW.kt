@@ -30,11 +30,18 @@ interface DaoIOKRW {
     @Query("SELECT SUM(income) FROM tbl_Info_IO WHERE id_account = :id_account AND date <= :date")
     fun sumOfIncome(id_account: Int?, date: String?): LiveData<Int>
 
+    @Query("SELECT SUM(income) FROM tbl_Info_IO WHERE date >= :startDate AND date <= :endDate")
+    fun sumOfIncome(startDate: String?, endDate: String?): LiveData<Int>
+
+    @Query("SELECT SUM(spend_cash) + SUM(spend_card) FROM tbl_Info_IO WHERE date >= :startDate AND date <= :endDate")
+    fun sumOfSpend(startDate: String?, endDate: String?): LiveData<Int>
+
     @Query("SELECT SUM(spend_card) FROM tbl_Info_IO WHERE id_account = :id_account AND date <= :date")
     fun sumOfSpendCard(id_account: Int?, date: String?): LiveData<Int>
 
     @Query("SELECT SUM(spend_cash) FROM tbl_Info_IO WHERE id_account = :id_account AND date <= :date")
     fun sumOfSpendCash(id_account: Int?, date: String?): LiveData<Int>
+
 
     @Insert
     fun insert(io: IOKRW)
