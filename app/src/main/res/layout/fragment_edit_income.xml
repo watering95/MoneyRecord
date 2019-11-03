@@ -3,6 +3,7 @@
     <data>
         <import type="com.watering.moneyrecord.model.Converter"/>
         <variable name="viewmodel" type="com.watering.moneyrecord.viewmodel.ViewModelEditIncome"/>
+        <variable name="amount" type="Integer"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_edit_income"
@@ -72,7 +73,7 @@
                 android:layout_marginEnd="8dp"
                 android:ems="10"
                 android:inputType="numberSigned"
-                android:text="@={Converter.intToStr(viewmodel.income.amount)}"
+                android:text="@={Converter.intToStr(amount)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView9"
                 app:layout_constraintTop_toBottomOf="@+id/edit_details_fragment_edit_income" />

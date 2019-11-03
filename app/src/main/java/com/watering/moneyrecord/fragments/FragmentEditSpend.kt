@@ -198,6 +198,7 @@ class FragmentEditSpend : Fragment() {
     }
 
     private fun save() {
+        spend.apply { amount = binding.amount }
         runBlocking {
             delay(100)
             binding.viewmodel?.run {
