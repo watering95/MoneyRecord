@@ -14,7 +14,7 @@
                 android:layout_height="match_parent">
 
             <TextView
-                    android:id="@+id/textView29"
+                    android:id="@+id/textView_1_fragment_home_list"
                     android:layout_width="140dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -25,39 +25,39 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                    android:id="@+id/textView30"
+                    android:id="@+id/textView_2_fragment_home_list"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="@string/principal"
                     android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView29"
-                    app:layout_constraintStart_toEndOf="@+id/textView29"
-                    app:layout_constraintTop_toTopOf="@+id/textView29" />
+                    app:layout_constraintBottom_toBottomOf="@+id/textView_1_fragment_home_list"
+                    app:layout_constraintStart_toEndOf="@+id/textView_1_fragment_home_list"
+                    app:layout_constraintTop_toTopOf="@+id/textView_1_fragment_home_list" />
 
             <TextView
-                    android:id="@+id/textView31"
+                    android:id="@+id/textView_3_fragment_home_list"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:text="@string/evaluation"
                     android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView30"
-                    app:layout_constraintStart_toEndOf="@+id/textView30"
-                    app:layout_constraintTop_toTopOf="@+id/textView30" />
+                    app:layout_constraintBottom_toBottomOf="@+id/textView_2_fragment_home_list"
+                    app:layout_constraintStart_toEndOf="@+id/textView_2_fragment_home_list"
+                    app:layout_constraintTop_toTopOf="@+id/textView_2_fragment_home_list" />
 
             <TextView
-                    android:id="@+id/textView32"
+                    android:id="@+id/textView_4_fragment_home_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="8dp"
                     android:text="@string/profit"
                     android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView31"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView_3_fragment_home_list"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/textView31"
-                    app:layout_constraintTop_toTopOf="@+id/textView31" />
+                    app:layout_constraintStart_toEndOf="@+id/textView_3_fragment_home_list"
+                    app:layout_constraintTop_toTopOf="@+id/textView_3_fragment_home_list" />
 
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerview_fragment_home_list"
@@ -66,7 +66,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView32">
+                    app:layout_constraintTop_toBottomOf="@+id/textView_4_fragment_home_list">
 
             </androidx.recyclerview.widget.RecyclerView>
 

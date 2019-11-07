@@ -52,6 +52,7 @@ class FragmentBook : Fragment() {
                     when(position) {
                         0 -> activity.supportActionBar?.setTitle(R.string.title_spend)
                         1 -> activity.supportActionBar?.setTitle(R.string.title_income)
+                        2 -> activity.supportActionBar?.setTitle(R.string.title_statistics)
                     }
                 }
             })

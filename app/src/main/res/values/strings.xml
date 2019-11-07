@@ -39,9 +39,11 @@
     <string name="backward">backward</string>
     <string name="auto">자동생성</string>
     <string name="text"> </string>
+    <string name="yearmonth">년월</string>
     <string name="db_file_list">DB 파일 목록</string>
     <string name="title_spend">가계부 : 지출</string>
     <string name="title_income">가계부 : 수입</string>
+    <string name="title_statistics">가계부 : 통계</string>
     <string name="title_home">Home</string>
     <string name="title_book">가계부</string>
     <string name="title_accounts">계좌</string>
