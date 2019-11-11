@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "799315006133-ilakigscssvno95lsnsbes2trh7m6hc8.apps.googleusercontent.com",
+          "client_id": "799315006133-q84fkvj6t7045ntdqdqa7t8kidnlos8a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.watering.moneyrecord",
-            "certificate_hash": "f4497bac74db113f65adbb4d4cf1ca322f5b18ec"
+            "certificate_hash": "27e348edd7ac1e75a864a3ed9ada7588b9e67b08"
+          }
+        },
+        {
+          "client_id": "799315006133-lu6i2uff8siou76cq3rg7d0gh2tl7mjj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.watering.moneyrecord",
+            "certificate_hash": "8719d749053a088d2af5feb70a55bd2178a3cf45"
           }
         },
         {

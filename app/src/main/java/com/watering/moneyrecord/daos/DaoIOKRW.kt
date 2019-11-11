@@ -3,6 +3,7 @@ package com.watering.moneyrecord.daos
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.watering.moneyrecord.entities.IOKRW
+import com.watering.moneyrecord.entities.StatisticsMonthly
 
 @Dao
 interface DaoIOKRW {
@@ -41,6 +42,9 @@ interface DaoIOKRW {
 
     @Query("SELECT SUM(spend_cash) FROM tbl_Info_IO WHERE id_account = :id_account AND date <= :date")
     fun sumOfSpendCash(id_account: Int?, date: String?): LiveData<Int>
+
+    @Query("SELECT substr(date, 1, 7) AS date, sum(income) AS income, sum(spend_cash) + sum(spend_card) AS spend FROM tbl_Info_IO GROUP BY substr(date, 1, 7)")
+    fun sumOfMonthly(): LiveData<List<StatisticsMonthly>>
 
 
     @Insert

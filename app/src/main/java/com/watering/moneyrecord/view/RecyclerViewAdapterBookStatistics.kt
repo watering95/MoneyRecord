@@ -30,12 +30,12 @@ class RecyclerViewAdapterBookStatistics(val lists:List<StatisticsMonthly>, priva
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         private var yearMonth: TextView = view.findViewById(R.id.text_yearmonth_card_book_statistics)
         private var income: TextView = view.findViewById(R.id.text_income_card_book_statistics)
-        private var spend: TextView = view.findViewById(R.id.text_income_card_book_statistics)
+        private var spend: TextView = view.findViewById(R.id.text_spend_card_book_statistics)
 
         fun bind(statistics: StatisticsMonthly, position: Int, clickListener: (Int) -> Unit) {
             val df = DecimalFormat("#,###")
 
-            yearMonth.text = "${statistics.year}.${statistics.month}"
+            yearMonth.text = statistics.date
             income.text = df.format(statistics.income)
             spend.text = df.format(statistics.spend)
             view.setOnClickListener { clickListener(position) }

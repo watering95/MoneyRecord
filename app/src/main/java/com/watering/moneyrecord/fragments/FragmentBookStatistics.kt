@@ -42,9 +42,11 @@ class FragmentBookStatistics : Fragment() {
     }
 
     private fun updateList() {
-        var list: List<StatisticsMonthly>
-        TODO("list 만들기")
-        onChangedRecyclerView(list)
+        mViewModel.run {
+            sumOfMonthlyStatistics().observe(this@FragmentBookStatistics, Observer { statistics -> statistics?.let {
+                onChangedRecyclerView(it)
+            } })
+        }
     }
 
     private fun onChangedRecyclerView(list: List<StatisticsMonthly>) {
