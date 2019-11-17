@@ -27,6 +27,8 @@
     <string name="spend">지출</string>
     <string name="deposit_amount">입금액</string>
     <string name="withdraw_amount">출금액</string>
+    <string name="deposit_account">입금계좌</string>
+    <string name="withdraw_account">출금계좌</string>
     <string name="principal">원금</string>
     <string name="evaluation">평가금액</string>
     <string name="withdraw_date">인출일</string>
@@ -70,6 +72,7 @@
     <string name="toast_warning_input">입력값을 확인해 주세요.</string>
     <string name="toast_save_success">저장되었습니다.</string>
     <string name="toast_delete_success">삭제되었습니다.</string>
+    <string name="toast_transfer_success">이체되었습니다.</string>
     <array name="category">
         <item name="spend">spend</item>
         <item name="income">income</item>

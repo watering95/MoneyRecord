@@ -67,7 +67,7 @@ class FragmentAccounts : Fragment() {
                             when(select) {
                                 0 -> mViewModel.replaceFragment(mFragmentManager, FragmentEditInoutKRW().initInstance(idAccount, today))
                                 1 -> mViewModel.replaceFragment(mFragmentManager, FragmentEditInoutForeign().initInstance(idAccount, today))
-                                2 -> {}
+                                2 -> mViewModel.replaceFragment(mFragmentManager, FragmentAccountTransfer().initInstance(idAccount))
                             }
                         }
                     })
@@ -85,7 +85,7 @@ class FragmentAccounts : Fragment() {
                     when(select) {
                         0 -> mViewModel.replaceFragment(mFragmentManager, FragmentEditInoutKRW().initInstance(binding.viewmodel?.idAccount, date))
                         1 -> mViewModel.replaceFragment(mFragmentManager, FragmentEditInoutForeign().initInstance(binding.viewmodel?.idAccount, date))
-                        2 -> {}
+                        2 -> mViewModel.replaceFragment(mFragmentManager, FragmentAccountTransfer().initInstance(binding.viewmodel?.idAccount))
                     }
                 }
             })

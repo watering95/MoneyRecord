@@ -147,8 +147,12 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                                 new.spendCash = sumOfSpendsCash
                                 new.spendCard = sumOfSpendsCard
                                 new.income = sumOfIncome
+                                new.output = 0
+                                new.input = 0
                                 new
                             } else {
+                                if(io.output == null) io.output = 0
+                                if(io.input == null) io.input = 0
                                 if (isUpdateEvaluation) io.evaluationKRW =
                                     previousEvaluation - sumOfSpendsCard - sumOfSpendsCash + sumOfIncome - io.output!! + io.input!!
                                 io.spendCash = sumOfSpendsCash

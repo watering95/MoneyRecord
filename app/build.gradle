@@ -59,10 +59,10 @@ dependencies {
     // Lifecycle components
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-rc01"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc01"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc01"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc01"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-rc02"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc02"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc02"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc02"
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
