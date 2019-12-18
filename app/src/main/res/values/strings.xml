@@ -18,6 +18,8 @@
     <string name="exchange_rate">환율</string>
     <string name="foreign_principal">외화 원금</string>
     <string name="krw_evaluation">원화 평가금액</string>
+    <string name="update_evaluation">평가액 반영</string>
+    <string name="update_inout">입출금액 반영</string>
     <string name="profit">이익율</string>
     <string name="name">이름</string>
     <string name="company">회사</string>

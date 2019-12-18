@@ -47,6 +47,7 @@ class FragmentEditIncome : Fragment() {
         binding.viewmodel?.run {
             income = this@FragmentEditIncome.income
             if(income.id != null) idAccount = income.account
+            binding.amount = income.amount
 
             getCatMainBySub(this@FragmentEditIncome.income.category).observeOnce( Observer { main -> main?.let {
                 Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let { indexOfMain = index } })
@@ -63,6 +64,8 @@ class FragmentEditIncome : Fragment() {
                 }
             })
         }
+
+        binding.isUpdateEvaluation = false
 
         binding.buttonDateFragmentEditIncome.setOnClickListener {
             binding.viewmodel?.run {
@@ -100,7 +103,7 @@ class FragmentEditIncome : Fragment() {
                     runBlocking {
                         job.join()
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                        processing.ioKRW(idAccount,income.date)
+                        processing.ioKRW(idAccount,income.date, binding.isUpdateEvaluation!!)
                     }
                 }
             }
@@ -161,7 +164,7 @@ class FragmentEditIncome : Fragment() {
                     runBlocking {
                         jobIncome.join()
                         Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                        processing.ioKRW(idAccount, income.date)
+                        processing.ioKRW(idAccount, income.date, binding.isUpdateEvaluation!!)
                     }
                 }
             }

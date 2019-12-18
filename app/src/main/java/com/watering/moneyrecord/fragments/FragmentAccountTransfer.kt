@@ -56,6 +56,9 @@ class FragmentAccountTransfer : Fragment() {
             }.observeOnce(Observer { index -> index?.let { indexOfWithdrawAccount = it } })
         }
 
+        binding.isUpdateDeposit = false
+        binding.isUpdateWithdraw = false
+
         Converter.addConvertedTextChangedListener(binding.editAmountFragmentAccountTransfer)
 
         setHasOptionsMenu(true)
@@ -75,7 +78,7 @@ class FragmentAccountTransfer : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    // DB 업데이트 실패 시 되돌리는 것도 검토 필
+    // TODO : DB 업데이트 실패 시 되돌리는 것도 검토 필요
     private fun save() {
         binding.viewmodel?.run {
             if(indexOfDepositAccount == indexOfWithdrawAccount || indexOfDepositAccount < 0 || indexOfWithdrawAccount < 0 || binding.amount!! < 0) {
@@ -93,7 +96,7 @@ class FragmentAccountTransfer : Fragment() {
 
                         runBlocking {
                             job1.join()
-                            processing.ioKRW(io.account, io.date)
+                            processing.ioKRW(io.account, io.date, binding.isUpdateWithdraw!!)
 
                             Transformations.switchMap(listOfAccount) { list ->
                                 Transformations.switchMap(getAccountByNumber(list[indexOfDepositAccount].split(" ")[0])) { account ->
@@ -106,7 +109,7 @@ class FragmentAccountTransfer : Fragment() {
                                 runBlocking {
                                     job2.join()
                                     Toast.makeText(activity, R.string.toast_transfer_success, Toast.LENGTH_SHORT).show()
-                                    processing.ioKRW(io.account, io.date)
+                                    processing.ioKRW(io.account, io.date, binding.isUpdateDeposit!!)
                                 }
                             } } )
                         }

@@ -123,26 +123,15 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         repository.getAfterDairyTotal(idAccount, date)
 
     fun loadingIOKRW(idAccount: Int?, date: String?, isUpdateEvaluation: Boolean): LiveData<IOKRW> {
-        return Transformations.switchMap(
-            getPreviousEvaluationOfKRW(
-                idAccount,
-                date
-            )
-        ) { previousEvaluation ->
+        return Transformations.switchMap(getPreviousEvaluationOfKRW(idAccount, date)) { previousEvaluation ->
             Transformations.switchMap(sumOfSpendCashForDate(idAccount, date)) { sumOfSpendsCash ->
-                Transformations.switchMap(
-                    sumOfSpendCardForDate(
-                        idAccount,
-                        date
-                    )
-                ) { sumOfSpendsCard ->
+                Transformations.switchMap(sumOfSpendCardForDate(idAccount, date)) { sumOfSpendsCard ->
                     Transformations.switchMap(sumOfIncomeForDate(idAccount, date)) { sumOfIncome ->
                         Transformations.map(getIOKRW(idAccount, date)) { io ->
                             if (io == null) {
                                 val new = IOKRW()
                                 new.date = date
-                                new.evaluationKRW =
-                                    previousEvaluation - sumOfSpendsCard - sumOfSpendsCash + sumOfIncome
+                                new.evaluationKRW = previousEvaluation - sumOfSpendsCard - sumOfSpendsCash + sumOfIncome
                                 new.account = idAccount
                                 new.spendCash = sumOfSpendsCash
                                 new.spendCard = sumOfSpendsCard
@@ -153,8 +142,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                             } else {
                                 if(io.output == null) io.output = 0
                                 if(io.input == null) io.input = 0
-                                if (isUpdateEvaluation) io.evaluationKRW =
-                                    previousEvaluation - sumOfSpendsCard - sumOfSpendsCash + sumOfIncome - io.output!! + io.input!!
+                                if(isUpdateEvaluation) io.evaluationKRW = previousEvaluation - sumOfSpendsCard - sumOfSpendsCash + sumOfIncome - io.output!! + io.input!!
                                 io.spendCash = sumOfSpendsCash
                                 io.spendCard = sumOfSpendsCard
                                 io.income = sumOfIncome
@@ -167,19 +155,8 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun loadingIOForeign(
-        idAccount: Int?,
-        date: String?,
-        currency: Int?,
-        isUpdateEvaluation: Boolean
-    ): LiveData<IOForeign> {
-        return Transformations.switchMap(
-            getPreviousEvaluationKRWOfForeign(
-                idAccount,
-                date,
-                currency
-            )
-        ) { previousEvaluation ->
+    fun loadingIOForeign(idAccount: Int?, date: String?, currency: Int?, isUpdateEvaluation: Boolean): LiveData<IOForeign> {
+        return Transformations.switchMap(getPreviousEvaluationKRWOfForeign(idAccount, date, currency)) { previousEvaluation ->
             Transformations.map(getIOForeign(idAccount, date, currency)) { io ->
                 if (io == null) {
                     val new = IOForeign()
@@ -189,74 +166,37 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                     new.evaluationKRW = previousEvaluation
                     new
                 } else {
-                    if (isUpdateEvaluation) io.evaluationKRW =
-                        previousEvaluation + io.inputKRW!! - io.outputKRW!!
+                    if (isUpdateEvaluation) io.evaluationKRW = previousEvaluation + io.inputKRW!! - io.outputKRW!!
                     io
                 }
             }
         }
     }
 
-    fun loadingDairyKRW(
-        idAccount: Int?,
-        date: String?,
-        isUpdateEvaluation: Boolean
-    ): LiveData<DairyKRW> {
+    fun loadingDairyKRW(idAccount: Int?, date: String?, isUpdateEvaluation: Boolean): LiveData<DairyKRW> {
         return Transformations.switchMap(getDairyKRW(idAccount, date)) { dairy ->
-            Transformations.switchMap(calculatePrincipalOfKRW(idAccount, date)) { principal ->
-                Transformations.map(
-                    calculateRateOfKRW(
-                        idAccount,
-                        date,
-                        isUpdateEvaluation
-                    )
-                ) { rate ->
-                    if (dairy == null) {
-                        val new = DairyKRW()
-                        new.principalKRW = principal
-                        new.rate = rate
-                        new.account = idAccount
-                        new.date = date
-                        new
-                    } else {
-                        dairy.principalKRW = principal
-                        dairy.rate = rate
-                        dairy
-                    }
-                }
+            Transformations.switchMap(calculatePrincipalOfKRW(idAccount, date)) { principal -> Transformations.map(calculateRateOfKRW(idAccount, date, isUpdateEvaluation)) { rate ->
+                if (dairy == null) {
+                    val new = DairyKRW()
+                    new.principalKRW = principal
+                    new.rate = rate
+                    new.account = idAccount
+                    new.date = date
+                    new
+                } else {
+                    dairy.principalKRW = principal
+                    dairy.rate = rate
+                    dairy
+                } }
             }
         }
     }
 
-    fun loadingDairyForeign(
-        idAccount: Int?,
-        date: String?,
-        currency: Int?,
-        isUpdateEvaluation: Boolean
-    ): LiveData<DairyForeign> {
+    fun loadingDairyForeign(idAccount: Int?, date: String?, currency: Int?, isUpdateEvaluation: Boolean): LiveData<DairyForeign> {
         return Transformations.switchMap(getDairyForeign(idAccount, date, currency)) { dairy ->
-            Transformations.switchMap(
-                calculatePrincipalOfForeign(
-                    idAccount,
-                    date,
-                    currency
-                )
-            ) { principal ->
-                Transformations.switchMap(
-                    calculatePrincipalKRWOfForeign(
-                        idAccount,
-                        date,
-                        currency
-                    )
-                ) { principal_krw ->
-                    Transformations.map(
-                        calculateRateOfForeign(
-                            idAccount,
-                            date,
-                            currency,
-                            isUpdateEvaluation
-                        )
-                    ) { rate ->
+            Transformations.switchMap(calculatePrincipalOfForeign(idAccount, date, currency)) { principal ->
+                Transformations.switchMap(calculatePrincipalKRWOfForeign(idAccount, date, currency)) { principal_krw ->
+                    Transformations.map(calculateRateOfForeign(idAccount, date, currency, isUpdateEvaluation)) { rate ->
                         if (dairy == null) {
                             val new = DairyForeign()
                             new.principal = principal
@@ -277,32 +217,11 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun loadingDairyTotal(
-        idAccount: Int?,
-        date: String?,
-        isUpdateEvaluation: Boolean
-    ): LiveData<DairyTotal> {
-        return Transformations.switchMap(
-            getLastDairyForeign(
-                idAccount,
-                date
-            )
-        ) { listOf_last_dairy_foreign ->
+    fun loadingDairyTotal(idAccount: Int?, date: String?, isUpdateEvaluation: Boolean): LiveData<DairyTotal> {
+        return Transformations.switchMap(getLastDairyForeign(idAccount, date)) { listOf_last_dairy_foreign ->
             Transformations.switchMap(getLastIOForeign(idAccount, date)) { listOf_last_io_foreign ->
-                Transformations.switchMap(
-                    loadingDairyKRW(
-                        idAccount,
-                        date,
-                        isUpdateEvaluation
-                    )
-                ) { dairy_krw ->
-                    Transformations.switchMap(
-                        loadingIOKRW(
-                            idAccount,
-                            date,
-                            isUpdateEvaluation
-                        )
-                    ) { io_krw ->
+                Transformations.switchMap(loadingDairyKRW(idAccount, date, isUpdateEvaluation)) { dairy_krw ->
+                    Transformations.switchMap(loadingIOKRW(idAccount, date, isUpdateEvaluation)) { io_krw ->
                         Transformations.map(getDairyTotal(idAccount, date)) { dairy_total ->
                             var principal = 0
                             var evaluation = 0
@@ -314,8 +233,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                             listOf_last_dairy_foreign.forEach { principal += it.principalKRW!! }
                             listOf_last_io_foreign.forEach { evaluation += it.evaluationKRW!!.toInt() }
 
-                            if (principal != 0 && evaluation != 0) rate =
-                                evaluation.toDouble() / principal * 100 - 100
+                            if (principal != 0 && evaluation != 0) rate = evaluation.toDouble() / principal * 100 - 100
 
                             if (dairy_total == null) {
                                 val new = DairyTotal()
@@ -346,11 +264,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         }
     }
 
-    private fun getPreviousEvaluationKRWOfForeign(
-        idAccount: Int?,
-        date: String?,
-        currency: Int?
-    ): LiveData<Double> {
+    private fun getPreviousEvaluationKRWOfForeign(idAccount: Int?, date: String?, currency: Int?): LiveData<Double> {
         val before = MyCalendar.calendarToStr(MyCalendar.changeDate(date, -1))
 
         return Transformations.map(getLastIOForeign(idAccount, before, currency)) { last ->

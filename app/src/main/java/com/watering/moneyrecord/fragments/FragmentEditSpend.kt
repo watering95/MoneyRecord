@@ -52,6 +52,7 @@ class FragmentEditSpend : Fragment() {
         binding.viewmodel?.run {
             spend = this@FragmentEditSpend.spend
             this@FragmentEditSpend.spend.code?.let { oldCode = it }
+            binding.amount = spend.amount
 
             getCatMainBySub(this@FragmentEditSpend.spend.category).observeOnce( Observer { main -> main?.let {
                 Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let { indexOfMain = index } })
@@ -68,6 +69,8 @@ class FragmentEditSpend : Fragment() {
                 }
             })
         }
+
+        binding.isUpdateEvaluation = false
 
         binding.buttonDateFragmentEditSpend.setOnClickListener {
             binding.viewmodel?.run {
@@ -111,7 +114,7 @@ class FragmentEditSpend : Fragment() {
                                 runBlocking {
                                     jobDelete.join()
                                     Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                                    processing.ioKRW(idAccount, spend.date)
+                                    processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
                                 }
                             }})
                             '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let {
@@ -119,7 +122,7 @@ class FragmentEditSpend : Fragment() {
                                 runBlocking {
                                     jobDelete.join()
                                     Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                                    processing.ioKRW(idAccount, spend.date)
+                                    processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
                                 }
                             }})
                         }
@@ -227,7 +230,7 @@ class FragmentEditSpend : Fragment() {
                                 }
                             } else {
                                 Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                                processing.ioKRW(idAccount, spend.date)
+                                processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
                             }
                         }
                     } })
@@ -264,7 +267,7 @@ class FragmentEditSpend : Fragment() {
             runBlocking {
                 job.join()
                 Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                processing.ioKRW(idAccount, spend.date)
+                processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
             }
         }
     }

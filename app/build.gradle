@@ -9,13 +9,13 @@ apply plugin: 'com.google.gms.google-services' // Firebase
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.watering.moneyrecord"
         minSdkVersion 24
-        targetSdkVersion 28
-        versionCode 24
-        versionName "1.24"
+        targetSdkVersion 29
+        versionCode 26
+        versionName "1.26"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -43,7 +43,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.firebase:firebase-auth:19.1.0' // Firebase Authentication
+    implementation 'com.google.firebase:firebase-auth:19.2.0' // Firebase Authentication
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1' // Firebase Authentication UI
     implementation 'com.google.firebase:firebase-database:19.2.0' // Firebase Database
     implementation 'com.google.firebase:firebase-storage:19.1.0' // Firebase Storage
@@ -52,17 +52,17 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // Room components
-    implementation "androidx.room:room-runtime:2.2.1"
+    implementation "androidx.room:room-runtime:2.2.2"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
 
     // Lifecycle components
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-rc02"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc02"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc02"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc02"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-rc03"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc03"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc03"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc03"
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

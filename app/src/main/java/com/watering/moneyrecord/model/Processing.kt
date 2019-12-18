@@ -47,29 +47,29 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
         }
     }
 
-    fun ioKRW(idAccount:Int?, selectedDate:String?) {
+    fun ioKRW(idAccount:Int?, selectedDate:String?, isUpdateEvaluation: Boolean = false) {
         viewmodel?.run {
-            loadingIOKRW(idAccount, selectedDate, false).observeOnce( Observer { io -> io?.let {
+            loadingIOKRW(idAccount, selectedDate, isUpdateEvaluation).observeOnce( Observer { io -> io?.let {
                 val jobIO = if(io.id == null) insert(io) else update(io)
 
                 runBlocking {
                     jobIO.join()
-                    checkNextIOKRW(idAccount, selectedDate, selectedDate)
+                    checkNextIOKRW(idAccount, selectedDate, selectedDate, isUpdateEvaluation)
                 }
             } })
         }
     }
 
-    private fun checkNextIOKRW(idAccount: Int?, selectedDate: String?, nextDate: String?) {
+    private fun checkNextIOKRW(idAccount: Int?, selectedDate: String?, nextDate: String?, isUpdateEvaluation: Boolean = false) {
         viewmodel?.run {
             getNextIOKRW(idAccount, nextDate).observeOnce( Observer { date ->
-                if(date.isNullOrEmpty()) dairyKRW(idAccount, selectedDate)
+                if(date.isNullOrEmpty()) dairyKRW(idAccount, selectedDate, isUpdateEvaluation)
                 else {
                     loadingIOKRW(idAccount, date, true).observeOnce( Observer { io -> io?.run {
                         val job = update(io)
                         runBlocking {
                             job.join()
-                            checkNextIOKRW(idAccount, selectedDate, date)
+                            checkNextIOKRW(idAccount, selectedDate, date, isUpdateEvaluation)
                         }
                     } })
                 }
@@ -77,29 +77,29 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
         }
     }
 
-    private fun dairyKRW(idAccount:Int?, selectedDate:String?) {
+    private fun dairyKRW(idAccount:Int?, selectedDate:String?, isUpdateEvaluation: Boolean = false) {
         viewmodel?.run {
-            loadingDairyKRW(idAccount, selectedDate, false).observeOnce( Observer { dairy -> dairy?.let {
+            loadingDairyKRW(idAccount, selectedDate, isUpdateEvaluation).observeOnce( Observer { dairy -> dairy?.let {
                 val jobDairyKRW = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {
                     jobDairyKRW.join()
-                    checkNextDairyKRW(idAccount, selectedDate, selectedDate)
+                    checkNextDairyKRW(idAccount, selectedDate, selectedDate, isUpdateEvaluation)
                 }
             } })
         }
     }
 
-    private fun checkNextDairyKRW(idAccount: Int?, selectedDate: String?, nextDate: String?) {
+    private fun checkNextDairyKRW(idAccount: Int?, selectedDate: String?, nextDate: String?, isUpdateEvaluation: Boolean = false) {
         viewmodel?.run {
             getNextDairyKRW(idAccount, nextDate).observeOnce( Observer { date ->
-                if(date.isNullOrEmpty()) dairyTotal(idAccount, selectedDate)
+                if(date.isNullOrEmpty()) dairyTotal(idAccount, selectedDate, isUpdateEvaluation)
                 else {
                     loadingDairyKRW(idAccount, date, true).observeOnce( Observer { dairy -> dairy?.let {
                         val job = update(dairy)
                         runBlocking {
                             job.join()
-                            checkNextDairyKRW(idAccount, selectedDate, date)
+                            checkNextDairyKRW(idAccount, selectedDate, date, isUpdateEvaluation)
                         }
                     } })
                 }
@@ -168,9 +168,9 @@ class Processing(val viewmodel: ViewModelApp?, val fragmentManager: FragmentMana
         }
     }
 
-    private fun dairyTotal(idAccount:Int?, selectedDate:String?) {
+    private fun dairyTotal(idAccount:Int?, selectedDate:String?, isUpdateEvaluation: Boolean = false) {
         viewmodel?.run {
-            loadingDairyTotal(idAccount, selectedDate, false).observeOnce(Observer { dairy -> dairy?.let {
+            loadingDairyTotal(idAccount, selectedDate, isUpdateEvaluation).observeOnce(Observer { dairy -> dairy?.let {
                 val jobDairyTotal = if(dairy.id == null) insert(dairy) else update(dairy)
 
                 runBlocking {

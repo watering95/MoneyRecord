@@ -74,6 +74,11 @@ class FragmentEditInoutKRW : Fragment() {
                 fragmentManager?.let { dialog.show(it, "dialog") }
             }
         }
+        binding.buttonUpdateEvaluationFragmentEditInoutKrw.setOnClickListener {
+            binding.viewmodel?.run {
+                evaluation = evaluation!! - withdraw!! + deposit!!
+            }
+        }
 
         Converter.addConvertedTextChangedListener(binding.editWithdrawFragmentEditInoutKrw)
         Converter.addConvertedTextChangedListener(binding.editDepositFragmentEditInoutKrw)

@@ -6,6 +6,8 @@
         <import type="com.watering.moneyrecord.model.Converter"/>
         <variable name="viewmodel" type="com.watering.moneyrecord.viewmodel.ViewModelAccountTransfer"/>
         <variable name="amount" type="Integer"/>
+        <variable name="isUpdateWithdraw" type="Boolean" />
+        <variable name="isUpdateDeposit" type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,7 +16,7 @@
 
         <TextView
                 android:id="@+id/text_1_fragment_account_transfer"
-                android:layout_width="80dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
@@ -25,20 +27,18 @@
 
         <Spinner
                 android:id="@+id/spinner_withdrawaccount_fragment_account_transfer"
-                android:layout_width="0dp"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
                 android:entries="@{viewmodel.listOfAccount}"
                 android:selectedItemPosition="@={viewmodel.indexOfWithdrawAccount}"
                 app:layout_constraintBottom_toBottomOf="@+id/text_1_fragment_account_transfer"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/text_1_fragment_account_transfer"
                 app:layout_constraintTop_toTopOf="@+id/text_1_fragment_account_transfer" />
 
         <TextView
                 android:id="@+id/text_2_fragment_account_transfer"
-                android:layout_width="80dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/deposit_account"
@@ -49,14 +49,12 @@
 
         <Spinner
                 android:id="@+id/spinner_depositaccount_fragment_account_transfer"
-                android:layout_width="0dp"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
                 android:entries="@{viewmodel.listOfAccount}"
                 android:selectedItemPosition="@={viewmodel.indexOfDepositAccount}"
                 app:layout_constraintBottom_toBottomOf="@+id/text_2_fragment_account_transfer"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/text_2_fragment_account_transfer"
                 app:layout_constraintTop_toTopOf="@+id/text_2_fragment_account_transfer" />
 
@@ -84,5 +82,31 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/text_3_fragment_account_transfer"
                 app:layout_constraintTop_toTopOf="@+id/text_3_fragment_account_transfer" />
+
+        <CheckBox
+                android:id="@+id/check_update_evaluation_withdraw_fragment_account_transfer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:checked="@={isUpdateWithdraw}"
+                android:text="@string/update_evaluation"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_withdrawaccount_fragment_account_transfer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/spinner_withdrawaccount_fragment_account_transfer"
+                app:layout_constraintTop_toTopOf="@+id/spinner_withdrawaccount_fragment_account_transfer" />
+
+        <CheckBox
+                android:id="@+id/check_update_evaluation_deposit_fragment_account_transfer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:checked="@={isUpdateDeposit}"
+                android:text="@string/update_evaluation"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_depositaccount_fragment_account_transfer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/spinner_depositaccount_fragment_account_transfer"
+                app:layout_constraintTop_toTopOf="@+id/spinner_depositaccount_fragment_account_transfer" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

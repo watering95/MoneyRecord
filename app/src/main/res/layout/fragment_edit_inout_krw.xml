@@ -137,11 +137,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:ems="10"
+                android:ems="9"
                 android:inputType="numberSigned|number"
                 android:text="@={Converter.intToStr(viewmodel.evaluation)}"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/text_6_fragment_edit_inout_krw"
                 app:layout_constraintTop_toBottomOf="@+id/edit_principal_fragment_edit_inout_krw" />
         <Button
@@ -160,5 +158,17 @@
                 app:layout_constraintTop_toTopOf="@+id/button_date_fragment_edit_inout_krw"
                 app:layout_constraintBottom_toBottomOf="@+id/button_date_fragment_edit_inout_krw"
                 app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"/>
+
+        <Button
+                android:id="@+id/button_update_evaluation_fragment_edit_inout_krw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/update_inout"
+                app:layout_constraintBottom_toBottomOf="@+id/edit_evaluation_fragment_edit_inout_krw"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/edit_evaluation_fragment_edit_inout_krw"
+                app:layout_constraintTop_toTopOf="@+id/edit_evaluation_fragment_edit_inout_krw" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

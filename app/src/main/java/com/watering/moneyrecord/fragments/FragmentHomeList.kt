@@ -22,7 +22,7 @@ class FragmentHomeList : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_home_list, container, false)
         initLayout()
-        return binding.root
+        return binding.fragmentHomeList
     }
 
     fun updateList() {
