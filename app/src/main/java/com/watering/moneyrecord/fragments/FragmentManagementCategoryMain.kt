@@ -35,7 +35,7 @@ class FragmentManagementCategoryMain : Fragment() {
         val button = mView.findViewById<Button>(R.id.button_automatic_fragment_management_category_main)
         button.setOnClickListener { generateBasicCategory() }
 
-        mViewModel.allCatMains.observe(this, Observer { categoryMains -> categoryMains?.let {
+        mViewModel.allCatMains.observe(viewLifecycleOwner, Observer { categoryMains -> categoryMains?.let {
             mView.findViewById<RecyclerView>(R.id.recyclerview_fragment_management_category_main).run {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(mView.context)

@@ -52,6 +52,7 @@
     <string name="title_book">가계부</string>
     <string name="title_accounts">계좌</string>
     <string name="title_management">관리</string>
+    <string name="title_management_user">사용자 관리</string>
     <string name="title_management_group">그룹 관리</string>
     <string name="title_management_account">계좌 관리</string>
     <string name="title_management_card">카드 관리</string>
@@ -75,6 +76,8 @@
     <string name="toast_save_success">저장되었습니다.</string>
     <string name="toast_delete_success">삭제되었습니다.</string>
     <string name="toast_transfer_success">이체되었습니다.</string>
+    <string name="toast_login_success">로그인되었습니다.</string>
+    <string name="toast_login_error">로그인에 실패하였습니다.</string>
     <array name="category">
         <item name="spend">spend</item>
         <item name="income">income</item>

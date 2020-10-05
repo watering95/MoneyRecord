@@ -35,7 +35,7 @@ class FragmentManagementCategorySub : Fragment() {
         val button = mView.findViewById<Button>(R.id.button_automatic_fragment_management_category_sub)
         button.setOnClickListener { generateBasicCategory() }
 
-        mViewModel.allCatSubs.observe(this, Observer { categorySubs -> categorySubs?.let {
+        mViewModel.allCatSubs.observe(viewLifecycleOwner, Observer { categorySubs -> categorySubs?.let {
             mView.findViewById<RecyclerView>(R.id.recyclerview_fragment_management_category_sub).run {
                 val list = mutableListOf<String>()
                 it.forEach { catSub -> mViewModel.getCatMain(catSub.categoryMain).observeOnce(Observer {

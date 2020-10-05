@@ -30,7 +30,7 @@ class FragmentManagementAccount : Fragment() {
 
         setHasOptionsMenu(false)
 
-        mViewModel.allAccounts.observe(this, Observer { accounts -> accounts?.let {
+        mViewModel.allAccounts.observe(viewLifecycleOwner, Observer { accounts -> accounts?.let {
             mView.findViewById<RecyclerView>(R.id.recyclerview_fragment_management_account).apply {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(mView.context)

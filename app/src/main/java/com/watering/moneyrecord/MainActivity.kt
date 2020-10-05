@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -101,8 +102,9 @@ class MainActivity : AppCompatActivity() {
 
             if(resultCode == Activity.RESULT_OK) {
                 mUser = FirebaseAuth.getInstance().currentUser
+                Toast.makeText(this, "${mUser?.displayName} ${getString(R.string.toast_login_success)}", Toast.LENGTH_SHORT).show()
             } else {
-
+                Toast.makeText(this, "${response} ${getString(R.string.toast_login_error)}", Toast.LENGTH_SHORT).show()
             }
         }
     }

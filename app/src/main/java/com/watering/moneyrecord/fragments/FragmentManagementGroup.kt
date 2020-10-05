@@ -30,7 +30,7 @@ class FragmentManagementGroup : Fragment() {
 
         setHasOptionsMenu(false)
 
-        mViewModel.allGroups.observe(this, Observer { groups -> groups?.let {
+        mViewModel.allGroups.observe(viewLifecycleOwner, Observer { groups -> groups?.let {
             mView.findViewById<RecyclerView>(R.id.recyclerview_fragment_management_group).run {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(mView.context)

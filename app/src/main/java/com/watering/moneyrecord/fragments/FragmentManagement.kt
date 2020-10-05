@@ -1,7 +1,6 @@
 package com.watering.moneyrecord.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -17,6 +16,7 @@ class FragmentManagement : Fragment() {
     private lateinit var mView: View
     private lateinit var mViewModel: ViewModelApp
 
+    private val mFragmentManagementUser = FragmentManagementUser()
     private val mFragmentManagementGroup = FragmentManagementGroup()
     private val mFragmentManagementAccount = FragmentManagementAccount()
     private val mFragmentManagementCategoryMain = FragmentManagementCategoryMain()
@@ -24,7 +24,7 @@ class FragmentManagement : Fragment() {
     private val mFragmentManagementCard = FragmentManagementCard()
     private val mFragmentManagementDB = FragmentManagementDB()
 
-    val lists = arrayListOf("Group","Account","CategoryMain","CategorySub","Card","DB", "test")
+    val lists = arrayListOf("User","Group","Account","CategoryMain","CategorySub","Card","DB", "test")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_management, container, false)
@@ -45,13 +45,14 @@ class FragmentManagement : Fragment() {
     private fun itemClicked(position: Int) {
         mViewModel.run {
             when (position) {
-                0 -> replaceFragment(fragmentManager!!, mFragmentManagementGroup)
-                1 -> replaceFragment(fragmentManager!!, mFragmentManagementAccount)
-                2 -> replaceFragment(fragmentManager!!, mFragmentManagementCategoryMain)
-                3 -> replaceFragment(fragmentManager!!, mFragmentManagementCategorySub)
-                4 -> replaceFragment(fragmentManager!!, mFragmentManagementCard)
-                5 -> replaceFragment(fragmentManager!!, mFragmentManagementDB)
-                6 -> test()
+                0 -> replaceFragment(fragmentManager!!, mFragmentManagementUser)
+                1 -> replaceFragment(fragmentManager!!, mFragmentManagementGroup)
+                2 -> replaceFragment(fragmentManager!!, mFragmentManagementAccount)
+                3 -> replaceFragment(fragmentManager!!, mFragmentManagementCategoryMain)
+                4 -> replaceFragment(fragmentManager!!, mFragmentManagementCategorySub)
+                5 -> replaceFragment(fragmentManager!!, mFragmentManagementCard)
+                6 -> replaceFragment(fragmentManager!!, mFragmentManagementDB)
+                7 -> test()
                 else -> {}
             }
         }

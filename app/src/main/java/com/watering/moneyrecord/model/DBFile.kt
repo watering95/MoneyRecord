@@ -18,6 +18,7 @@ class DBFile(val context: Context) {
     fun requestDownload() {
         val file = Uri.fromFile(app.getDatabasePath(dbFileName))
         val fileRef = mStorageRef.child("${app.mUser?.uid}/database/${file.lastPathSegment}")
+//        val fileRef = mStorageRef.child("${null}/database/${file.lastPathSegment}")
 
         fileRef.getFile(file).addOnSuccessListener {
             Toast.makeText(context, R.string.toast_db_download_ok, Toast.LENGTH_SHORT).show()
@@ -29,6 +30,7 @@ class DBFile(val context: Context) {
     fun requestUpload() {
         val file = Uri.fromFile(app.getDatabasePath(dbFileName))
         val fileRef = mStorageRef.child("${app.mUser?.uid}/database/${file.lastPathSegment}")
+//        val fileRef = mStorageRef.child("${null}/database/${file.lastPathSegment}")
 
         fileRef.putFile(file).addOnFailureListener {
             Toast.makeText(context, R.string.toast_db_upload_error, Toast.LENGTH_SHORT).show()

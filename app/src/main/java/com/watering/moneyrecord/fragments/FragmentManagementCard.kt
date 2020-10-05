@@ -30,7 +30,7 @@ class FragmentManagementCard : Fragment() {
 
         setHasOptionsMenu(false)
 
-        mViewModel.allCards.observe(this, Observer { cards -> cards?.let {
+        mViewModel.allCards.observe(viewLifecycleOwner, Observer { cards -> cards?.let {
             mView.findViewById<RecyclerView>(R.id.recyclerview_fragment_management_card).apply {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(mView.context)
