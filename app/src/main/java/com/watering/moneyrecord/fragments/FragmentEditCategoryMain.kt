@@ -4,19 +4,15 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
-import androidx.fragment.app.Fragment
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditCategorymainBinding
 import com.watering.moneyrecord.entities.CategoryMain
-import com.watering.moneyrecord.viewmodel.ViewModelApp
 import com.watering.moneyrecord.viewmodel.ViewModelEditCategoryMain
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
-class FragmentEditCategoryMain : Fragment() {
+class FragmentEditCategoryMain : ParentFragment() {
     private lateinit var item: CategoryMain
-    private lateinit var mViewModel: ViewModelApp
     private lateinit var binding:FragmentEditCategorymainBinding
     private lateinit var mList:List<String>
 
@@ -30,9 +26,6 @@ class FragmentEditCategoryMain : Fragment() {
         return this
     }
     private fun initLayout() {
-        val activity = activity as MainActivity
-        mViewModel = activity.mViewModel
-
         mList = resources.getStringArray(R.array.category).toList()
 
         binding.viewmodel = ViewModelEditCategoryMain(this.item, mList.indexOf(this.item.kind))
@@ -64,7 +57,7 @@ class FragmentEditCategoryMain : Fragment() {
                                     runBlocking {
                                         job.join()
                                         Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                                        fragmentManager?.popBackStack()
+                                        mFragmentManager.popBackStack()
                                     }
                                 }
                             }
@@ -80,7 +73,7 @@ class FragmentEditCategoryMain : Fragment() {
                     runBlocking {
                         job.join()
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                        fragmentManager?.popBackStack()
+                        mFragmentManager.popBackStack()
                     }
                 }
             }

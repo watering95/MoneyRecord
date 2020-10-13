@@ -5,32 +5,25 @@ import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
-import androidx.lifecycle.Observer
 import com.watering.moneyrecord.BR
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditInoutKrwBinding
 import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
-import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditInoutKRW
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
-class FragmentEditInoutKRW : Fragment() {
+class FragmentEditInoutKRW : ParentFragment() {
     private lateinit var binding: FragmentEditInoutKrwBinding
-    private lateinit var processing: Processing
     private var idAccount:Int? = 0
     private var date:String? = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_edit_inout_krw, container, false)
         binding.lifecycleOwner = this
-        binding.viewmodel = ViewModelProviders.of(this).get(ViewModelEditInoutKRW::class.java)
-        processing = Processing(binding.viewmodel, fragmentManager)
+        binding.viewmodel = application?.let { ViewModelEditInoutKRW(it) }
 
         initLayout()
 
@@ -44,7 +37,7 @@ class FragmentEditInoutKRW : Fragment() {
     }
 
     private fun initLayout() {
-        (activity as MainActivity).supportActionBar?.setTitle(R.string.title_inout_krw)
+        mActionBar?.setTitle(R.string.title_inout_krw)
 
         binding.viewmodel?.run {
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
@@ -71,7 +64,7 @@ class FragmentEditInoutKRW : Fragment() {
                         }
                     }
                 })
-                fragmentManager?.let { dialog.show(it, "dialog") }
+                mFragmentManager.let { dialog.show(it, "dialog") }
             }
         }
         binding.buttonUpdateEvaluationFragmentEditInoutKrw.setOnClickListener {
@@ -132,24 +125,21 @@ class FragmentEditInoutKRW : Fragment() {
 
     private fun onChangedDate() {
         binding.viewmodel?.run {
-            loadingIOKRW(idAccount, date, false).observeOnce( Observer { io -> io?.let {
-                income = io.income
-                evaluation = io.evaluationKRW
-                deposit = io.input
-                spend = io.spendCard!! + io.spendCash!!
-                withdraw = io.output
-                this.io = io
-                loadingDairyKRW(idAccount, date, false).observeOnce( Observer { dairy -> dairy?.let { principal = dairy.principalKRW }})
-            } })
-        }
-    }
-
-    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
-        observeForever(object: Observer<T> {
-            override fun onChanged(t: T) {
-                observer.onChanged(t)
-                removeObserver(this)
+            loadingIOKRW(idAccount, date, false).observeOnce { io ->
+                io?.let {
+                    income = io.income
+                    evaluation = io.evaluationKRW
+                    deposit = io.input
+                    spend = io.spendCard!! + io.spendCash!!
+                    withdraw = io.output
+                    this.io = io
+                    loadingDairyKRW(
+                        idAccount,
+                        date,
+                        false
+                    ).observeOnce { dairy -> dairy?.let { principal = dairy.principalKRW } }
+                }
             }
-        })
+        }
     }
 }

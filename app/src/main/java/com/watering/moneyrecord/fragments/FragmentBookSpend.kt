@@ -6,22 +6,16 @@ import android.text.TextWatcher
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentBookSpendBinding
 import com.watering.moneyrecord.entities.Spend
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.view.RecyclerViewAdapterBookSpend
-import com.watering.moneyrecord.viewmodel.ViewModelApp
 import java.util.*
 
-class FragmentBookSpend : Fragment() {
-    private lateinit var mViewModel: ViewModelApp
+class FragmentBookSpend : ParentFragment() {
     private lateinit var binding: FragmentBookSpendBinding
-    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_book_spend, container, false)
@@ -29,9 +23,6 @@ class FragmentBookSpend : Fragment() {
         return binding.root
     }
     private fun initLayout() {
-        val activity = activity as MainActivity
-
-        mViewModel = activity.mViewModel
         binding.date = MyCalendar.getToday()
 
         setHasOptionsMenu(false)
@@ -46,7 +37,7 @@ class FragmentBookSpend : Fragment() {
                     }
                 }
             })
-            fragmentManager?.let { it -> dialog.show(it, "dialog") }
+            mFragmentManager.let { dialog.show(it, "dialog") }
         }
         binding.buttonBackwardFragmentBookSpend.setOnClickListener {
             val date = MyCalendar.changeDate(binding.date.toString(), -1)
@@ -68,7 +59,7 @@ class FragmentBookSpend : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                mViewModel.getSpends(binding.date).observe(this@FragmentBookSpend, Observer { list -> list?.let {
+                mViewModel.getSpends(binding.date).observe(viewLifecycleOwner, { list -> list?.let {
                     binding.recyclerviewFragmentBookSpend.run {
                         setHasFixedSize(true)
                         layoutManager = LinearLayoutManager(context)
@@ -80,10 +71,10 @@ class FragmentBookSpend : Fragment() {
 
         binding.floatingFragmentBookSpend.setOnClickListener {
             val spend = Spend().apply { date = binding.date }
-            mViewModel.replaceFragment(mFragmentManager, FragmentEditSpend().initInstance(spend))
+            replaceFragment(FragmentEditSpend().initInstance(spend))
         }
     }
     private fun itemClicked(item: Spend) {
-        mViewModel.replaceFragment(mFragmentManager, FragmentEditSpend().initInstance(item))
+        replaceFragment(FragmentEditSpend().initInstance(item))
     }
 }

@@ -6,32 +6,25 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
 import androidx.databinding.library.baseAdapters.BR
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import androidx.lifecycle.Observer
-
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditIncomeBinding
 import com.watering.moneyrecord.entities.Income
 import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
-import com.watering.moneyrecord.model.Processing
 import com.watering.moneyrecord.viewmodel.ViewModelEditIncome
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
-class FragmentEditIncome : Fragment() {
+class FragmentEditIncome : ParentFragment() {
     private lateinit var income: Income
     private lateinit var binding: FragmentEditIncomeBinding
-    private lateinit var processing: Processing
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_edit_income, container, false)
         binding.lifecycleOwner = this
-        binding.viewmodel = ViewModelProviders.of(this).get(ViewModelEditIncome::class.java)
-        processing = Processing(binding.viewmodel, fragmentManager)
+        binding.viewmodel = application?.let { ViewModelEditIncome(it) }
 
         initLayout()
         return binding.root
@@ -42,16 +35,19 @@ class FragmentEditIncome : Fragment() {
     }
 
     private fun initLayout() {
-        (activity as MainActivity).supportActionBar?.setTitle(R.string.title_income)
+        mActionBar?.setTitle(R.string.title_income)
 
         binding.viewmodel?.run {
             income = this@FragmentEditIncome.income
             if(income.id != null) idAccount = income.account
             binding.amount = income.amount
 
-            getCatMainBySub(this@FragmentEditIncome.income.category).observeOnce( Observer { main -> main?.let {
-                Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let { indexOfMain = index } })
-            } })
+            getCatMainBySub(this@FragmentEditIncome.income.category).observeOnce { main ->
+                main?.let {
+                    Transformations.map(listOfMain) { list -> list.indexOf(main.name) }
+                        .observeOnce { index -> index?.let { indexOfMain = index } }
+                }
+            }
 
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
@@ -78,7 +74,7 @@ class FragmentEditIncome : Fragment() {
                         }
                     }
                 })
-                fragmentManager?.let { it -> dialog.show(it, "dialog") }
+                mFragmentManager.let { dialog.show(it, "dialog") }
             }
         }
 
@@ -115,19 +111,30 @@ class FragmentEditIncome : Fragment() {
     fun onChangedIndexOfMain() {
         // 화면 갱신이 동시에 되도록
         binding.viewmodel?.run {
-            listOfAccount.observeOnce( Observer { list -> list?.let {
-                getAccount(income.account).observeOnce( Observer { account -> account?.let {
-                    indexOfAccount = list.indexOf(account.number + " " + account.institute + " " + account.description)
-                } })
-            } })
+            listOfAccount.observeOnce { list ->
+                list?.let {
+                    getAccount(income.account).observeOnce { account ->
+                        account?.let {
+                            indexOfAccount =
+                                list.indexOf(account.number + " " + account.institute + " " + account.description)
+                        }
+                    }
+                }
+            }
         }
     }
 
     fun onChangedListOfSub() {
         binding.viewmodel?.run {
-            getCatSub(this@FragmentEditIncome.income.category).observeOnce( Observer { sub -> sub?.let {
-                listOfSub.observeOnce( Observer { list-> list?.let { indexOfSub = list.indexOf(sub.name) } })
-            } })
+            getCatSub(this@FragmentEditIncome.income.category).observeOnce { sub ->
+                sub?.let {
+                    listOfSub.observeOnce { list ->
+                        list?.let {
+                            indexOfSub = list.indexOf(sub.name)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -138,17 +145,19 @@ class FragmentEditIncome : Fragment() {
                     if(indexOfSub < 0 || indexOfMain < 0) null
                     else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
                 }
-            }.observeOnce( Observer { sub -> sub?.let { income.category = sub.id } })
+            }.observeOnce { sub -> sub?.let { income.category = sub.id } }
         }
     }
     fun onChangedIndexOfAccount() {
         binding.viewmodel?.run {
             Transformations.switchMap(listOfAccount) { list ->
                 if(indexOfAccount < 0) null else getAccountByNumber(list[indexOfAccount].split(" ")[0])
-            }.observeOnce( Observer { account -> account?.let {
-                idAccount = account.id
-                income.account = account.id
-            } })
+            }.observeOnce { account ->
+                account?.let {
+                    idAccount = account.id
+                    income.account = account.id
+                }
+            }
         }
     }
     private fun save() {
@@ -157,7 +166,7 @@ class FragmentEditIncome : Fragment() {
             delay(100)
             binding.viewmodel?.run {
                 if(income.details.isNullOrEmpty() || indexOfMain < 0 || indexOfSub < 0 || indexOfAccount < 0) {
-                    Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
                 } else {
                     val jobIncome = if(income.id == null) insert(income) else update(income)
 
@@ -169,14 +178,5 @@ class FragmentEditIncome : Fragment() {
                 }
             }
         }
-    }
-
-    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
-        observeForever(object: Observer<T> {
-            override fun onChanged(t: T) {
-                observer.onChanged(t)
-                removeObserver(this)
-            }
-        })
     }
 }

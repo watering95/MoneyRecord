@@ -8,14 +8,10 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
 import androidx.databinding.library.baseAdapters.BR
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentAccountsBinding
 import com.watering.moneyrecord.entities.DairyTotal
@@ -23,16 +19,14 @@ import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.view.RecyclerViewAdapterAccounts
 import com.watering.moneyrecord.viewmodel.ViewModelAccounts
 
-class FragmentAccounts : Fragment() {
-    private val mViewModel by lazy { (activity as MainActivity).mViewModel }
+class FragmentAccounts : ParentFragment() {
     private lateinit var binding: FragmentAccountsBinding
-    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager }
     private lateinit var logs:List<DairyTotal>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_accounts, container, false)
         binding.lifecycleOwner = this
-        binding.viewmodel = ViewModelProviders.of(this).get(ViewModelAccounts::class.java)
+        binding.viewmodel = application?.let { ViewModelAccounts(it) }
         initLayout()
         return binding.root
     }
@@ -58,47 +52,37 @@ class FragmentAccounts : Fragment() {
 
         binding.floatingFragmentAccounts.setOnClickListener {
             binding.viewmodel?.run {
-                if(indexOfAccount < 0) {
-                    Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
-                } else {
-                    val dialog = DialogInOut().newInstance(object : DialogInOut.Complete {
-                        override fun onComplete(select: Int) {
-                            val today = MyCalendar.getToday()
-                            when(select) {
-                                0 -> mViewModel.replaceFragment(mFragmentManager, FragmentEditInoutKRW().initInstance(idAccount, today))
-                                1 -> mViewModel.replaceFragment(mFragmentManager, FragmentEditInoutForeign().initInstance(idAccount, today))
-                                2 -> mViewModel.replaceFragment(mFragmentManager, FragmentAccountTransfer().initInstance(idAccount))
-                            }
-                        }
-                    })
-                    fragmentManager?.let { it -> dialog.show(it, "dialog") }
-                }
-
+                if(indexOfAccount < 0) Toast.makeText(activity.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                else showDialogInout(MyCalendar.getToday())
             }
         }
     }
-    private fun itemClicked(position: Int) {
-        binding.viewmodel?.run {
-            val dialog = DialogInOut().newInstance(object : DialogInOut.Complete {
-                override fun onComplete(select: Int) {
-                    val date = logs[position].date
+
+    private fun showDialogInout(date: String?) {
+        val dialog = DialogInOut().newInstance(object : DialogInOut.Complete {
+            override fun onComplete(select: Int) {
+                binding.viewmodel?.run {
                     when(select) {
-                        0 -> mViewModel.replaceFragment(mFragmentManager, FragmentEditInoutKRW().initInstance(binding.viewmodel?.idAccount, date))
-                        1 -> mViewModel.replaceFragment(mFragmentManager, FragmentEditInoutForeign().initInstance(binding.viewmodel?.idAccount, date))
-                        2 -> mViewModel.replaceFragment(mFragmentManager, FragmentAccountTransfer().initInstance(binding.viewmodel?.idAccount))
+                        0 -> replaceFragment(FragmentEditInoutKRW().initInstance(idAccount, date))
+                        1 -> replaceFragment(FragmentEditInoutForeign().initInstance(idAccount, date))
+                        2 -> replaceFragment(FragmentAccountTransfer().initInstance(idAccount))
                     }
                 }
-            })
-            fragmentManager?.let { dialog.show(it, "dialog") }
-        }
+            }
+        })
+        dialog.show(mFragmentManager, "dialog")
+    }
+
+    private fun itemClicked(position: Int) {
+        showDialogInout(logs[position].date)
     }
 
     fun onIndexOfAccountChanged() {
         binding.viewmodel?.run {
-            allAccounts.observe(this@FragmentAccounts, Observer { list -> list?.let {
+            allAccounts.observe(this@FragmentAccounts, { list -> list?.let {
                 list[indexOfAccount].id?.let {
                     idAccount = it
-                    getDairyTotalOrderByDate(idAccount).observe(this@FragmentAccounts, Observer { logs -> logs?.let {
+                    getDairyTotalOrderByDate(idAccount).observe(this@FragmentAccounts, { logs -> logs?.let {
                         this@FragmentAccounts.logs = logs
                         binding.recyclerviewFragmentAccounts.run {
                             adapter = RecyclerViewAdapterAccounts(logs) { position -> itemClicked(position) }

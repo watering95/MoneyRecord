@@ -4,18 +4,14 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
-import androidx.fragment.app.Fragment
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditGroupBinding
 import com.watering.moneyrecord.entities.Group
-import com.watering.moneyrecord.viewmodel.ViewModelApp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
-class FragmentEditGroup : Fragment() {
+class FragmentEditGroup : ParentFragment() {
     private lateinit var item: Group
-    private lateinit var mViewModel: ViewModelApp
     private lateinit var binding:FragmentEditGroupBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,9 +24,6 @@ class FragmentEditGroup : Fragment() {
         return this
     }
     private fun initLayout() {
-        val activity = activity as MainActivity
-        mViewModel = activity.mViewModel
-
         setHasOptionsMenu(true)
         binding.group = this.item
     }
@@ -57,7 +50,7 @@ class FragmentEditGroup : Fragment() {
                         runBlocking {
                             job.join()
                             Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                            fragmentManager?.popBackStack()
+                            mFragmentManager.popBackStack()
                         }
                     }
                 }
@@ -70,7 +63,7 @@ class FragmentEditGroup : Fragment() {
                     runBlocking {
                         job.join()
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                        fragmentManager?.popBackStack()
+                        mFragmentManager.popBackStack()
                     }
                 }
             }

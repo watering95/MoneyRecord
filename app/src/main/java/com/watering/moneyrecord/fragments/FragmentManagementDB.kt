@@ -3,30 +3,25 @@ package com.watering.moneyrecord.fragments
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil.inflate
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentManagementDbBinding
 import com.watering.moneyrecord.view.RecyclerViewAdapterFileManagementDB
 import com.watering.moneyrecord.view.RecyclerViewAdapterManagementDB
 import com.watering.moneyrecord.viewmodel.ViewModelManagementDB
 
-class FragmentManagementDB : Fragment() {
+class FragmentManagementDB : ParentFragment() {
     private lateinit var binding: FragmentManagementDbBinding
-    private lateinit var mMainActivity: MainActivity
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_management_db, container, false)
         binding.lifecycleOwner = this
-        binding.viewmodel = ViewModelProviders.of(this).get(ViewModelManagementDB::class.java)
+        binding.viewmodel = activity.application?.let { ViewModelManagementDB(it) }
         initLayout()
         return binding.root
     }
     private fun initLayout() {
-        mMainActivity = activity as MainActivity
-        mMainActivity.supportActionBar?.setTitle(R.string.title_management_db)
+        mActionBar?.setTitle(R.string.title_management_db)
 
         setHasOptionsMenu(false)
 
@@ -49,21 +44,21 @@ class FragmentManagementDB : Fragment() {
         when(position) {
             // 파일 백업
             0 -> {
-                mMainActivity.mViewModel.close()
-                mMainActivity.mDBFile.requestUpload()
+                mViewModel.close()
+                activity.mDBFile.requestUpload()
             }
             // 파일 복원
             1 -> {
-                mMainActivity.mViewModel.close()
-                mMainActivity.mDBFile.requestDownload()
-                mMainActivity.mViewModel.initialize()
+                mViewModel.close()
+                activity.mDBFile.requestDownload()
+                mViewModel.initialize()
                 getList()
             }
             // 파일 삭제
             2 -> {
-                mMainActivity.mViewModel.close()
-                mMainActivity.mDBFile.requestDelete()
-                mMainActivity.mViewModel.initialize()
+                mViewModel.close()
+                activity.mDBFile.requestDelete()
+                mViewModel.initialize()
                 getList()
             }
         }
@@ -71,7 +66,7 @@ class FragmentManagementDB : Fragment() {
 
     private fun getList() {
         binding.viewmodel?.run {
-            listOfFile = mMainActivity.getDatabasePath(mMainActivity.mDBFile.dbFileName).parentFile.list().filterNotNull()
+            listOfFile = activity.getDatabasePath(activity.mDBFile.dbFileName).parentFile.list().filterNotNull()
             binding.recyclerviewFileFragmentManagementDb.run {
                 adapter = RecyclerViewAdapterFileManagementDB(listOfFile)
             }

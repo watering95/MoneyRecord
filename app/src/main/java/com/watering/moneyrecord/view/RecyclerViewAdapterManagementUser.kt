@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.watering.moneyrecord.R
-import com.watering.moneyrecord.entities.Account
 import com.watering.moneyrecord.entities.User
 
 class RecyclerViewAdapterManagementUser(val lists:List<User>, private val clickListener: (Int) -> Unit): RecyclerView.Adapter<RecyclerViewAdapterManagementUser.ViewHolder>() {

@@ -29,7 +29,7 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     var allCatSubs = daoCatSub.getAll()
     var allCards = daoCard.getAll()
     var allHomes = daoHome.getAll()
-    var allSpendCashs = daoSpendCash.getAll()
+    var allSpendCashes = daoSpendCash.getAll()
 
     fun initialize() {
         db = AppDatabase.getDatabase(application, scope)

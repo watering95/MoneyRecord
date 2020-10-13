@@ -6,10 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.watering.moneyrecord.R
-import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.entities.StatisticsMonthly
 import java.text.DecimalFormat
-import java.util.*
 
 class RecyclerViewAdapterBookStatistics(val lists:List<StatisticsMonthly>, private val clickListener: (Int) -> Unit): RecyclerView.Adapter<RecyclerViewAdapterBookStatistics.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

@@ -1,12 +1,9 @@
 package com.watering.moneyrecord.viewmodel
 
 import android.app.Application
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import com.watering.moneyrecord.R
 import com.watering.moneyrecord.entities.*
 import com.watering.moneyrecord.model.AppRepository
 import com.watering.moneyrecord.model.MyCalendar
@@ -27,7 +24,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     val allCatSubs = repository.allCatSubs
     val allCards = repository.allCards
     val allHomes = repository.allHomes
-    val allSpendCashs = repository.allSpendCashs
+    val allSpendCashes = repository.allSpendCashes
 
     val categoryOfSpend = mapOf(
         "식비" to listOf("식자재", "외식비", "간식비", "기타"),
@@ -55,13 +52,6 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
 
     fun close() = repository.close()
     fun initialize() = repository.initialize()
-
-    fun replaceFragment(fragmentManager: FragmentManager, fragment: Fragment) {
-        fragmentManager.run {
-            val transaction = beginTransaction()
-            transaction.replace(R.id.frame_main, fragment).addToBackStack(null).commit()
-        }
-    }
 
     fun getFirstDate(group: String?)
             = if(group != "") Transformations.switchMap(getGroup(group)) { repository.getFirstDate(it.id) }

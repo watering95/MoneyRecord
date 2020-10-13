@@ -6,32 +6,24 @@ import android.text.TextWatcher
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentBookIncomeBinding
 import com.watering.moneyrecord.entities.Income
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.view.RecyclerViewAdapterBookIncome
-import com.watering.moneyrecord.viewmodel.ViewModelApp
 import java.util.*
 
-class FragmentBookIncome : Fragment() {
-    private lateinit var mViewModel: ViewModelApp
+class FragmentBookIncome : ParentFragment() {
     private lateinit var binding: FragmentBookIncomeBinding
-    private val mFragmentManager by lazy { (activity as MainActivity).supportFragmentManager }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_book_income, container, false)
         initLayout()
         return binding.root
     }
-    private fun initLayout() {
-        val activity = activity as MainActivity
 
-        mViewModel = activity.mViewModel
+    private fun initLayout() {
         binding.date = MyCalendar.getToday()
 
         setHasOptionsMenu(false)
@@ -46,7 +38,7 @@ class FragmentBookIncome : Fragment() {
                     }
                 }
             })
-            fragmentManager?.let { it -> dialog.show(it, "dialog") }
+            dialog.show(mFragmentManager, "dialog")
         }
 
         binding.buttonBackwardFragmentBookIncome.setOnClickListener {
@@ -73,7 +65,7 @@ class FragmentBookIncome : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                mViewModel.getIncomes(binding.date).observe(this@FragmentBookIncome, Observer { list -> list?.let {
+                mViewModel.getIncomes(binding.date).observe(viewLifecycleOwner, { list -> list?.let {
                     binding.recyclerviewFragmentBookIncome.run {
                         setHasFixedSize(true)
                         layoutManager = LinearLayoutManager(context)
@@ -85,10 +77,11 @@ class FragmentBookIncome : Fragment() {
 
         binding.floatingFragmentBookIncome.setOnClickListener {
             val income = Income().apply { date = binding.date }
-            mViewModel.replaceFragment(mFragmentManager, FragmentEditIncome().initInstance(income))
+            replaceFragment(FragmentEditIncome().initInstance(income))
         }
     }
+
     private fun itemClicked(item: Income) {
-        mViewModel.replaceFragment(mFragmentManager, FragmentEditIncome().initInstance(item))
+        replaceFragment(FragmentEditIncome().initInstance(item))
     }
 }

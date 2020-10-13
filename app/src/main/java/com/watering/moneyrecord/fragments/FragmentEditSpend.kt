@@ -6,12 +6,8 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
 import androidx.databinding.library.baseAdapters.BR
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
-import androidx.lifecycle.Observer
 
-import com.watering.moneyrecord.MainActivity
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentEditSpendBinding
 import com.watering.moneyrecord.entities.Spend
@@ -19,22 +15,19 @@ import com.watering.moneyrecord.entities.SpendCard
 import com.watering.moneyrecord.entities.SpendCash
 import com.watering.moneyrecord.model.Converter
 import com.watering.moneyrecord.model.MyCalendar
-import com.watering.moneyrecord.model.Processing
+
 import com.watering.moneyrecord.viewmodel.ViewModelEditSpend
 import kotlinx.coroutines.*
 import java.util.*
 
-class FragmentEditSpend : Fragment() {
+class FragmentEditSpend : ParentFragment() {
     private lateinit var binding: FragmentEditSpendBinding
-    private lateinit var processing: Processing
     private lateinit var spend: Spend
-    private val mFragmentManager by lazy { fragmentManager as FragmentManager }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_edit_spend, container, false)
         binding.lifecycleOwner = this
-        binding.viewmodel = ViewModelProviders.of(this).get(ViewModelEditSpend::class.java)
-        processing = Processing(binding.viewmodel, mFragmentManager)
+        binding.viewmodel = application?.let { ViewModelEditSpend(it) }
 
         initLayout()
 
@@ -47,16 +40,19 @@ class FragmentEditSpend : Fragment() {
     }
 
     private fun initLayout() {
-        (activity as MainActivity).supportActionBar?.setTitle(R.string.title_spend)
+        mActionBar?.setTitle(R.string.title_spend)
 
         binding.viewmodel?.run {
             spend = this@FragmentEditSpend.spend
             this@FragmentEditSpend.spend.code?.let { oldCode = it }
             binding.amount = spend.amount
 
-            getCatMainBySub(this@FragmentEditSpend.spend.category).observeOnce( Observer { main -> main?.let {
-                Transformations.map(listOfMain) { list -> list.indexOf(main.name) }.observeOnce( Observer { index -> index?.let { indexOfMain = index } })
-            } })
+            getCatMainBySub(this@FragmentEditSpend.spend.category).observeOnce { main ->
+                main?.let {
+                    Transformations.map(listOfMain) { list -> list.indexOf(main.name) }
+                        .observeOnce { index -> index?.let { indexOfMain = index } }
+                }
+            }
 
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
@@ -83,7 +79,7 @@ class FragmentEditSpend : Fragment() {
                         }
                     }
                 })
-                fragmentManager?.let { dialog.show(it, "dialog") }
+                mFragmentManager.let { dialog.show(it, "dialog") }
             }
         }
 
@@ -109,22 +105,42 @@ class FragmentEditSpend : Fragment() {
                         job.join()
 
                         when(oldCode[0]) {
-                            '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let {
-                                val jobDelete = delete(it)
-                                runBlocking {
-                                    jobDelete.join()
-                                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                                    processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
+                            '1' -> getSpendCash(oldCode).observeOnce { cash ->
+                                cash?.let {
+                                    val jobDelete = delete(it)
+                                    runBlocking {
+                                        jobDelete.join()
+                                        Toast.makeText(
+                                            activity,
+                                            R.string.toast_delete_success,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        processing.ioKRW(
+                                            idAccount,
+                                            spend.date,
+                                            binding.isUpdateEvaluation!!
+                                        )
+                                    }
                                 }
-                            }})
-                            '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let {
-                                val jobDelete = delete(it)
-                                runBlocking {
-                                    jobDelete.join()
-                                    Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                                    processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
+                            }
+                            '2' -> getSpendCard(oldCode).observeOnce { card ->
+                                card?.let {
+                                    val jobDelete = delete(it)
+                                    runBlocking {
+                                        jobDelete.join()
+                                        Toast.makeText(
+                                            activity,
+                                            R.string.toast_delete_success,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        processing.ioKRW(
+                                            idAccount,
+                                            spend.date,
+                                            binding.isUpdateEvaluation!!
+                                        )
+                                    }
                                 }
-                            }})
+                            }
                         }
                     }
                 }
@@ -140,22 +156,32 @@ class FragmentEditSpend : Fragment() {
             when(oldCode[0]) {
                 '1' -> {
                     indexOfPay1 = 0
-                    listOfPay2.observeOnce( Observer { list -> list?.let {
-                        getAccountByCode(oldCode).observeOnce( Observer { account -> account?.let {
-                            indexOfPay2 = list.indexOf(account.number + " " + account.institute + " " + account.description)
-                            idAccount = account.id
-                        } })
-                    } })
+                    listOfPay2.observeOnce { list ->
+                        list?.let {
+                            getAccountByCode(oldCode).observeOnce { account ->
+                                account?.let {
+                                    indexOfPay2 =
+                                        list.indexOf(account.number + " " + account.institute + " " + account.description)
+                                    idAccount = account.id
+                                }
+                            }
+                        }
+                    }
                 }
                 '2' -> {
                     indexOfPay1 = 1
-                    listOfPay2.observeOnce( Observer { list -> list?.let {
-                        getCardByCode(oldCode).observeOnce( Observer { card -> card?.let {
-                            indexOfPay2 = list.indexOf(card.number + " " + card.company + " " + card.name)
-                            idCard = card.id
-                            idAccount = card.account
-                        } })
-                    } })
+                    listOfPay2.observeOnce { list ->
+                        list?.let {
+                            getCardByCode(oldCode).observeOnce { card ->
+                                card?.let {
+                                    indexOfPay2 =
+                                        list.indexOf(card.number + " " + card.company + " " + card.name)
+                                    idCard = card.id
+                                    idAccount = card.account
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -167,17 +193,19 @@ class FragmentEditSpend : Fragment() {
                     if(indexOfSub < 0 || indexOfMain < 0) null
                     else getCatSub(listOfSub[indexOfSub], listOfMain[indexOfMain])
                 }
-            }.observeOnce( Observer { sub -> sub?.let { spend.category = sub.id } })
+            }.observeOnce { sub -> sub?.let { spend.category = sub.id } }
         }
     }
 
     fun onChangedListOfSub() {
         binding.viewmodel?.run {
-            getCatSub(this@FragmentEditSpend.spend.category).observeOnce( Observer { sub -> sub?.let {
-                listOfSub.observeOnce(Observer { list ->
-                    indexOfSub = if(!list.isNullOrEmpty()) list.indexOf(sub.name) else 0
-                })
-            } })
+            getCatSub(this@FragmentEditSpend.spend.category).observeOnce { sub ->
+                sub?.let {
+                    listOfSub.observeOnce { list ->
+                        indexOfSub = if (!list.isNullOrEmpty()) list.indexOf(sub.name) else 0
+                    }
+                }
+            }
         }
     }
     fun onChangedIndexOfPay2() {
@@ -186,15 +214,17 @@ class FragmentEditSpend : Fragment() {
                 '1' -> {
                     Transformations.switchMap(listOfPay2) { list -> list?.let {
                         if(list.isNotEmpty()) getAccountByNumber(it[indexOfPay2].split(" ")[0]) else null }
-                    }.observeOnce( Observer { account -> account?.let { idAccount = account.id } })
+                    }.observeOnce { account -> account?.let { idAccount = account.id } }
                 }
                 '2' -> {
                     Transformations.switchMap(listOfPay2) { list -> list?.let{
                         if(list.isNotEmpty()) getCardByNumber(it[indexOfPay2].split(" ")[0]) else null }
-                    } .observeOnce( Observer { card -> card?.let {
-                        idCard = card.id
-                        idAccount = card.account
-                    } })
+                    } .observeOnce { card ->
+                        card?.let {
+                            idCard = card.id
+                            idAccount = card.account
+                        }
+                    }
                 }
             }
         }
@@ -206,34 +236,56 @@ class FragmentEditSpend : Fragment() {
             delay(100)
             binding.viewmodel?.run {
                 if(spend.details.isNullOrEmpty() || indexOfMain < 0 || indexOfSub < 0 || indexOfPay1 < 0 || indexOfPay2 < 0) {
-                    Toast.makeText(activity?.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity.baseContext, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
                 }
                 else {
                     Transformations.map(getLastSpendCode(spend.date)) { code ->
                         val index = code?.substring(10,12)?.toInt() ?: -1
                         newCode = newCode.replaceRange(10, 12, String.format("%02d", index + 1))
                         newCode
-                    }.observeOnce( Observer { code -> code?.let {
-                        spend.code = code
+                    }.observeOnce { code ->
+                        code?.let {
+                            spend.code = code
 
-                        val jobSpend1 = if(spend.id == null) insert(spend) else update(spend)
-                        val jobSpend2 = jobSpend2(code)
+                            val jobSpend1 = if (spend.id == null) insert(spend) else update(spend)
+                            val jobSpend2 = jobSpend2(code)
 
-                        runBlocking {
-                            jobSpend1.join()
-                            jobSpend2?.join()
+                            runBlocking {
+                                jobSpend1.join()
+                                jobSpend2?.join()
 
-                            if(spend.id != null) {
-                                when(oldCode[0]) {
-                                    '1' -> getSpendCash(oldCode).observeOnce( Observer { cash -> cash?.let { deleteOldSpend(it) } })
-                                    '2' -> getSpendCard(oldCode).observeOnce( Observer { card -> card?.let { deleteOldSpend(it) } })
+                                if (spend.id != null) {
+                                    when (oldCode[0]) {
+                                        '1' -> getSpendCash(oldCode).observeOnce { cash ->
+                                            cash?.let {
+                                                deleteOldSpend(
+                                                    it
+                                                )
+                                            }
+                                        }
+                                        '2' -> getSpendCard(oldCode).observeOnce { card ->
+                                            card?.let {
+                                                deleteOldSpend(
+                                                    it
+                                                )
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        activity,
+                                        R.string.toast_save_success,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    processing.ioKRW(
+                                        idAccount,
+                                        spend.date,
+                                        binding.isUpdateEvaluation!!
+                                    )
                                 }
-                            } else {
-                                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                                processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
                             }
                         }
-                    } })
+                    }
                 }
             }
         }
@@ -270,14 +322,5 @@ class FragmentEditSpend : Fragment() {
                 processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
             }
         }
-    }
-
-    private fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
-        observeForever(object: Observer<T> {
-            override fun onChanged(t: T) {
-                observer.onChanged(t)
-                removeObserver(this)
-            }
-        })
     }
 }
