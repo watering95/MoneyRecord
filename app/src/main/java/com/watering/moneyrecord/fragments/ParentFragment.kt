@@ -15,7 +15,7 @@ open class ParentFragment: Fragment() {
     val mViewModel by lazy { ViewModelApp(activity.application) }
     val mFragmentManager by lazy { activity.supportFragmentManager }
     val mActionBar by lazy { activity.supportActionBar }
-    val processing by lazy { Processing(mViewModel, mFragmentManager) }
+    val processing by lazy { application?.let { Processing(it, mFragmentManager) } }
 
     fun replaceFragment(fragment: Fragment) {
         mFragmentManager.run {

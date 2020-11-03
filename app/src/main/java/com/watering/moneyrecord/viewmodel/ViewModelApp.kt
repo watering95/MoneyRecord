@@ -14,9 +14,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     private val coroutineContext = parentJob + Dispatchers.Main
     private val scope = CoroutineScope(coroutineContext)
 
-    private val repository = AppRepository(application, scope)
-
-    var currentGroupId: Int? = -1
+    val repository = AppRepository(application, scope)
 
     val allGroups = repository.allGroups
     val allAccounts = repository.allAccounts
@@ -46,6 +44,10 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         "기타수입" to listOf("기타")
     )
 
+    companion object {
+        var currentGroupId = -1
+    }
+
     fun <T> insert(t: T) = scope.launch(Dispatchers.IO) { repository.insert(t) }
     fun <T> update(t: T) = scope.launch(Dispatchers.IO) { repository.update(t) }
     fun <T> delete(t: T) = scope.launch(Dispatchers.IO) { repository.delete(t) }
@@ -56,61 +58,25 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun getFirstDate(group: String?)
             = if(group != "") Transformations.switchMap(getGroup(group)) { repository.getFirstDate(it.id) }
             else repository.getFirstDate()
-    fun getGroup(id: Int?) = repository.getGroup(id)
-    fun getGroup(name: String?) = repository.getGroup(name)
+    fun getGroup(id: Int?) = repository.getGroup(id) // FragmentEditAccount, FragmentHome, Processing
+    fun getGroup(name: String?) = repository.getGroup(name)  // FragmentHome, ViewModelApp
 
-    fun getAccount(id: Int?) = repository.getAccount(id)
-    fun getAccountByCode(code: String?) = repository.getAccountByCode(code)
-    fun getAccountByNumber(number: String?) = repository.getAccount(number)
-    fun getAccountsByGroup(id: Int?) = repository.getAccountsByGroup(id)
+    fun getAccount(id: Int?) = repository.getAccount(id)  // FragmentAccountTransfer, FragmentEditCard, FragmentEditIncome
 
-    fun getHomeByIdAccount(idAccount: Int?) = repository.getHomeByIdAccount(idAccount)
-    fun getHomesByGroup(group: String?) = repository.getHomesByGroup(group)
+    fun getAccountByNumber(number: String?) = repository.getAccount(number)  // FragmentAccountTransfer, FragmentEditAccount, FragmentEditIncome, FragmentEditSpend
 
-    fun getCatMain(id: Int?) = repository.getCatMain(id)
-    fun getCatMainsByKind(kind: String?) = repository.getCatMain(kind)
-    fun getCatMainBySub(idSub: Int?) = repository.getCatMainBySub(idSub)
-    fun getCatMainByName(name: String?) = repository.getCatMainByName(name)
+    fun getHomeByIdAccount(idAccount: Int?) = repository.getHomeByIdAccount(idAccount)  // FragmentEditAccount, Processing
+    fun getHomesByGroup(group: String?) = repository.getHomesByGroup(group)  // FragmentHome, FragmentHomeList
 
-    fun getCatSub(id: Int?) = repository.getCatSub(id)
-    fun getCatSub(nameOfSub: String?, nameOfMain: String?) =
+    fun getCatMain(id: Int?) = repository.getCatMain(id)  // FragmentEditCategorySub, FragmentManagementCategorySub
+    fun getCatMainsByKind(kind: String?) = repository.getCatMain(kind)  // FragmentEditIncome, FragmentEditSpend
+    fun getCatMainBySub(idSub: Int?) = repository.getCatMainBySub(idSub)  // FragmentEditIncome, FragmentEditSpend
+
+    fun getCatSub(id: Int?) = repository.getCatSub(id)  // FragmentEditIncome, FragmentEditSpend
+    fun getCatSub(nameOfSub: String?, nameOfMain: String?) =  // FragmentEditIncome, FragmentEditSpend, FragmentManagementCategorySub
         repository.getCatSub(nameOfSub, nameOfMain)
 
-    fun getCatSubsByMain(nameOfMain: String?) = repository.getCatSubsByMain(nameOfMain)
-    fun getCatSubsByMain(idMain: Int?) = repository.getCatSubsByMain(idMain)
-
-    fun getSpends(date: String?) = repository.getSpends(date)
-    fun getSpendCash(code: String?) = repository.getSpendCash(code)
-    fun getSpendCard(code: String?) = repository.getSpendCard(code)
-
-    fun getIncomes(date: String?) = repository.getIncomes(date)
-    fun getCardByCode(code: String?) = repository.getCardByCode(code)
-    fun getCardByNumber(number: String?) = repository.getCardByNumber(number)
-    fun getLastSpendCode(date: String?) = repository.getLastSpendCode(date)
-    fun getDairyTotalOrderByDate(idAccount: Int?) = repository.getDairyTotalOrderByDate(idAccount)
-
-    fun getNextIOKRW(idAccount: Int?, date: String?) = repository.getNextIOKRW(idAccount, date)
-    fun getNextIOForeign(idAccount: Int?, date: String?, currency: Int?) =
-        repository.getNextIOForeign(idAccount, date, currency)
-
-    fun getNextDairyKRW(idAccount: Int?, date: String?) =
-        repository.getNextDairyKRW(idAccount, date)
-
-    fun getNextDairyForeign(idAccount: Int?, date: String?, currency: Int?) =
-        repository.getNextDairyForeign(idAccount, date, currency)
-
-    fun getNextDairyTotal(idAccount: Int?, date: String?) =
-        repository.getNextDairyTotal(idAccount, date)
-
-    fun getAfterIOKRW(idAccount: Int?, date: String?) = repository.getAfterIOKRW(idAccount, date)
-    fun getAfterDairyKRW(idAccount: Int?, date: String?) =
-        repository.getAfterDairyKRW(idAccount, date)
-
-    fun getAfterDairyForeign(idAccount: Int?, date: String?, currency: Int?) =
-        repository.getAfterDairyForeign(idAccount, date, currency)
-
-    fun getAfterDairyTotal(idAccount: Int?, date: String?) =
-        repository.getAfterDairyTotal(idAccount, date)
+    fun getCatSubsByMain(nameOfMain: String?) = repository.getCatSubsByMain(nameOfMain)  // ViewModelEditIncome, ViewModelEditSpend
 
     fun loadingIOKRW(idAccount: Int?, date: String?, isUpdateEvaluation: Boolean): LiveData<IOKRW> {
         return Transformations.switchMap(getPreviousEvaluationOfKRW(idAccount, date)) { previousEvaluation ->
@@ -143,7 +109,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                 }
             }
         }
-    }
+    }  // FragmentAccountTransfer, FragmentEditInoutKRW, Processing, ViewModelApp
 
     fun loadingIOForeign(idAccount: Int?, date: String?, currency: Int?, isUpdateEvaluation: Boolean): LiveData<IOForeign> {
         return Transformations.switchMap(getPreviousEvaluationKRWOfForeign(idAccount, date, currency)) { previousEvaluation ->
@@ -161,7 +127,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                 }
             }
         }
-    }
+    }  // FragmentEditInoutForeign, Processing, ViewModelApp
 
     fun loadingDairyKRW(idAccount: Int?, date: String?, isUpdateEvaluation: Boolean): LiveData<DairyKRW> {
         return Transformations.switchMap(getDairyKRW(idAccount, date)) { dairy ->
@@ -180,7 +146,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                 } }
             }
         }
-    }
+    }  // FragmentEditInoutKRW, Processing, ViewModelApp
 
     fun loadingDairyForeign(idAccount: Int?, date: String?, currency: Int?, isUpdateEvaluation: Boolean): LiveData<DairyForeign> {
         return Transformations.switchMap(getDairyForeign(idAccount, date, currency)) { dairy ->
@@ -205,46 +171,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
                 }
             }
         }
-    }
-
-    fun loadingDairyTotal(idAccount: Int?, date: String?, isUpdateEvaluation: Boolean): LiveData<DairyTotal> {
-        return Transformations.switchMap(getLastDairyForeign(idAccount, date)) { listOf_last_dairy_foreign ->
-            Transformations.switchMap(getLastIOForeign(idAccount, date)) { listOf_last_io_foreign ->
-                Transformations.switchMap(loadingDairyKRW(idAccount, date, isUpdateEvaluation)) { dairy_krw ->
-                    Transformations.switchMap(loadingIOKRW(idAccount, date, isUpdateEvaluation)) { io_krw ->
-                        Transformations.map(getDairyTotal(idAccount, date)) { dairy_total ->
-                            var principal = 0
-                            var evaluation = 0
-                            var rate = 0.0
-
-                            dairy_krw?.run { principal = principalKRW!! }
-                            io_krw?.run { evaluation = evaluationKRW!! }
-
-                            listOf_last_dairy_foreign.forEach { principal += it.principalKRW!! }
-                            listOf_last_io_foreign.forEach { evaluation += it.evaluationKRW!!.toInt() }
-
-                            if (principal != 0 && evaluation != 0) rate = evaluation.toDouble() / principal * 100 - 100
-
-                            if (dairy_total == null) {
-                                val new = DairyTotal()
-                                new.account = idAccount
-                                new.date = date
-                                new.evaluationKRW = evaluation
-                                new.principalKRW = principal
-                                new.rate = rate
-                                new
-                            } else {
-                                dairy_total.evaluationKRW = evaluation
-                                dairy_total.principalKRW = principal
-                                dairy_total.rate = rate
-                                dairy_total
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    }  // FragmentEditInoutForeign, Processing
 
     private fun getPreviousEvaluationOfKRW(idAccount: Int?, date: String?): LiveData<Int> {
         val before = MyCalendar.calendarToStr(MyCalendar.changeDate(date, -1))
@@ -272,9 +199,6 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     private fun getDairyForeign(idAccount: Int?, date: String?, currency: Int?) =
         repository.getDairyForeign(idAccount, date, currency)
 
-    private fun getDairyTotal(idAccount: Int?, date: String?) =
-        repository.getDairyTotal(idAccount, date)
-
     private fun getLastIOKRW(idAccount: Int?, date: String?) =
         repository.getLastIOKRW(idAccount, date)
 
@@ -283,12 +207,6 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
 
     private fun getLastDairyKRW(idAccount: Int?, date: String?) =
         repository.getLastDairyKRW(idAccount, date)
-
-    private fun getLastIOForeign(idAccount: Int?, date: String?) =
-        repository.getLastIOForeign(idAccount, date)
-
-    private fun getLastDairyForeign(idAccount: Int?, date: String?) =
-        repository.getLastDairyForeign(idAccount, date)
 
     private fun sumOfSpendCashForDate(idAccount: Int?, date: String?) =
         repository.sumOfSpendCashForDate(idAccount, date)
@@ -325,15 +243,6 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
 
     private fun sumOfSpendCashUntilDate(idAccount: Int?, date: String?) =
         repository.sumOfSpendCashUntilDate(idAccount, date)
-
-    fun sumOfIncome(startDate: String, endDate: String) = repository.sumOfIncome(startDate, endDate)
-    fun sumOfSpend(startDate: String, endDate: String) = repository.sumOfSpend(startDate, endDate)
-    fun sumOfMonthlyStatistics() = repository.sumOfMonthlyStatistics()
-
-    fun sumOfEvaluation(date: String) = if(currentGroupId!! > 0) repository.sumOfEvaluation(currentGroupId, date) else repository.sumOfEvaluation(date)
-
-    fun sumOfPrincipal(date: String) = if(currentGroupId!! > 0) repository.sumOfPrincipal(currentGroupId, date) else repository.sumOfPrincipal(date)
-
 
     // 지정일까지 원화 원금을 원화 입금액, 출금액, 지출, 수입 전체로 계산
     private fun calculatePrincipalOfKRW(idAccount: Int?, date: String?): LiveData<Int> {

@@ -99,7 +99,7 @@ class FragmentEditIncome : ParentFragment() {
                     runBlocking {
                         job.join()
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                        processing.ioKRW(idAccount,income.date, binding.isUpdateEvaluation!!)
+                        processing?.ioKRW(idAccount,income.date, binding.isUpdateEvaluation!!)
                     }
                 }
             }
@@ -173,7 +173,7 @@ class FragmentEditIncome : ParentFragment() {
                     runBlocking {
                         jobIncome.join()
                         Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                        processing.ioKRW(idAccount, income.date, binding.isUpdateEvaluation!!)
+                        processing?.ioKRW(idAccount, income.date, binding.isUpdateEvaluation!!)
                     }
                 }
             }

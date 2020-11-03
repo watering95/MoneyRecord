@@ -81,4 +81,11 @@ class ViewModelEditSpend(application:Application) : ObservableViewModel(applicat
         field = value
         notifyPropertyChanged(BR.indexOfPay2)
     }
+
+    fun getAccountByCode(code: String?) = repository.getAccountByCode(code)  // FragmentEditSpend
+    fun getSpendCash(code: String?) = repository.getSpendCash(code)  // FragmentEditSpend
+    fun getSpendCard(code: String?) = repository.getSpendCard(code)  // FragmentEditSpend
+    fun getCardByCode(code: String?) = repository.getCardByCode(code)  // FragmentEditSpend
+    fun getCardByNumber(number: String?) = repository.getCardByNumber(number)  // FragmentEditSpend
+    fun getLastSpendCode(date: String?) = repository.getLastSpendCode(date)  // FragmentEditSpend
 }

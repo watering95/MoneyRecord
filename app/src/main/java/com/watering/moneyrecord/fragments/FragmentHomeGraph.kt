@@ -12,6 +12,7 @@ import java.io.FileWriter
 
 import android.widget.Toast
 import com.watering.moneyrecord.R
+import com.watering.moneyrecord.viewmodel.ViewModelHomeGraph
 import java.io.IOException
 import java.util.*
 
@@ -21,6 +22,7 @@ class FragmentHomeGraph : ParentFragment() {
     var group: String? = ""
     private var duration = 100
     private var interval = 1
+    private val viewModel by lazy { application?.let { ViewModelHomeGraph(it) } }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_home_graph, container, false)
@@ -57,9 +59,9 @@ class FragmentHomeGraph : ParentFragment() {
     private fun makeData(firstDate: String, date: Calendar, i: Int, data: StringBuilder) {
         if(date >= MyCalendar.strToCalendar(firstDate) && i < duration) {
             val strDate = MyCalendar.calendarToStr(date)
-            mViewModel.sumOfEvaluation(strDate).observeOnce { sumEvaluation ->
+            viewModel?.sumOfEvaluation(strDate)?.observeOnce { sumEvaluation ->
                 sumEvaluation?.let {
-                    mViewModel.sumOfPrincipal(strDate).observeOnce { sumPrincipal ->
+                    viewModel?.sumOfPrincipal(strDate)?.observeOnce { sumPrincipal ->
                         sumPrincipal?.let {
                             var rate = 0.0
                             if (sumPrincipal != 0 && sumEvaluation != 0) rate =

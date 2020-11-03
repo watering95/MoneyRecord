@@ -22,4 +22,6 @@ class ViewModelAccounts(application:Application) : ObservableViewModel(applicati
         field = value
         notifyPropertyChanged(BR.listOfAccount)
     }
+
+    fun getDairyTotalOrderByDate(idAccount: Int?) = repository.getDairyTotalOrderByDate(idAccount)  // FragmentAccounts
 }

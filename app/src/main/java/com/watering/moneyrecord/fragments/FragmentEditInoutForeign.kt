@@ -94,7 +94,7 @@ class FragmentEditInoutForeign : ParentFragment() {
                     runBlocking {
                         job.join()
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                        processing.ioForeign(idAccount, io.date, io.currency)
+                        processing?.ioForeign(idAccount, io.date, io.currency)
                     }
                 }
             }
@@ -112,7 +112,7 @@ class FragmentEditInoutForeign : ParentFragment() {
                 runBlocking {
                     jobIO.join()
                     Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                    processing.ioForeign(idAccount, io.date, io.currency)
+                    processing?.ioForeign(idAccount, io.date, io.currency)
                 }
             }
         }

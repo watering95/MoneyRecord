@@ -96,7 +96,7 @@ class FragmentEditInoutKRW : ParentFragment() {
                     runBlocking {
                         delete(io).join()
                         Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
-                        processing.ioKRW(idAccount, io.date)
+                        processing?.ioKRW(idAccount, io.date)
                     }
                 }
 
@@ -116,7 +116,7 @@ class FragmentEditInoutKRW : ParentFragment() {
                 runBlocking {
                     jobIO.join()
                     Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                    processing.ioKRW(idAccount, io.date)
+                    processing?.ioKRW(idAccount, io.date)
                 }
             }
 

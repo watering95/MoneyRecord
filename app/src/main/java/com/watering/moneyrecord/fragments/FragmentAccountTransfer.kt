@@ -82,7 +82,7 @@ class FragmentAccountTransfer : ParentFragment() {
 
                             runBlocking {
                                 job1.join()
-                                processing.ioKRW(io.account, io.date, binding.isUpdateWithdraw!!)
+                                processing?.ioKRW(io.account, io.date, binding.isUpdateWithdraw!!)
 
                                 Transformations.switchMap(listOfAccount) { list ->
                                     Transformations.switchMap(
@@ -112,7 +112,7 @@ class FragmentAccountTransfer : ParentFragment() {
                                                 R.string.toast_transfer_success,
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                            processing.ioKRW(
+                                            processing?.ioKRW(
                                                 io.account,
                                                 io.date,
                                                 binding.isUpdateDeposit!!

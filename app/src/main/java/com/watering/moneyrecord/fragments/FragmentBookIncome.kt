@@ -12,10 +12,12 @@ import com.watering.moneyrecord.databinding.FragmentBookIncomeBinding
 import com.watering.moneyrecord.entities.Income
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.view.RecyclerViewAdapterBookIncome
+import com.watering.moneyrecord.viewmodel.ViewModelBookIncome
 import java.util.*
 
 class FragmentBookIncome : ParentFragment() {
     private lateinit var binding: FragmentBookIncomeBinding
+    private val viewModel by lazy { application?.let { ViewModelBookIncome(it) } }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_book_income, container, false)
@@ -65,7 +67,7 @@ class FragmentBookIncome : ParentFragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                mViewModel.getIncomes(binding.date).observe(viewLifecycleOwner, { list -> list?.let {
+                viewModel?.getIncomes(binding.date)?.observe(viewLifecycleOwner, { list -> list?.let {
                     binding.recyclerviewFragmentBookIncome.run {
                         setHasFixedSize(true)
                         layoutManager = LinearLayoutManager(context)

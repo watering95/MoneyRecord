@@ -12,10 +12,12 @@ import com.watering.moneyrecord.databinding.FragmentBookSpendBinding
 import com.watering.moneyrecord.entities.Spend
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.view.RecyclerViewAdapterBookSpend
+import com.watering.moneyrecord.viewmodel.ViewModelBookSpend
 import java.util.*
 
 class FragmentBookSpend : ParentFragment() {
     private lateinit var binding: FragmentBookSpendBinding
+    private val viewModel by lazy { application?.let { ViewModelBookSpend(it) } }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_book_spend, container, false)
@@ -59,7 +61,7 @@ class FragmentBookSpend : ParentFragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                mViewModel.getSpends(binding.date).observe(viewLifecycleOwner, { list -> list?.let {
+                viewModel?.getSpends(binding.date)?.observe(viewLifecycleOwner, { list -> list?.let {
                     binding.recyclerviewFragmentBookSpend.run {
                         setHasFixedSize(true)
                         layoutManager = LinearLayoutManager(context)

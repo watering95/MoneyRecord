@@ -65,7 +65,6 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     fun getAccount(id: Int?) = daoAccount.get(id)
     fun getAccount(number: String?) = daoAccount.get(number)
     fun getAccountByCode(code: String?) = daoAccount.getByCode(code)
-    fun getAccountsByGroup(id: Int?) = daoAccount.getByGroup(id)
 
     fun getHomeByIdAccount(id_account: Int?) = daoHome.getByIdAccount(id_account)
     fun getHomesByGroup(group: String?) = daoHome.getByGroup(group)
@@ -103,11 +102,6 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     fun getNextDairyKRW(id_account: Int?, date: String?) = daoDairyKRW.getNext(id_account, date)
     fun getNextDairyForeign(id_account: Int?, date: String?, currency: Int?) = daoDairyForeign.getNext(id_account, date, currency)
     fun getNextDairyTotal(id_account: Int?, date: String?) = daoDairyTotal.getNext(id_account, date)
-
-    fun getAfterIOKRW(id_account: Int?, date: String?) = daoIOKRW.getAfter(id_account, date)
-    fun getAfterDairyKRW(id_account: Int?, date: String?) = daoDairyKRW.getAfter(id_account, date)
-    fun getAfterDairyForeign(id_account: Int?, date: String?, currency: Int?) = daoDairyForeign.getAfter(id_account, date, currency)
-    fun getAfterDairyTotal(id_account: Int?, date: String?) = daoDairyTotal.getAfter(id_account, date)
 
     fun getLastSpendCode(date: String?) = daoSpend.getLastCode(date)
     fun getLastIOKRW(id_account: Int?, date: String?) = daoIOKRW.getLast(id_account, date)

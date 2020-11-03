@@ -8,9 +8,11 @@ import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentBookStatisticsBinding
 import com.watering.moneyrecord.entities.StatisticsMonthly
 import com.watering.moneyrecord.view.RecyclerViewAdapterBookStatistics
+import com.watering.moneyrecord.viewmodel.ViewModelBookStatistics
 
 class FragmentBookStatistics : ParentFragment() {
     private lateinit var binding: FragmentBookStatisticsBinding
+    private val viewModel by lazy { application?.let { ViewModelBookStatistics(it) } }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = inflate(inflater, R.layout.fragment_book_statistics, container, false)
@@ -25,7 +27,7 @@ class FragmentBookStatistics : ParentFragment() {
     }
 
     private fun updateList() {
-        mViewModel.run {
+        viewModel?.run {
             sumOfMonthlyStatistics().observe(viewLifecycleOwner, { statistics -> statistics?.let {
                 onChangedRecyclerView(it)
             } })

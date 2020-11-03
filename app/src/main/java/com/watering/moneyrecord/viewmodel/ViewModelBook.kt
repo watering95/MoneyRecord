@@ -20,4 +20,7 @@ class ViewModelBook(application: Application) : ObservableViewModel(application)
 
             notifyPropertyChanged(BR.totalSpend)
         }
+
+    fun sumOfIncome(startDate: String, endDate: String) = repository.sumOfIncome(startDate, endDate)  // FragmentBook
+    fun sumOfSpend(startDate: String, endDate: String) = repository.sumOfSpend(startDate, endDate)  // FragmentBook
 }

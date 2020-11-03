@@ -9,9 +9,11 @@ import com.watering.moneyrecord.R
 import com.watering.moneyrecord.entities.CategorySub
 import com.watering.moneyrecord.view.RecyclerViewAdapterManagementCategorySub
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.watering.moneyrecord.viewmodel.ViewModelManagementCategorySub
 
 class FragmentManagementCategorySub : ParentFragment() {
     private lateinit var mView: View
+    private val viewModel by lazy { application?.let { ViewModelManagementCategorySub(it) } }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_management_category_sub, container, false)
@@ -26,10 +28,10 @@ class FragmentManagementCategorySub : ParentFragment() {
         val button = mView.findViewById<Button>(R.id.button_automatic_fragment_management_category_sub)
         button.setOnClickListener { generateBasicCategory() }
 
-        mViewModel.allCatSubs.observe(viewLifecycleOwner, { categorySubs -> categorySubs?.let {
+        viewModel?.allCatSubs?.observe(viewLifecycleOwner, { categorySubs -> categorySubs?.let {
             mView.findViewById<RecyclerView>(R.id.recyclerview_fragment_management_category_sub).run {
                 val list = mutableListOf<String>()
-                it.forEach { catSub -> mViewModel.getCatMain(catSub.categoryMain).observeOnce {
+                it.forEach { catSub -> viewModel?.getCatMain(catSub.categoryMain)?.observeOnce {
                     list.add(catSub.name + " : " + it.name)
                     if (list.size == categorySubs.size) {
                         setHasFixedSize(true)
@@ -47,13 +49,13 @@ class FragmentManagementCategorySub : ParentFragment() {
         floating.setOnClickListener { replaceFragment(FragmentEditCategorySub().initInstance(CategorySub())) }
     }
     private fun itemClicked(item: String) {
-        mViewModel.run {
+        viewModel?.run {
             val cat = item.split(" : ")
             getCatSub(cat[0], cat[1]).observeOnce { sub -> replaceFragment(FragmentEditCategorySub().initInstance(sub)) }
         }
     }
     private fun generateBasicCategory() {
-        mViewModel.run {
+        viewModel?.run {
             categoryOfSpend.keys.forEach {
                 getCatMainByName(it).observeOnce { main ->
                     if (main != null) {

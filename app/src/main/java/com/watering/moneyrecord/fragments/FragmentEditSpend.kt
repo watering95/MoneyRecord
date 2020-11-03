@@ -115,7 +115,7 @@ class FragmentEditSpend : ParentFragment() {
                                             R.string.toast_delete_success,
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        processing.ioKRW(
+                                        processing?.ioKRW(
                                             idAccount,
                                             spend.date,
                                             binding.isUpdateEvaluation!!
@@ -133,7 +133,7 @@ class FragmentEditSpend : ParentFragment() {
                                             R.string.toast_delete_success,
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        processing.ioKRW(
+                                        processing?.ioKRW(
                                             idAccount,
                                             spend.date,
                                             binding.isUpdateEvaluation!!
@@ -277,7 +277,7 @@ class FragmentEditSpend : ParentFragment() {
                                         R.string.toast_save_success,
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    processing.ioKRW(
+                                    processing?.ioKRW(
                                         idAccount,
                                         spend.date,
                                         binding.isUpdateEvaluation!!
@@ -319,7 +319,7 @@ class FragmentEditSpend : ParentFragment() {
             runBlocking {
                 job.join()
                 Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
-                processing.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
+                processing?.ioKRW(idAccount, spend.date, binding.isUpdateEvaluation!!)
             }
         }
     }

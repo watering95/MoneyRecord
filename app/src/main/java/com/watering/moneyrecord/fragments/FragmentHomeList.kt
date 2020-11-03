@@ -19,21 +19,23 @@ class FragmentHomeList : ParentFragment() {
         return binding.fragmentHomeList
     }
 
-    fun updateList() {
-        (if(group == "") mViewModel.allHomes else mViewModel.getHomesByGroup(group))
-        .observe(viewLifecycleOwner, { listOfHomes -> listOfHomes?.let {
-            var totalEvaluation = 0
-
-            it.forEach { home -> totalEvaluation += home.evaluationKRW!! }
-
-            onChangedRecyclerView(it, totalEvaluation)
-        } })
-    }
-
     private fun initLayout() {
         updateList()
 
         setHasOptionsMenu(false)
+    }
+
+    private fun updateList() {
+        (if(group == "") mViewModel.allHomes else mViewModel.getHomesByGroup(group))
+        .observeOnce { listOfHomes ->
+            listOfHomes?.let {
+                var totalEvaluation = 0
+
+                it.forEach { home -> totalEvaluation += home.evaluationKRW!! }
+
+                onChangedRecyclerView(it, totalEvaluation)
+            }
+        }
     }
 
     private fun itemClicked(item: Int) {

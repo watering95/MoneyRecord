@@ -14,7 +14,6 @@ class PagerAdapterHome(fm: FragmentManager): FragmentPagerAdapter(fm) {
     fun setGroup(group: String?) {
         fragmentHomeList.group = group
         fragmentHomeGraph.group = group
-        fragmentHomeList.updateList()
     }
 
     override fun getItem(position: Int): Fragment {
