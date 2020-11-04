@@ -7,8 +7,6 @@ import androidx.lifecycle.*
 
 
 class ViewModelAccounts(application:Application) : ObservableViewModel(application) {
-    var idAccount = 0
-
     var indexOfAccount = -1
     @Bindable get
         set(value) {

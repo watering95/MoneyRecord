@@ -38,7 +38,7 @@ class FragmentAccountTransfer : ParentFragment() {
                     val index = list.indexOf(account.number + " " + account.institute + " " + account.description)
                     index
                 }
-            }.observeOnce { index -> index?.let { indexOfWithdrawAccount = it } }
+            }.observeOnce { index -> index.let { indexOfWithdrawAccount = it } }
         }
 
         binding.isUpdateDeposit = false

@@ -46,6 +46,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
 
     companion object {
         var currentGroupId = -1
+        var currentAccountId = -1
     }
 
     fun <T> insert(t: T) = scope.launch(Dispatchers.IO) { repository.insert(t) }

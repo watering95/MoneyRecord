@@ -18,6 +18,7 @@ import com.watering.moneyrecord.entities.DairyTotal
 import com.watering.moneyrecord.model.MyCalendar
 import com.watering.moneyrecord.view.RecyclerViewAdapterAccounts
 import com.watering.moneyrecord.viewmodel.ViewModelAccounts
+import com.watering.moneyrecord.viewmodel.ViewModelApp.Companion.currentAccountId
 
 class FragmentAccounts : ParentFragment() {
     private lateinit var binding: FragmentAccountsBinding
@@ -35,6 +36,12 @@ class FragmentAccounts : ParentFragment() {
 
         binding.viewmodel?.run {
             listOfAccount = Transformations.map(allAccounts) { list -> list.map { it.number + " " + it.institute + " " + it.description } } as MutableLiveData<List<String?>>
+
+            if(currentAccountId > 0) getAccount(currentAccountId).observeOnce { account ->
+                account?.let { Transformations.map(listOfAccount) { list -> list.indexOf(account.number + " " + account.institute + " " + account.description) }
+                    .observeOnce { index -> index?.let { indexOfAccount = index } }
+                }
+            }
 
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
@@ -63,9 +70,9 @@ class FragmentAccounts : ParentFragment() {
             override fun onComplete(select: Int) {
                 binding.viewmodel?.run {
                     when(select) {
-                        0 -> replaceFragment(FragmentEditInoutKRW().initInstance(idAccount, date))
-                        1 -> replaceFragment(FragmentEditInoutForeign().initInstance(idAccount, date))
-                        2 -> replaceFragment(FragmentAccountTransfer().initInstance(idAccount))
+                        0 -> replaceFragment(FragmentEditInoutKRW().initInstance(currentAccountId, date))
+                        1 -> replaceFragment(FragmentEditInoutForeign().initInstance(currentAccountId, date))
+                        2 -> replaceFragment(FragmentAccountTransfer().initInstance(currentAccountId))
                     }
                 }
             }
@@ -79,17 +86,23 @@ class FragmentAccounts : ParentFragment() {
 
     fun onIndexOfAccountChanged() {
         binding.viewmodel?.run {
-            allAccounts.observe(this@FragmentAccounts, { list -> list?.let {
-                list[indexOfAccount].id?.let {
-                    idAccount = it
-                    getDairyTotalOrderByDate(idAccount).observe(this@FragmentAccounts, { logs -> logs?.let {
-                        this@FragmentAccounts.logs = logs
-                        binding.recyclerviewFragmentAccounts.run {
-                            adapter = RecyclerViewAdapterAccounts(logs) { position -> itemClicked(position) }
+            allAccounts.observeOnce { list ->
+                list?.let {
+                    list[indexOfAccount].id?.let {
+                        currentAccountId = it
+                        getDairyTotalOrderByDate(currentAccountId).observeOnce { logs ->
+                            logs?.let {
+                                this@FragmentAccounts.logs = logs
+                                binding.recyclerviewFragmentAccounts.run {
+                                    adapter = RecyclerViewAdapterAccounts(logs) { position ->
+                                        itemClicked(position)
+                                    }
+                                }
+                            }
                         }
-                    } })
+                    }
                 }
-            } })
+            }
         }
     }
 }
