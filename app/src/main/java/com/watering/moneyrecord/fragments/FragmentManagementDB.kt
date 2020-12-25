@@ -13,7 +13,7 @@ import com.watering.moneyrecord.viewmodel.ViewModelManagementDB
 class FragmentManagementDB : ParentFragment() {
     private lateinit var binding: FragmentManagementDbBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_management_db, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = activity.application?.let { ViewModelManagementDB(it) }

@@ -16,7 +16,7 @@ class FragmentEditCard : ParentFragment() {
     private lateinit var item: Card
     private lateinit var binding: FragmentEditCardBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_edit_card, container, false)
         initLayout()
         return binding.root

@@ -16,7 +16,7 @@ class FragmentEditCategoryMain : ParentFragment() {
     private lateinit var binding:FragmentEditCategorymainBinding
     private lateinit var mList:List<String>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_edit_categorymain, container, false)
         initLayout()
         return binding.root

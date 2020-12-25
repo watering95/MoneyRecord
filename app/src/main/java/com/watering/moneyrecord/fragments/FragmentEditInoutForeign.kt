@@ -21,7 +21,7 @@ class FragmentEditInoutForeign : ParentFragment() {
     private var date:String? = ""
     private var currency:Int? = 0
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_edit_inout_foreign, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = application?.let { ViewModelEditInoutForeign(it) }

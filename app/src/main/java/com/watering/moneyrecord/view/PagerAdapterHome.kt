@@ -11,11 +11,6 @@ class PagerAdapterHome(fm: FragmentManager): FragmentPagerAdapter(fm) {
     private val fragmentHomeGraph = FragmentHomeGraph()
     private val titles = arrayOf("목록", "그래프")
 
-    fun setGroup(group: String?) {
-        fragmentHomeList.group = group
-        fragmentHomeGraph.group = group
-    }
-
     override fun getItem(position: Int): Fragment {
         return when(position) {
             0 -> { fragmentHomeList }
@@ -32,7 +27,7 @@ class PagerAdapterHome(fm: FragmentManager): FragmentPagerAdapter(fm) {
         return 2
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
+    override fun getPageTitle(position: Int): CharSequence {
         return titles[position]
     }
 }

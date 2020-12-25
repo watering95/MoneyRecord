@@ -24,7 +24,7 @@ class FragmentEditSpend : ParentFragment() {
     private lateinit var binding: FragmentEditSpendBinding
     private lateinit var spend: Spend
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_edit_spend, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = application?.let { ViewModelEditSpend(it) }
@@ -203,6 +203,7 @@ class FragmentEditSpend : ParentFragment() {
                 sub?.let {
                     listOfSub.observeOnce { list ->
                         indexOfSub = if (!list.isNullOrEmpty()) list.indexOf(sub.name) else 0
+                        if(indexOfSub < 0) indexOfSub = 0
                     }
                 }
             }

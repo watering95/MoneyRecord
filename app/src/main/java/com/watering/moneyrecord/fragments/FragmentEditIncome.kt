@@ -21,7 +21,7 @@ class FragmentEditIncome : ParentFragment() {
     private lateinit var income: Income
     private lateinit var binding: FragmentEditIncomeBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_edit_income, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = application?.let { ViewModelEditIncome(it) }
@@ -130,7 +130,8 @@ class FragmentEditIncome : ParentFragment() {
                 sub?.let {
                     listOfSub.observeOnce { list ->
                         list?.let {
-                            indexOfSub = list.indexOf(sub.name)
+                            indexOfSub = if (!list.isNullOrEmpty()) list.indexOf(sub.name) else 0
+                            if(indexOfSub < 0) indexOfSub = 0
                         }
                     }
                 }

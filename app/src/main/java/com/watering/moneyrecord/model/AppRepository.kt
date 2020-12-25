@@ -82,7 +82,6 @@ class AppRepository(val application: Application, private val scope: CoroutineSc
     fun getCatSub(id: Int?) = daoCatSub.get(id)
     fun getCatSub(nameOfSub: String?, nameOfMain: String?) = daoCatSub.get(nameOfSub, nameOfMain)
     fun getCatSubsByMain(nameOfMain: String?) = daoCatSub.getByMain(nameOfMain)
-    fun getCatSubsByMain(id_main: Int?) = daoCatSub.getByMain(id_main)
 
     fun getSpends(date: String?) = daoSpend.get(date)
     fun getSpendCash(code: String?) = daoSpendCash.get(code)

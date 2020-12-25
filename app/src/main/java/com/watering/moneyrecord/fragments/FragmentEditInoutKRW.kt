@@ -20,7 +20,7 @@ class FragmentEditInoutKRW : ParentFragment() {
     private var idAccount:Int? = 0
     private var date:String? = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_edit_inout_krw, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = application?.let { ViewModelEditInoutKRW(it) }

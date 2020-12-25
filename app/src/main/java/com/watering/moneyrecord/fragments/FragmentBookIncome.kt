@@ -19,7 +19,7 @@ class FragmentBookIncome : ParentFragment() {
     private lateinit var binding: FragmentBookIncomeBinding
     private val viewModel by lazy { application?.let { ViewModelBookIncome(it) } }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_book_income, container, false)
         initLayout()
         return binding.root

@@ -19,7 +19,7 @@ class FragmentBookSpend : ParentFragment() {
     private lateinit var binding: FragmentBookSpendBinding
     private val viewModel by lazy { application?.let { ViewModelBookSpend(it) } }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_book_spend, container, false)
         initLayout()
         return binding.root

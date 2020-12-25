@@ -8,7 +8,6 @@ import androidx.lifecycle.Transformations
 import com.watering.moneyrecord.entities.DairyTotal
 import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.viewmodel.ObservableViewModel
-import com.watering.moneyrecord.viewmodel.ViewModelApp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 

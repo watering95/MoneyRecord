@@ -24,7 +24,7 @@ class FragmentHomeGraph : ParentFragment() {
     private var interval = 1
     private val viewModel by lazy { application?.let { ViewModelHomeGraph(it) } }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_home_graph, container, false)
         initLayout()
 

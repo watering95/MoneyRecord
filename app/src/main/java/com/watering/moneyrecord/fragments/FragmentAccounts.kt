@@ -24,7 +24,7 @@ class FragmentAccounts : ParentFragment() {
     private lateinit var binding: FragmentAccountsBinding
     private lateinit var logs:List<DairyTotal>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_accounts, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = application?.let { ViewModelAccounts(it) }

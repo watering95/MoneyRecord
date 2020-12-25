@@ -12,7 +12,7 @@ class FragmentManagement : ParentFragment() {
 
     private val mapOfFragments = mutableMapOf<Int, Fragments>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         mView = inflater.inflate(R.layout.fragment_management, container, false)
 
         mapOfFragments[0] = Fragments("User",FragmentManagementUser())

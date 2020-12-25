@@ -10,10 +10,11 @@ import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.view.RecyclerViewAdapterHomeList
 
 class FragmentHomeList : ParentFragment() {
+    lateinit var list: List<Home>
     private lateinit var binding: FragmentHomeListBinding
     var group: String? = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_home_list, container, false)
         initLayout()
         return binding.fragmentHomeList
@@ -21,25 +22,26 @@ class FragmentHomeList : ParentFragment() {
 
     private fun initLayout() {
         updateList()
-
         setHasOptionsMenu(false)
     }
 
     private fun updateList() {
-        (if(group == "") mViewModel.allHomes else mViewModel.getHomesByGroup(group))
-        .observeOnce { listOfHomes ->
-            listOfHomes?.let {
-                var totalEvaluation = 0
-
-                it.forEach { home -> totalEvaluation += home.evaluationKRW!! }
-
-                onChangedRecyclerView(it, totalEvaluation)
+        mViewModel.run {
+            val id = getCurrentGroupId()
+            (if(id < 0) allHomes else getHomesByGroup(id)).observeOnce { listOfHomes ->
+                listOfHomes?.let {
+                    var totalEvaluation = 0
+                    list = it
+                    it.forEach { home -> totalEvaluation += home.evaluationKRW!! }
+                    onChangedRecyclerView(it, totalEvaluation)
+                }
             }
         }
     }
 
     private fun itemClicked(item: Int) {
-
+        mViewModel.setCurrentAccountId(list[item].idAccount)
+        replaceFragment(FragmentAccounts())
     }
 
     private fun onChangedRecyclerView(list: List<Home>, totalEvaluation: Int) {

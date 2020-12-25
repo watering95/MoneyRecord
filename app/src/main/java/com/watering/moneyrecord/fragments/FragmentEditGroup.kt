@@ -14,7 +14,7 @@ class FragmentEditGroup : ParentFragment() {
     private lateinit var item: Group
     private lateinit var binding:FragmentEditGroupBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_edit_group, container, false)
         initLayout()
         return binding.root

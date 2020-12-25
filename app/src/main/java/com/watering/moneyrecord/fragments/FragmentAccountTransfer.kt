@@ -17,7 +17,7 @@ class FragmentAccountTransfer : ParentFragment() {
     private lateinit var binding: FragmentAccountTransferBinding
     private var id_withDrawAccount: Int? = -1
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_account_transfer, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = application?.let { ViewModelAccountTransfer(it) }

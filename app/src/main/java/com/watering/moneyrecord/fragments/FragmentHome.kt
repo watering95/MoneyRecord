@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.databinding.Observable
 import androidx.databinding.library.baseAdapters.BR
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.LiveData
 import com.watering.moneyrecord.R
 import com.watering.moneyrecord.databinding.FragmentHomeBinding
+import com.watering.moneyrecord.entities.Home
 import com.watering.moneyrecord.view.PagerAdapterHome
 import com.watering.moneyrecord.viewmodel.ViewModelApp.Companion.currentGroupId
 import com.watering.moneyrecord.viewmodel.ViewModelHome
@@ -17,7 +18,7 @@ import com.watering.moneyrecord.viewmodel.ViewModelHome
 class FragmentHome : ParentFragment() {
     private lateinit var binding: FragmentHomeBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_home, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = application?.let { ViewModelHome(it) }
@@ -29,13 +30,11 @@ class FragmentHome : ParentFragment() {
         setHasOptionsMenu(false)
 
         binding.viewmodel?.run {
-            if(currentGroupId > 0) getGroup(currentGroupId).observeOnce { group ->
-                group?.let {
-                    Transformations.map(listOfGroup) { list -> list.indexOf(group.name) }
-                        .observeOnce { index -> index?.let { indexOfGroup = index } }
-                }
-            }
-
+            getGroup(getCurrentGroupId()).observeOnce { group -> group?.let {
+                listOfGroup.observeOnce { list -> list?.let {
+                    indexOfGroup = list.indexOf(group.name)
+                } }
+            }}
             addOnPropertyChangedCallback(object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                     when(propertyId) {
@@ -44,46 +43,39 @@ class FragmentHome : ParentFragment() {
                 }
             })
         }
-        binding.viewpagerFragmentHome.run{
-            adapter = PagerAdapterHome(childFragmentManager)
-        }
     }
 
     fun onChangedIndexOfGroup() {
         binding.viewmodel?.run {
             if(indexOfGroup == 0) {
                 currentGroupId = -1
-                allHomes.observeOnce { listOfHomes -> listOfHomes?.let {
-                    totalEvaluation = 0
-                    totalPrincipal = 0
-                    it.forEach { home ->
-                        totalEvaluation += home.evaluationKRW!!
-                        totalPrincipal += home.principalKRW!!
-                    }
-                } }
+                changeList(allHomes)
             } else {
                 listOfGroup.observeOnce { listOfGroup -> listOfGroup?.let {
                     getGroup(it[indexOfGroup]).observeOnce { group -> group?.let {
-                            currentGroupId = group.id!!
-                        }
-                    }
-                    getHomesByGroup(it[indexOfGroup]).observeOnce { listOfHomes -> listOfHomes?.let {
-                        totalEvaluation = 0
-                        totalPrincipal = 0
-                        listOfHomes.forEach { home ->
-                            totalEvaluation += home.evaluationKRW!!
-                            totalPrincipal += home.principalKRW!!
-                        }
+                        currentGroupId = group.id!!
+                        changeList(getHomesByGroup(currentGroupId))
                     } }
                 } }
             }
-            binding.viewpagerFragmentHome.run {
-                if(indexOfGroup == 0) (adapter as PagerAdapterHome).setGroup("")
-                else listOfGroup.observeOnce { listOfGroup -> listOfGroup?.let {
-                    (adapter as PagerAdapterHome).setGroup(it[indexOfGroup])
-                } }
-                adapter!!.notifyDataSetChanged()
-            }
+        }
+    }
+
+    private fun changeList(liveDataList: LiveData<List<Home>>)
+    {
+        binding.viewmodel?.run {
+            liveDataList.observeOnce { listOfHomes -> listOfHomes?.let {
+                totalEvaluation = 0
+                totalPrincipal = 0
+                listOfHomes.forEach { home ->
+                    totalEvaluation += home.evaluationKRW!!
+                    totalPrincipal += home.principalKRW!!
+                }
+                binding.viewpagerFragmentHome.run {
+                    adapter = PagerAdapterHome(childFragmentManager)
+                    adapter!!.notifyDataSetChanged()
+                }
+            } }
         }
     }
 }

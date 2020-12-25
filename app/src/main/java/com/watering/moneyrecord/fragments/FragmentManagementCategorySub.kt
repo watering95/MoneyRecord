@@ -15,7 +15,7 @@ class FragmentManagementCategorySub : ParentFragment() {
     private lateinit var mView: View
     private val viewModel by lazy { application?.let { ViewModelManagementCategorySub(it) } }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         mView = inflater.inflate(R.layout.fragment_management_category_sub, container, false)
         initLayout()
         return mView

@@ -15,7 +15,7 @@ import com.watering.moneyrecord.viewmodel.ViewModelBook
 class FragmentBook : ParentFragment() {
     private lateinit var binding: FragmentBookBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_book, container, false)
         binding.viewmodel = application?.let { ViewModelBook(it) }
         initLayout()

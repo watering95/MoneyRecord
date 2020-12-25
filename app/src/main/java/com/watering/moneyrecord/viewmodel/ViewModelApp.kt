@@ -49,6 +49,13 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
         var currentAccountId = -1
     }
 
+    fun setCurrentAccountId(id: Int?) {
+        if (id != null) currentAccountId = id
+    }
+    fun getCurrentGroupId(): Int {
+        return currentGroupId
+    }
+
     fun <T> insert(t: T) = scope.launch(Dispatchers.IO) { repository.insert(t) }
     fun <T> update(t: T) = scope.launch(Dispatchers.IO) { repository.update(t) }
     fun <T> delete(t: T) = scope.launch(Dispatchers.IO) { repository.delete(t) }
@@ -56,8 +63,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
     fun close() = repository.close()
     fun initialize() = repository.initialize()
 
-    fun getFirstDate(group: String?)
-            = if(group != "") Transformations.switchMap(getGroup(group)) { repository.getFirstDate(it.id) }
+    fun getFirstDate(group: String?) = if(group != "") Transformations.switchMap(getGroup(group)) { repository.getFirstDate(it.id) }
             else repository.getFirstDate()
     fun getGroup(id: Int?) = repository.getGroup(id) // FragmentEditAccount, FragmentHome, Processing
     fun getGroup(name: String?) = repository.getGroup(name)  // FragmentHome, ViewModelApp
@@ -68,6 +74,7 @@ open class ViewModelApp(application: Application) : AndroidViewModel(application
 
     fun getHomeByIdAccount(idAccount: Int?) = repository.getHomeByIdAccount(idAccount)  // FragmentEditAccount, Processing
     fun getHomesByGroup(group: String?) = repository.getHomesByGroup(group)  // FragmentHome, FragmentHomeList
+    fun getHomesByGroup(id: Int?) = Transformations.switchMap(getGroup(id)) {repository.getHomesByGroup(it.name) }
 
     fun getCatMain(id: Int?) = repository.getCatMain(id)  // FragmentEditCategorySub, FragmentManagementCategorySub
     fun getCatMainsByKind(kind: String?) = repository.getCatMain(kind)  // FragmentEditIncome, FragmentEditSpend

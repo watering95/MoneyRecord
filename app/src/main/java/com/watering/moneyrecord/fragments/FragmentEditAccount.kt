@@ -17,7 +17,7 @@ class FragmentEditAccount : ParentFragment() {
     private lateinit var item: Account
     private lateinit var binding:FragmentEditAccountBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = inflate(inflater, R.layout.fragment_edit_account, container, false)
         initLayout()
         return binding.root
