@@ -57,20 +57,14 @@ class FragmentEditAccount : ParentFragment() {
                     runBlocking {
                         delay(100)
                         delete(this@FragmentEditAccount.item)
-                        getHomeByIdAccount(this@FragmentEditAccount.item.id).observeOnce { home ->
-                            home?.let {
-                                val job = delete(it)
-                                runBlocking {
-                                    job.join()
-                                    Toast.makeText(
-                                        activity,
-                                        R.string.toast_delete_success,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    mFragmentManager.popBackStack()
-                                }
+                        getHomeByIdAccount(this@FragmentEditAccount.item.id).observeOnce { home -> home?.let {
+                            val job = delete(it)
+                            runBlocking {
+                                job.join()
+                                Toast.makeText(activity, R.string.toast_delete_success, Toast.LENGTH_SHORT).show()
+                                mFragmentManager.popBackStack()
                             }
-                        }
+                        } }
                     }
                 }
             }
@@ -88,90 +82,56 @@ class FragmentEditAccount : ParentFragment() {
                     if(description.isNullOrEmpty() || institute.isNullOrEmpty() || number.isNullOrEmpty())
                         Toast.makeText(activity, R.string.toast_warning_input, Toast.LENGTH_SHORT).show()
                     else {
-                        mViewModel.allGroups.observeOnce { list ->
-                            list?.let {
-                                account?.apply { selected?.let { group = list[it].id } }
-                                    .let { account ->
-                                        when (this@FragmentEditAccount.item.id) {
-                                            null -> {
-                                                mViewModel.run {
-                                                    val job = insert(account)
-                                                    runBlocking {
-                                                        job.join()
-                                                        delay(100)
-                                                        getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce { account ->
-                                                            account?.let {
-                                                                getGroup(account.group).observeOnce { group ->
-                                                                    group?.let {
-                                                                        val home = Home()
-                                                                        home.idAccount =
-                                                                            account.id
-                                                                        home.account =
-                                                                            account.number
-                                                                        home.description =
-                                                                            account.institute + account.description
-                                                                        home.group =
-                                                                            group.name
-                                                                        val jj =
-                                                                            insert(home)
-                                                                        runBlocking {
-                                                                            jj.join()
-                                                                            Toast.makeText(
-                                                                                activity,
-                                                                                R.string.toast_save_success,
-                                                                                Toast.LENGTH_SHORT
-                                                                            ).show()
-                                                                            mFragmentManager.popBackStack()
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
+                        mViewModel.run {
+                            allGroups.observeOnce { list -> list?.let {
+                                account?.apply { selected?.let { group = list[it].id } }.let { account ->
+                                    when (this@FragmentEditAccount.item.id) {
+                                        null -> {
+                                            val job = insert(account)
+                                            runBlocking {
+                                                job.join()
+                                                delay(100)
+                                                getAccountByNumber(this@FragmentEditAccount.item.number).observeOnce { account -> account?.let {
+                                                    getGroup(account.group).observeOnce { group -> group?.let {
+                                                        val home = Home()
+                                                        home.idAccount = account.id
+                                                        home.account = account.number
+                                                        home.description = account.institute + account.description
+                                                        home.group = group.name
+                                                        val jj = insert(home)
+                                                        runBlocking {
+                                                            jj.join()
+                                                            Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                                            mFragmentManager.popBackStack()
                                                         }
-                                                    }
-                                                }
+                                                    } }
+                                                } }
                                             }
-                                            else -> {
-                                                mViewModel.run {
-                                                    val job = update(account)
-                                                    runBlocking {
-                                                        job.join()
-                                                        delay(100)
-                                                        Toast.makeText(
-                                                            activity,
-                                                            R.string.toast_save_success,
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                        getHomeByIdAccount(account?.id).observeOnce { home ->
-                                                            home?.let {
-                                                                getGroup(account?.group).observeOnce { group ->
-                                                                    group?.let {
-                                                                        home.account =
-                                                                            account?.number
-                                                                        home.description =
-                                                                            account?.institute + " " + account?.description
-                                                                        home.group =
-                                                                            group.name
-                                                                        val jj =
-                                                                            update(home)
-                                                                        runBlocking {
-                                                                            jj.join()
-                                                                            Toast.makeText(
-                                                                                activity,
-                                                                                R.string.toast_save_success,
-                                                                                Toast.LENGTH_SHORT
-                                                                            ).show()
-                                                                            mFragmentManager.popBackStack()
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
+                                        }
+                                        else -> {
+                                            val job = update(account)
+                                            runBlocking {
+                                                job.join()
+                                                delay(100)
+                                                Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                                getHomeByIdAccount(account?.id).observeOnce { home -> home?.let {
+                                                    getGroup(account?.group).observeOnce { group -> group?.let {
+                                                        home.account = account?.number
+                                                        home.description = account?.institute + " " + account?.description
+                                                        home.group = group.name
+                                                        val jj = update(home)
+                                                        runBlocking {
+                                                            jj.join()
+                                                            Toast.makeText(activity, R.string.toast_save_success, Toast.LENGTH_SHORT).show()
+                                                            mFragmentManager.popBackStack()
                                                         }
-                                                    }
-                                                }
+                                                    } }
+                                                } }
                                             }
                                         }
                                     }
-                            }
+                                }
+                            } }
                         }
                     }
                 }
