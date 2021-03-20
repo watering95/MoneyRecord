@@ -39,8 +39,10 @@ class FragmentHomeGraph : ParentFragment() {
     private fun openWebView() {
         mWeb = binding.webviewFragmentHomeGraph
         val set = mWeb.settings
-        set.javaScriptEnabled = true
         set.builtInZoomControls = true
+        set.javaScriptEnabled = true
+        set.allowFileAccess = true
+
         mWeb.loadUrl("""file:///${activity.filesDir}graph_total.html""")
     }
 

@@ -57,6 +57,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
 
                 runBlocking {
                     jobIO.join()
+                    delay(100)
                     checkNextIOKRW(idAccount, selectedDate, selectedDate, isUpdateEvaluation)
                 }
             }
@@ -69,6 +70,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
 
                 runBlocking {
                     jobIO.join()
+                    delay(100)
                     checkNextIOForeign(idAccount, currency, selectedDate, selectedDate)
                 }
             }
@@ -84,6 +86,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
                         val job = update(io)
                         runBlocking {
                             job.join()
+                            delay(100)
                             checkNextIOKRW(idAccount, selectedDate, date, isUpdateEvaluation)
                         }
                     }
@@ -98,6 +101,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
 
                 runBlocking {
                     jobDairyKRW.join()
+                    delay(100)
                     checkNextDairyKRW(idAccount, selectedDate, selectedDate, isUpdateEvaluation)
                 }
             }
@@ -112,6 +116,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
                         val job = update(dairy)
                         runBlocking {
                             job.join()
+                            delay(100)
                             checkNextDairyKRW(idAccount, selectedDate, date, isUpdateEvaluation)
                         }
                     }
@@ -129,6 +134,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
                         val job = update(io)
                         runBlocking {
                             job.join()
+                            delay(100)
                             checkNextIOForeign(idAccount, currency, selectedDate, date)
                         }
                     }
@@ -158,6 +164,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
                         val job = update(dairy)
                         runBlocking {
                             job.join()
+                            delay(100)
                             checkNextDairyForeign(idAccount, currency, selectedDate, date)
                         }
                     }
@@ -172,6 +179,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
 
                 runBlocking {
                     jobDairyTotal.join()
+                    delay(100)
                     updateHome(idAccount, dairy)
                     checkNextDairyTotal(idAccount, selectedDate)
                 }
@@ -187,6 +195,7 @@ class Processing(application: Application, private val fragmentManager: Fragment
                         val job = update(dairy)
                         runBlocking {
                             job.join()
+                            delay(100)
                             updateHome(idAccount, dairy)
                             checkNextDairyTotal(idAccount, date)
                         }

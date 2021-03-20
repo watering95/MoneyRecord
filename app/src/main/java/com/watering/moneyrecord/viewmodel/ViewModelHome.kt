@@ -11,7 +11,7 @@ class ViewModelHome(application:Application) : ObservableViewModel(application) 
     @Bindable get
         set(value) {
         field = value
-        if(totalEvaluation != 0) totalRate = totalEvaluation.toDouble() / totalPrincipal * 100 - 100
+        if(totalEvaluation != 0) totalRate = totalEvaluation.toDouble() / totalPrincipal.toDouble() * 100 - 100
         notifyPropertyChanged(BR.totalPrincipal)
     }
 
@@ -19,7 +19,7 @@ class ViewModelHome(application:Application) : ObservableViewModel(application) 
     @Bindable get
         set(value) {
         field = value
-        if(totalEvaluation != 0) totalRate = totalEvaluation.toDouble() / totalPrincipal * 100 - 100
+        if(totalEvaluation != 0) totalRate = totalEvaluation.toDouble() / totalPrincipal.toDouble() * 100 - 100
         notifyPropertyChanged(BR.totalEvaluation)
     }
 
