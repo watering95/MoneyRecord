@@ -35,7 +35,7 @@ class DialogInOut: DialogFragment() {
         val listView: ListView = view.findViewById(R.id.listView_dlg_Inout)
 
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
-        listView.adapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1, list)
+        listView.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, list)
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             complete.onComplete(position)
             dismiss()
