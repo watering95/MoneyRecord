@@ -51,7 +51,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation 'com.google.firebase:firebase-auth:21.0.1' // Firebase Authentication
     implementation 'com.firebaseui:firebase-ui-auth:8.0.0' // Firebase Authentication UI
-    implementation 'com.google.firebase:firebase-database:20.0.1' // Firebase Database
+    implementation 'com.google.firebase:firebase-database:20.0.2' // Firebase Database
     implementation 'com.google.firebase:firebase-storage:20.0.0' // Firebase Storage
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'
